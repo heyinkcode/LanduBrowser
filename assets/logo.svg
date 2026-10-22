@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="岚渡浏览器 Landu Browser">
+  <title>岚渡浏览器 · Landu Browser</title>
+  <defs>
+    <linearGradient id="landu-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#24c2f5"/>
+      <stop offset=".48" stop-color="#007aff"/>
+      <stop offset="1" stop-color="#0640da"/>
+    </linearGradient>
+    <linearGradient id="landu-wave" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".18"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#landu-blue)"/>
+  <path d="M108 133 Q108 126 115 126 H151 Q158 126 158 133 V252 C194 229 225 226 251 239 C276 251 298 280 319 298 C337 314 354 319 367 309 C382 299 388 278 386 257 C384 223 363 202 331 202 H233 Q226 202 226 195 V159 Q226 152 233 152 H332 C395 152 436 198 436 261 C436 320 402 367 354 367 C317 367 292 338 268 312 C247 289 227 274 204 271 C172 267 137 282 112 299 Q108 302 108 296 Z" fill="#fff"/>
+  <path d="M108 321 C151 295 184 290 214 300 C249 311 272 341 299 365 H115 Q108 365 108 358 Z" fill="url(#landu-wave)"/>
+</svg>

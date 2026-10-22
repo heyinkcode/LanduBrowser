@@ -1,0 +1,13 @@
+{
+  "name": "landu-browser-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landu Browser 官网与文档，基于 OpenBrowser 的免费浏览器环境管理工具",
+  "scripts": {
+    "start": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
