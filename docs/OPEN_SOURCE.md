@@ -34,11 +34,17 @@
 
 ## 当前公开内容
 
-本仓库目前公开官网静态源码、Logo、使用示例截图和说明文档，**尚未包含完整岚渡桌面端源码和安装包**。这一点不会用“开源免费”口号掩盖。
+`main` 分支公开官网静态源码、Logo、使用示例截图和说明文档。[v1.0.26 Releases](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26) 提供 Windows x64 安装程序，以及明确命名的 `LanduBrowser-1.0.26-source.zip` 对应应用源码包。
 
-桌面端后续发布时，应同时整理对应源码、保留上游许可证，明确版本与改动，提供实际构建说明；安装包是否可用以 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 为准。
+该源码包包含岚渡修改后的主进程、界面、自动化模块、原生 C# 组件、构建脚本、许可证及 `BUILD_LANDU.md`；上游参考提交为 `0b57e39595b02ff9662da3d807b413f3393ce166`。不包含个人环境、依赖目录及浏览器内核二进制。它不是 GitHub 自动生成的官网 `Source code (zip)`。
 
-当前可以直接查看的核心实现来自 [上游 OpenBrowser 仓库](https://github.com/sheying2013/OpenBrowser)。
+## 第三方组件并非统一 MIT
+
+- Windows 后台输入组件 `native-input-mirror.cs` 包含基于 [chrome-power-app](https://github.com/zmzimpl/chrome-power-app) 的实现，来源许可为 AGPL-3.0。发行版同时提供 C# 源码、构建脚本、`LICENSE.chrome-power.txt` 与 `THIRD-PARTY-NOTICES.md`。
+- 桌面运行时的许可和 Chromium 通告分别保留于安装目录的 `runtime/LICENSE` 和 `runtime/LICENSES.chromium.html`。
+- 独立浏览器内核、字体和其他资源适用各自许可；应用源码包不包含这些第三方二进制的完整源代码，也不将其宣称为岚渡原创。
+
+修改或再分发时，请分别检查各组件许可与源码提供要求，不要仅凭根目录 MIT 文件覆盖第三方许可。
 
 ## 使用边界
 

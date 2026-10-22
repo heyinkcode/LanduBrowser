@@ -4,11 +4,12 @@
 
 ## 1. 先确认你下载的是什么
 
-岚渡浏览器是基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发的免费桌面浏览器环境管理工具，核心业务逻辑来自原项目。当前仓库先提供官网和文档，尚未发布岚渡桌面端安装包与完整客户端源码。
+岚渡浏览器是基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发的免费桌面浏览器环境管理工具，核心业务逻辑来自原项目。v1.0.26 提供 Windows x64 安装程序及对应应用源码包；新用户推荐内置内核的完整版，见 [下载与安装](DOWNLOADS.md)。
 
 - 客户端请认准 [heyinkcode/LanduBrowser 的 Releases](https://github.com/heyinkcode/LanduBrowser/releases)，以实际发布的资产为准。
 - GitHub 的 `Source code (zip)`、`Download ZIP` 是源码压缩包，**不是可双击运行的 Windows 安装程序**。
 - 本仓库的 `npm start` 只预览官网，不启动客户端。
+- 岚渡桌面端对应源码单独命名为 `LanduBrowser-1.0.26-source.zip`，构建说明在包内 `BUILD_LANDU.md`。
 - 原项目的源码启动方法请查看 [OpenBrowser 中文 README](https://github.com/sheying2013/OpenBrowser/blob/main/README_CN.md)，不要把上游安装包误认为已换肤的岚渡版本。
 
 以下介绍岚渡桌面界面的基本操作。具体入口和支持情况以你安装的版本为准。
@@ -85,9 +86,13 @@
 
 上游 OpenBrowser 提供 macOS 和 Ubuntu 的支持及打包路径；岚渡当前主要在 Windows 本地适配，本仓库暂未发布或独立验证这些平台的岚渡客户端。
 
-### 下载页为空怎么办？
+### 完整版为什么比较大？
 
-说明还没有在此仓库发布安装包。不要把源码压缩包当安装包；可以关注仓库的发布通知，或先研究上游项目。
+完整版包含桌面运行时、独立 Chromium 内核和字体资源，并不是每次只下载几个界面文件。已有兼容内核可考虑轻量版，但轻量版不等于内置内核的全部能力。当前更新按整包发布，未实现增量补丁更新。
+
+### Windows 提示未知发布者怎么办？
+
+本版尚未使用代码签名证书。先核对来自官方 Releases 的文件与 SHA-256；如提示恶意软件或校验不一致，停止安装并反馈，不要关闭安全防护。校验命令见 [下载说明](DOWNLOADS.md)。
 
 ### 怎么反馈问题？
 

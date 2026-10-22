@@ -22,7 +22,20 @@
 
 **岚渡浏览器软件免费使用，不以订阅或付费激活作为使用门槛。** 自行选择的代理、VPN、服务器等第三方服务费用另计，不包含在软件中，也不是使用软件的必选条件。
 
-> **当前仓库范围**：本仓库目前发布岚渡浏览器的官网、品牌资源和说明文档，尚未上传完整的岚渡桌面端源码或安装包。桌面端发布以 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 的实际内容为准；现在需要研究核心实现，可查看 [上游 OpenBrowser 源码](https://github.com/sheying2013/OpenBrowser)。不要将本仓库克隆后当作桌面客户端启动。
+> **仓库与发行版**：`main` 分支存放官网、品牌资源和说明文档；Windows 客户端安装程序及对应应用源码包放在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases)。本仓库的 `npm start` 预览官网，不启动桌面客户端。
+
+## 免费下载 · v1.0.26
+
+**普通用户推荐 [Windows 64 位完整版安装程序](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-with-kernel.exe)**，下载后双击安装，无需 Node.js 或开发工具。
+
+| 文件 | 适合谁 |
+| --- | --- |
+| [完整版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-with-kernel.exe) | 首次使用；内置独立内核和字体资源，体积较大。 |
+| [轻量版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-without-kernel.exe) | 已准备兼容内核的用户；未附带独立内核，首次运行需另外下载或配置。 |
+| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-1.0.26-source.zip) | 开发者；含岚渡修改、原生组件源码和构建说明，不含内核与个人数据。 |
+| [SHA-256 校验文件](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/SHA256SUMS.txt) | 核对下载是否完整。 |
+
+Windows 10/11 x64；尚未提供代码签名，可能出现未知发布者提示。请核对下载来源与校验值，不要关闭安全软件。详细步骤见 [下载、安装与更新](docs/DOWNLOADS.md)。
 
 ## 界面预览
 
@@ -48,16 +61,17 @@
 
 | 平台 | 当前说明 |
 | --- | --- |
-| Windows | 岚渡版本当前的主要本地适配与验证平台；安装包尚未在本仓库发布。 |
+| Windows | 提供 v1.0.26 x64 完整版和轻量版安装程序；当前主要适配与验证平台。 |
 | macOS / Ubuntu | 上游提供支持与打包路径；本仓库暂未提供岚渡版本安装包或完成独立验证。 |
 | Android / iOS | 本仓库不提供手机客户端，也不提供手机远程管理端。 |
 
 1. 先阅读 [使用指南](docs/GETTING_STARTED.md)。
-2. 在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 查看是否已有适合设备的正式安装包；没有发布资产时，请等待发布，不使用来历不明的下载链接。
-3. 需要从源码了解原项目，可查阅 [OpenBrowser 中文说明](https://github.com/sheying2013/OpenBrowser/blob/main/README_CN.md)。
+2. 在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 下载 EXE 并核对校验值，再按安装向导操作。
+3. 需要岚渡客户端源码，请下载明确命名的 `LanduBrowser-1.0.26-source.zip`；GitHub 自动生成的 `Source code (zip)` 只对应官网分支。
 
 ## 文档导航
 
+- [下载、安装与更新](docs/DOWNLOADS.md)：选择安装包、校验下载、升级与卸载。
 - [使用指南](docs/GETTING_STARTED.md)：环境、代理、扩展、自动化、数据和常见问题。
 - [开源说明与原作者致谢](docs/OPEN_SOURCE.md)：项目关系、MIT 许可证、免费范围与发布边界。
 - [推荐网络服务（推广）](docs/RECOMMENDED_SERVICES.md)：岚渡云的入口及服务说明。
@@ -89,6 +103,6 @@ npm start
 
 ## 许可证
 
-上游 OpenBrowser 使用 MIT 许可证。本仓库保留其 [LICENSE](LICENSE) 与贡献者署名，官网代码亦按 MIT 提供。第三方组件、Chromium、扩展及外部服务仍适用各自的条款。
+上游 OpenBrowser 根许可证为 MIT。本仓库保留其 [LICENSE](LICENSE) 与贡献者署名，官网代码亦按 MIT 提供。客户端 Windows 后台输入组件含 AGPL-3.0 来源实现，对应许可及 C# 源码随发行版提供；Chromium、字体、扩展等适用各自条款。不要将所有第三方组件统称为 MIT，详见 [开源说明](docs/OPEN_SOURCE.md)。
 
 **再次感谢 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 原作者及贡献者。岚渡基于原作继续改进，而非取代原作的贡献。**
