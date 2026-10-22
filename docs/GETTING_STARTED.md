@@ -1,12 +1,12 @@
 # 岚渡浏览器使用指南
 
-[返回项目首页](../README.md) · [官网](https://kissow.github.io/LanduBrowser/) · [开源说明](OPEN_SOURCE.md)
+[返回项目首页](../README.md) · [官网](https://heyinkcode.github.io/LanduBrowser/) · [开源说明](OPEN_SOURCE.md)
 
 ## 1. 先确认你下载的是什么
 
 岚渡浏览器是基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发的免费桌面浏览器环境管理工具，核心业务逻辑来自原项目。当前仓库先提供官网和文档，尚未发布岚渡桌面端安装包与完整客户端源码。
 
-- 客户端请认准 [kissow/LanduBrowser 的 Releases](https://github.com/kissow/LanduBrowser/releases)，以实际发布的资产为准。
+- 客户端请认准 [heyinkcode/LanduBrowser 的 Releases](https://github.com/heyinkcode/LanduBrowser/releases)，以实际发布的资产为准。
 - GitHub 的 `Source code (zip)`、`Download ZIP` 是源码压缩包，**不是可双击运行的 Windows 安装程序**。
 - 本仓库的 `npm start` 只预览官网，不启动客户端。
 - 原项目的源码启动方法请查看 [OpenBrowser 中文 README](https://github.com/sheying2013/OpenBrowser/blob/main/README_CN.md)，不要把上游安装包误认为已换肤的岚渡版本。
@@ -91,4 +91,4 @@
 
 ### 怎么反馈问题？
 
-在 [Issues](https://github.com/kissow/LanduBrowser/issues) 提交系统版本、应用版本、复现步骤、预期结果和脱敏截图。截图中请遮挡密码、Cookie、令牌、代理地址及个人信息。
+在 [Issues](https://github.com/heyinkcode/LanduBrowser/issues) 提交系统版本、应用版本、复现步骤、预期结果和脱敏截图。截图中请遮挡密码、Cookie、令牌、代理地址及个人信息。

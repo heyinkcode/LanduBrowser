@@ -36,7 +36,7 @@
 
 本仓库目前公开官网静态源码、Logo、使用示例截图和说明文档，**尚未包含完整岚渡桌面端源码和安装包**。这一点不会用“开源免费”口号掩盖。
 
-桌面端后续发布时，应同时整理对应源码、保留上游许可证，明确版本与改动，提供实际构建说明；安装包是否可用以 [Releases](https://github.com/kissow/LanduBrowser/releases) 为准。
+桌面端后续发布时，应同时整理对应源码、保留上游许可证，明确版本与改动，提供实际构建说明；安装包是否可用以 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 为准。
 
 当前可以直接查看的核心实现来自 [上游 OpenBrowser 仓库](https://github.com/sheying2013/OpenBrowser)。
 

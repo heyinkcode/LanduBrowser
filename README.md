@@ -8,7 +8,7 @@
 
 基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发的免费桌面浏览器环境管理工具。
 
-[访问官网](https://kissow.github.io/LanduBrowser/) · [使用指南](docs/GETTING_STARTED.md) · [开源与致谢](docs/OPEN_SOURCE.md) · [版本发布](https://github.com/kissow/LanduBrowser/releases)
+[访问官网](https://heyinkcode.github.io/LanduBrowser/) · [使用指南](docs/GETTING_STARTED.md) · [开源与致谢](docs/OPEN_SOURCE.md) · [版本发布](https://github.com/heyinkcode/LanduBrowser/releases)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 **岚渡浏览器软件免费使用，不以订阅或付费激活作为使用门槛。** 自行选择的代理、VPN、服务器等第三方服务费用另计，不包含在软件中，也不是使用软件的必选条件。
 
-> **当前仓库范围**：本仓库目前发布岚渡浏览器的官网、品牌资源和说明文档，尚未上传完整的岚渡桌面端源码或安装包。桌面端发布以 [Releases](https://github.com/kissow/LanduBrowser/releases) 的实际内容为准；现在需要研究核心实现，可查看 [上游 OpenBrowser 源码](https://github.com/sheying2013/OpenBrowser)。不要将本仓库克隆后当作桌面客户端启动。
+> **当前仓库范围**：本仓库目前发布岚渡浏览器的官网、品牌资源和说明文档，尚未上传完整的岚渡桌面端源码或安装包。桌面端发布以 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 的实际内容为准；现在需要研究核心实现，可查看 [上游 OpenBrowser 源码](https://github.com/sheying2013/OpenBrowser)。不要将本仓库克隆后当作桌面客户端启动。
 
 ## 界面预览
 
@@ -53,7 +53,7 @@
 | Android / iOS | 本仓库不提供手机客户端，也不提供手机远程管理端。 |
 
 1. 先阅读 [使用指南](docs/GETTING_STARTED.md)。
-2. 在 [Releases](https://github.com/kissow/LanduBrowser/releases) 查看是否已有适合设备的正式安装包；没有发布资产时，请等待发布，不使用来历不明的下载链接。
+2. 在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 查看是否已有适合设备的正式安装包；没有发布资产时，请等待发布，不使用来历不明的下载链接。
 3. 需要从源码了解原项目，可查阅 [OpenBrowser 中文说明](https://github.com/sheying2013/OpenBrowser/blob/main/README_CN.md)。
 
 ## 文档导航
@@ -76,7 +76,7 @@
 需要 Node.js 18 或更新版本，无需安装依赖：
 
 ```bash
-git clone https://github.com/kissow/LanduBrowser.git
+git clone https://github.com/heyinkcode/LanduBrowser.git
 cd LanduBrowser
 npm start
 ```
@@ -85,7 +85,7 @@ npm start
 
 ## 反馈与贡献
 
-欢迎在 [Issues](https://github.com/kissow/LanduBrowser/issues) 提交排版、文档和使用问题。请描述系统、版本、复现步骤，并附上脱敏截图；不要上传账号密码、代理凭据、Cookie、验证码或完整环境数据。
+欢迎在 [Issues](https://github.com/heyinkcode/LanduBrowser/issues) 提交排版、文档和使用问题。请描述系统、版本、复现步骤，并附上脱敏截图；不要上传账号密码、代理凭据、Cookie、验证码或完整环境数据。
 
 ## 许可证
 

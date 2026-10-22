@@ -33,7 +33,7 @@ npm start
 
 仓库 Pages 使用 `main` 分支的根目录。发布地址：
 
-**https://kissow.github.io/LanduBrowser/**
+**https://heyinkcode.github.io/LanduBrowser/**
 
 在仓库 Settings → Pages 选择 Deploy from a branch，分支 `main`，目录 `/ (root)`。推送后等待 Pages 构建成功再验收，不把“代码已推送”视为“网页已上线”。
 
