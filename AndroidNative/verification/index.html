@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>岚渡原生内核验证</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#202632;background:#f6f8fc;font-size:16px}*{box-sizing:border-box}body{max-width:900px;margin:auto;padding:24px}h1{font-size:26px;font-weight:500}h2{font-size:18px;font-weight:500}p{line-height:1.65;color:#667085}.card{background:white;padding:22px;border:1px solid #e3e7ef;border-radius:16px;margin:18px 0}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px}label{display:grid;gap:8px;font-size:14px}input,select,button{font:inherit;min-height:48px;border:1px solid #ccd4e0;border-radius:10px;padding:10px 12px;background:white;color:inherit}button{cursor:pointer;margin:14px 8px 0 0}button.primary{background:#087bff;border-color:#087bff;color:white}button:disabled{opacity:.6;cursor:wait}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8bc0ff;outline-offset:2px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.5}#status{min-height:26px}.ok{color:#157347}.fail{color:#b42318}iframe{width:1px;height:1px;border:0;position:absolute;opacity:0;pointer-events:none}
+</style>
+<h1>岚渡原生内核验证</h1>
+<p>通过本机 USB 转发访问。结果保留在当前页面，不上传到服务器。该页面用于开发验收，测试通过也不代表全部指纹能力已完成。</p>
+<section class="card"><h2>页面与独立执行环境</h2>
+<div class="row"><label>预期 CPU 核心数（留空仅核对一致性）<input id="cpu" type="number" min="1" max="64"></label><label>预期设备内存 GB（留空仅核对一致性）<input id="memory" type="number" min="1" max="16"></label></div>
+<div class="row"><label>预期网页语言（留空核对主页面）<input id="languages" placeholder="en-US,en"></label><label>预期时区（留空核对主页面）<input id="timezone" placeholder="America/Los_Angeles"></label></div>
+<button class="primary" id="run">检测主页面 / iframe / worker</button>
+<p>检测覆盖主页面、iframe、Dedicated Worker、Service Worker，核对硬件值、网页语言、Intl 和冬夏时区偏移，以及导航和子资源请求头。任何缺失、超时或不一致都保留为失败。请用配套本地检查工具打开此页。</p></section>
+<section class="card"><h2>网页地理位置</h2>
+<label>本环境重启后的预期模式<select id="geo-mode"><option value="custom">自定义坐标：核对精确值</option><option value="blocked">阻止定位：核对拒绝状态</option><option value="system">跟随手机：仅记录观察结果</option></select></label>
+<div class="row"><label>预期纬度<input id="geo-latitude" value="37.5" inputmode="decimal"></label><label>预期经度<input id="geo-longitude" value="-122.25" inputmode="decimal"></label><label>预期精度（米）<input id="geo-accuracy" value="75" inputmode="decimal"></label></div>
+<button id="geolocation">检测定位权限、坐标与持续更新</button>
+<p>仅点击后申请定位。自定义模式请先允许网站使用精确定位；检查当前位置、两次 watchPosition 更新及其清理。坐标只留在页面和你手动保存的报告内。跟随手机会读取真实位置，只记观察结果。阻止模式需按“允许 → 阻止 → 恢复”重启对照，单次拒绝不能证明拒绝原因或全部定位路径。</p></section>
+<section class="card"><h2>GPU 标识</h2>
+<label>本次检查<select id="gpu-mode"><option value="coherence">只核对各执行环境的一致性</option><option value="custom">核对环境中填写的自定义值</option></select></label>
+<div class="row"><label>WebGL 厂商<input id="gpu-0"></label><label>WebGL 渲染器<input id="gpu-1"></label></div>
+<div class="row"><label>WebGPU 厂商<input id="gpu-2"></label><label>WebGPU 架构（可留空）<input id="gpu-3"></label></div>
+<div class="row"><label>WebGPU 设备编号（可留空）<input id="gpu-4"></label><label>WebGPU 描述（可留空）<input id="gpu-5"></label></div>
+<button id="gpu">检测 WebGL 1/2 与 WebGPU</button>
+<p>核对主页面、iframe、Dedicated Worker 的标识、扩展权限和 GPUDevice.adapterInfo。API 缺失、超时或不一致不算通过。此项不验证像素噪声、图形能力画像或安装包来源。</p></section>
+<section class="card"><h2>浏览器身份与 Client Hints</h2>
+<label>本次检查<select id="identity-mode"><option value="coherence">跟随手机：核对一致性</option><option value="custom">自定义身份：核对指定值</option></select></label>
+<div class="row"><label>预期 Android 版本<input id="identity-version" maxlength="16" placeholder="例如：15"></label><label>预期设备型号<input id="identity-model" maxlength="80" placeholder="留空表示不报告型号"></label></div>
+<button id="identity">检测 UA、型号与请求头</button>
+<p>覆盖页面、iframe、Dedicated Worker、Service Worker 及导航请求，核对低/高熵 Client Hints、实际请求头和固定内核版本。页面与导航必须发送匹配的请求头；worker 原生不发送整套 UA Client Hints 时会单独记录，已发送的值仍需一致。默认冻结的 Android 10 / K UA 按 Chromium 规则接受；自定义模式下型号留空会严格核对为空。</p></section>
+<section class="card"><h2>Do Not Track</h2>
+<label>本环境重启后的预期状态<select id="dnt-mode"><option value="enabled">开启：发送 DNT: 1</option><option value="disabled">关闭：不发送 DNT</option></select></label>
+<button id="dnt">检测网页值与请求头</button>
+<p>核对页面与 iframe 的 navigator.doNotTrack，以及导航、页面、iframe、Dedicated Worker、Service Worker 发起的实际请求。先在环境中开启、重启检查，再关闭并重启复查。网站是否遵守 DNT 不在本检查范围内。</p></section>
+<section class="card"><h2>中文与厂商字体隔离</h2>
+<div class="row"><label>本次检查<select id="font-mode"><option value="baseline">隔离关闭：记录对照</option><option value="isolated">隔离开启：对照验证</option></select></label><label>载入关闭隔离时的 JSON 报告<input id="font-baseline" type="file" accept="application/json,.json"></label></div>
+<button id="fonts">检测字体读取</button>
+<p>先关闭该环境的字体隔离，重启环境后检测并保存报告；再开启隔离、重启，载入同一设备的报告后对照。检查 CSS 布局、Canvas / OffscreenCanvas 和 local() 字体加载。设备原本没有对应字体时只记为“未观察到”，不会据此宣布隔离成功。</p></section>
+<section class="card"><h2>Canvas 环境指纹</h2>
+<div class="row"><label>本次检查<select id="canvas-mode"><option value="baseline">噪声关闭：记录对照</option><option value="isolated">噪声开启：对照验证</option></select></label><label>载入关闭噪声时的 JSON 报告<input id="canvas-baseline" type="file" accept="application/json,.json"></label></div>
+<button id="canvas">检测 Canvas 读回和导出</button>
+<p>先关闭该环境的固定噪声，重启并保存对照报告；再开启噪声、重启后载入报告检查。核对主页面、iframe、Dedicated Worker 和 Service Worker，直接解析 PNG 导出的像素，检查透明区域、重复读取、截取区域和写回稳定性。本轮使用 RGBA8 已知图案，HDR 与 WebGL 仍需另外验收。</p></section>
+<section class="card"><h2>WebGL 环境像素</h2>
+<div class="row"><label>本次检查<select id="webgl-mode"><option value="baseline">噪声关闭：记录对照</option><option value="isolated">噪声开启：对照验证</option></select></label><label>载入关闭噪声时的 JSON 报告<input id="webgl-baseline" type="file" accept="application/json,.json"></label></div>
+<button id="webgl">检测 WebGL 读回和 PNG 导出</button>
+<p>使用环境中的“固定环境噪声”开关；先关闭并重启保存对照，再开启并重启后检查。核对 WebGL1/2、HTML/OffscreenCanvas、iframe 和 Dedicated Worker，以及偏移、行间距、PBO 复制、错误保留和直接解码 PNG。这里只验收已知 RGBA8 图案，不代表全部格式或 WebGPU 像素已经验收。报告仅保存在本机。</p></section>
+<section class="card"><h2>环境存储隔离</h2>
+<div class="row"><label>当前环境标记<input id="owner" value="A" maxlength="32"></label><label>本次预期<select id="expect"><option value="empty">首次打开：应为空</option><option value="existing">重新打开：应保留此标记</option></select></label></div>
+<button id="storage">检查并写入本环境标记</button>
+<p>顺序：环境 A 首次检查 → 环境 B 首次检查 → 回到 A 检查保留。发现其他环境的标记时不会覆盖它。Cookie、LocalStorage、IndexedDB 和 Cache Storage 分别检查。</p></section>
+<section class="card"><h2>验证结果</h2><p id="status" role="status" aria-live="polite">尚未检测</p><button id="export" disabled>保存 JSON 报告</button><pre id="result"></pre></section>
+<script src="values.js"></script><script src="fonts.js"></script><script src="canvas.js"></script><script src="webgl.js"></script><script src="audio.js"></script><script src="rects.js"></script><script src="media.js"></script><script src="interaction.js"></script><script src="region-checks.js"></script><script src="dnt-checks.js"></script><script src="identity.js"></script><script src="gpu.js"></script><script src="geolocation.js"></script><script src="verify.js"></script>
+</html>

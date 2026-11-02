@@ -1,0 +1,46 @@
+:root {
+  --font-body-size: 12px;
+  --font-weight-body: 300;
+  --font-weight-control: 400;
+  --font-weight-heading: 500;
+}
+
+body,
+body :where(*) {
+  font-weight: var(--font-weight-body) !important;
+}
+
+body {
+  font-size: var(--font-body-size) !important;
+}
+
+body :where(p, li, dd, dt, label, th, td, small, .field-hint, .editor-card-desc, .profile-total) {
+  font-size: var(--font-body-size) !important;
+}
+
+body :where(button, input, select, textarea, label, .nav, .tabs button) {
+  font-weight: var(--font-weight-control) !important;
+}
+
+body :where(h1, h2, h3, h4, h5, h6, summary, legend, .section-title, .editor-card-title, [class*="section-heading"]) {
+  font-weight: var(--font-weight-heading) !important;
+}
+
+body :where(strong, b) {
+  font-weight: var(--font-weight-heading) !important;
+}
+
+#view-profile-editor .editor-tabs button {
+  font-size: 14px !important;
+}
+
+#add-app-dialog .store-source-tabs {
+  justify-content: center;
+  gap: 12px;
+  padding-inline: 16px;
+}
+
+#add-app-dialog .store-source-tabs button {
+  flex: 0 1 220px;
+  max-width: calc((100% - 12px) / 2);
+}

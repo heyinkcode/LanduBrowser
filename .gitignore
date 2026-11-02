@@ -1,7 +1,41 @@
+# Dependencies
+node_modules
 node_modules/
-.env
-.env.*
-reports/
-*.log
+
+# Python bytecode and cache
+__pycache__
+__pycache__/
+*.pyc
+
+# Test reports and build output
+Browserapp/reports/
+/reports/
+dist
+dist/
+
+# OS generated files
 .DS_Store
-Thumbs.db
+
+# Internal maintenance documentation (confidential - never commit)
+CODE_OVERVIEW.md
+**/CODE_OVERVIEW.md
+
+# Local tools, device evidence and generated application state
+AGENTS.md
+**/AGENTS.md
+*.log
+*.dmp
+*.apk
+*.aab
+*.jks
+*.keystore
+Browserapp/electron-startup-debug.txt
+Browserapp/native-*.exe
+Browserapp/kernels/
+AndroidNative/validation/
+AndroidNative/feature-parity.json
+Androidapp/.local/
+Androidapp/.gradle/
+Androidapp/.kotlin/
+Androidapp/**/build/
+Androidapp/local.properties

@@ -1,0 +1,356 @@
+package com.landu.browser.nativecore;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.concurrent.atomic.AtomicReference;
+
+/** Exact patched owner methods; host-only UI, tab, scheduler, and file-API dependencies. */
+public final class LegacyTabCloseTest {
+    static int assertions;
+    static void check(boolean value, String message) {
+        assertions++;
+        if (!value) throw new AssertionError(message);
+    }
+    static final List<String> events = new ArrayList<>();
+    static final Deque<Runnable> ui = new ArrayDeque<>();
+    static final List<Store> stores = new ArrayList<>();
+    static EnvironmentLegacySaveBarrier sLanduSaveBarrier = new EnvironmentLegacySaveBarrier();
+    static final Thread UI_OWNER = Thread.currentThread();
+    static int workerChecks;
+    static int captured, released;
+    static class ThreadUtils {
+        static void assertOnUiThread() {
+            if (Thread.currentThread() != UI_OWNER) throw new AssertionError("not UI");
+        }
+        static void assertOnBackgroundThread() {
+            if (Thread.currentThread() == UI_OWNER) throw new AssertionError("I/O on UI");
+            workerChecks++;
+        }
+    }
+    static class TaskTraits { static final int UI_DEFAULT = 1; }
+    static class PostTask { static void postTask(int traits, Runnable task) { ui.add(task); } }
+    static class Queue {
+        final Deque<Runnable> tasks = new ArrayDeque<>();
+        void execute(Runnable task) { tasks.add(task); }
+        void run() {
+            AtomicReference<Throwable> failure = new AtomicReference<>();
+            Thread worker = new Thread(() -> {
+                try { while (!tasks.isEmpty()) tasks.remove().run(); }
+                catch (Throwable error) { failure.set(error); }
+            }, "legacy-save-host-worker");
+            worker.start();
+            try { worker.join(5000); }
+            catch (InterruptedException error) { throw new AssertionError(error); }
+            if (worker.isAlive()) throw new AssertionError("host worker did not finish");
+            if (failure.get() != null) throw new AssertionError("host worker failed", failure.get());
+        }
+    }
+    static class Log { static void e(String tag, String text, Throwable error) { } }
+    static class WebContentsState {
+        boolean destroyed;
+        void destroy() {
+            ThreadUtils.assertOnUiThread();
+            if (destroyed) throw new AssertionError("buffer released twice");
+            destroyed = true; released++;
+        }
+    }
+    static class TabState {
+        final String value;
+        final WebContentsState contentsState = new WebContentsState();
+        TabState(String value) { this.value = value; captured++; }
+    }
+    static class Tab {
+        final int id;
+        boolean closing, destroyed, missing, oom, restoring;
+        String value, url;
+        TabStateAttributes attributes = new TabStateAttributes(this);
+        Tab(int id) { this.id = id; value = "current-" + id; }
+        boolean isClosing() { return closing; }
+        boolean isDestroyed() { return destroyed; }
+        boolean isBeingRestored() { return restoring; }
+        int getId() { ThreadUtils.assertOnUiThread(); return id; }
+    }
+    @interface DirtinessState { int CLEAN = 0, UNTIDY = 1, DIRTY = 2; }
+    interface Observer { void onTabStateDirtinessChanged(Tab tab, int dirtiness); }
+    static class TabStateAttributes {
+        final Tab mTab;
+        int mDirtinessState = DirtinessState.DIRTY, mNumberOpenBatchEdits;
+        long mLanduSaveRevision;
+        Integer mPendingDirty;
+        final List<Observer> mObservers = new ArrayList<>();
+        TabStateAttributes(Tab tab) { mTab = tab; }
+        void updatePendingDirty(int value) { mPendingDirty = value; }
+        void dirty(int value) { updateIsDirtyInternal(value, tab -> false); }
+        void clearTabStateDirtiness() { dirty(DirtinessState.CLEAN); }
+        /* LANDU_ATTRIBUTE_METHODS */
+    }
+    static class TabPersistentStoreImpl { }
+    static class TabStateAttributesRegistry {
+        static TabStateAttributes getAttributesFor(Tab tab, Class<?> key) { return tab.attributes; }
+    }
+    static class TabStateExtractor {
+        static TabState from(Tab tab) {
+            ThreadUtils.assertOnUiThread();
+            if (tab.oom) throw new OutOfMemoryError("allocation");
+            return tab.missing ? null : new TabState(tab.value);
+        }
+    }
+    static class Model extends ArrayList<Tab> {
+        Tab getTabById(int id) {
+            ThreadUtils.assertOnUiThread();
+            for (Tab tab : this) if (tab.id == id) return tab;
+            return null;
+        }
+    }
+    static class Selector {
+        boolean ready = true;
+        final Model normal = new Model(), incognito = new Model();
+        int selected;
+        boolean isTabStateInitialized() { return ready; }
+        Model getModel(boolean incognito) { ThreadUtils.assertOnUiThread(); return incognito ? this.incognito : normal; }
+    }
+    static class TabModelSelectorMetadata {
+        final String value;
+        TabModelSelectorMetadata(String value) { this.value = value; }
+        @Override public boolean equals(Object other) {
+            return other instanceof TabModelSelectorMetadata && value.equals(((TabModelSelectorMetadata) other).value);
+        }
+        @Override public int hashCode() { return value.hashCode(); }
+    }
+    static class Policy { String getMetadataFileName() { return "tabs"; } }
+    static class TabStateFileManager {
+        static int failId = -1;
+        static boolean saveStateBeforeLanduExit(File file, TabState state, int id, boolean encrypted, Object cipher) {
+            ThreadUtils.assertOnBackgroundThread();
+            check(!state.contentsState.destroyed, "I/O retains a live captured buffer");
+            events.add("tab:" + id + ":" + encrypted);
+            return state != null && id != failId;
+        }
+    }
+    static class TabMetadataFileManager {
+        static boolean fail;
+        static boolean saveListBeforeLanduExit(File file, TabModelSelectorMetadata metadata) {
+            ThreadUtils.assertOnBackgroundThread();
+            events.add("metadata"); return !fail;
+        }
+    }
+    static class Task {
+        final Tab mTab;
+        boolean cancelled;
+        Task(Tab tab) { mTab = tab; }
+        boolean cancel(boolean interrupt) {
+            check(!interrupt, "strict close never interrupts FileChannel writers");
+            cancelled = true; return true;
+        }
+    }
+    interface StoreApi { void saveStateBeforeLanduExit(Runnable done, Runnable failed); }
+    static class Store implements StoreApi {
+        static final String TAG = "host";
+        boolean mDestroyed, mLanduSavePaused, mLoadInProgress, metadataThrows;
+        long mLanduModelRevision;
+        final Selector mTabModelSelector = new Selector();
+        final Deque<Tab> mTabsToSave = new ArrayDeque<>(), mTabsToMigrate = new ArrayDeque<>();
+        final List<Object> mTabsToRestore = new ArrayList<>();
+        Task mSaveTabTask, mMigrateTabTask, mSaveListTask;
+        final Queue mSequencedTaskRunner = new Queue();
+        final Object mCipherFactory = new Object();
+        final Policy mPersistencePolicy = new Policy();
+        TabModelSelectorMetadata mLastSavedMetadata;
+        int resumed;
+        Store() {
+            stores.add(this);
+            /* LANDU_REGISTER */
+        }
+        File getStateDirectory() {
+            ThreadUtils.assertOnBackgroundThread();
+            return new File("unused-host-api-only");
+        }
+        void saveNextTab() { resumed++; }
+        TabModelSelectorMetadata extractTabMetadata() throws IOException {
+            if (metadataThrows) throw new IOException("index capture");
+            StringBuilder value = new StringBuilder("index:" + mTabModelSelector.selected);
+            for (boolean encrypted : new boolean[] {false, true}) {
+                for (Tab tab : mTabModelSelector.getModel(encrypted)) {
+                    if (!tab.closing) value.append(':').append(encrypted).append(':').append(tab.id).append(':').append(tab.url);
+                }
+            }
+            return new TabModelSelectorMetadata(value.toString());
+        }
+        /* LANDU_OWNER_METHODS */
+    }
+    static void reset() {
+        stores.clear(); ui.clear(); events.clear();
+        captured = 0; released = 0;
+        TabStateFileManager.failId = -1; TabMetadataFileManager.fail = false;
+        sLanduSaveBarrier = new EnvironmentLegacySaveBarrier();
+    }
+    static void drain() {
+        for (int i = 0; i < 10; i++) {
+            boolean queued = !ui.isEmpty();
+            for (Store store : stores) {
+                queued |= !store.mSequencedTaskRunner.tasks.isEmpty();
+                store.mSequencedTaskRunner.run();
+            }
+            while (!ui.isEmpty()) ui.remove().run();
+            if (!queued) return;
+        }
+        throw new AssertionError("host queue did not drain");
+    }
+    static void captureOnly() {
+        for (Store store : stores) store.mSequencedTaskRunner.run();
+        while (!ui.isEmpty()) ui.remove().run();
+    }
+    public static void main(String[] args) {
+        reset();
+        Store a = new Store(), b = new Store();
+        Tab one = new Tab(1), secret = new Tab(2), two = new Tab(3);
+        a.mTabModelSelector.normal.add(one); a.mTabModelSelector.incognito.add(secret);
+        b.mTabModelSelector.normal.add(two);
+        a.mSaveTabTask = new Task(one); Task old = a.mSaveTabTask;
+        a.mMigrateTabTask = new Task(one); a.mSaveListTask = new Task(one);
+        a.mSequencedTaskRunner.execute(() -> events.add("old-running-write-ended"));
+        b.mSequencedTaskRunner.execute(() -> events.add("other-window-write-ended"));
+        int[] result = new int[2]; Runnable done = () -> result[0]++, fail = () -> result[1]++;
+        a.saveStateBeforeLanduExit(done, fail); b.saveStateBeforeLanduExit(done, fail);
+        check(old.cancelled && a.mSaveTabTask == null && a.mSaveListTask == null,
+                "cancel and detach old workers");
+        check(events.isEmpty() && result[0] == 0, "no snapshot before queues drain");
+        a.mSequencedTaskRunner.run(); while (!ui.isEmpty()) ui.remove().run();
+        check(!events.contains("metadata"), "second window queue still prevents index save");
+        drain();
+        check(result[0] == 2 && result[1] == 0, "both close requests finish after global save");
+        check(events.indexOf("old-running-write-ended") < events.indexOf("tab:1:false")
+                && events.indexOf("other-window-write-ended") < events.indexOf("tab:1:false"),
+                "all running writers end before first fresh tab snapshot");
+        check(events.contains("tab:2:true"), "incognito keeps encrypted branch");
+        check(a.mLastSavedMetadata != null && a.mTabsToSave.isEmpty()
+                && a.mTabsToMigrate.isEmpty(), "only successful save clears cancelled queues");
+        check(!a.mLanduSavePaused && !b.mLanduSavePaused && captured == 3 && released == 3,
+                "release captured handles on UI and restore gates");
+
+        reset(); a = new Store(); one = new Tab(10); a.mTabModelSelector.normal.add(one);
+        a.mTabsToSave.add(one); TabStateFileManager.failId = 10;
+        a.saveStateBeforeLanduExit(done, fail); drain();
+        check(result[1] == 1 && !events.contains("metadata"), "failed tab prevents index commit");
+        check(a.mLastSavedMetadata == null && !a.mTabsToSave.isEmpty() && a.resumed == 1,
+                "failed close retains queued state and resumes ordinary saving");
+        TabStateFileManager.failId = -1; a.saveStateBeforeLanduExit(done, fail); drain();
+        check(result[0] == 3 && a.mLastSavedMetadata != null, "retry captures and saves anew");
+        TabModelSelectorMetadata previous = a.mLastSavedMetadata;
+        TabMetadataFileManager.fail = true; a.saveStateBeforeLanduExit(done, fail); drain();
+        check(result[1] == 2 && a.mLastSavedMetadata == previous, "failed index never poisons saved cache");
+        TabMetadataFileManager.fail = false; one.oom = true;
+        a.saveStateBeforeLanduExit(done, fail); drain();
+        check(result[1] == 3 && a.mLastSavedMetadata == previous && captured == released,
+                "allocation failure retains previous index and releases owned snapshots");
+        one.oom = false; one.missing = true;
+        a.saveStateBeforeLanduExit(done, fail); drain();
+        check(result[1] == 4, "missing WebContents snapshot fails close");
+        one.missing = false; a.mTabModelSelector.ready = false;
+        a.saveStateBeforeLanduExit(done, fail);
+        check(result[1] == 5 && !a.mLanduSavePaused, "unfinished restoration cannot close");
+        a.mTabModelSelector.ready = true;
+        a.saveStateBeforeLanduExit(done, fail); a.mDestroyed = true;
+        sLanduSaveBarrier.unregister(a); drain();
+        check(result[1] == 6, "destroyed owner invalidates pending snapshot");
+
+        reset(); Store timed = new Store(); timed.mTabModelSelector.normal.add(new Tab(12));
+        Runnable[] timeout = new Runnable[1]; int[] terminated = new int[1];
+        EnvironmentShutdownCoordinator close = new EnvironmentShutdownCoordinator(
+                new EnvironmentShutdownCoordinator.Operations() {
+                    public void blockBackgroundRestart() { }
+                    public void restoreAfterFailure() { }
+                    public void flush(EnvironmentShutdownCoordinator.Result reply) {
+                        timed.saveStateBeforeLanduExit(() -> reply.complete(null), () -> reply.complete("file save failed"));
+                    }
+                    public void terminate() { terminated[0]++; }
+                }, (action, delay) -> { timeout[0] = action; return () -> {}; });
+        List<String> closed = new ArrayList<>(); close.request(closed::add);
+        timeout[0].run(); drain();
+        check(terminated[0] == 0 && closed.size() == 1 && closed.get(0) != null,
+                "late file callback after timeout cannot kill environment");
+        close.request(closed::add); drain();
+        check(terminated[0] == 1 && closed.size() == 2 && closed.get(1) == null,
+                "fresh close attempt can succeed after timeout");
+
+        for (int mutation = 0; mutation < 7; mutation++) {
+            reset();
+            Store changing = new Store(); Tab current = new Tab(20);
+            changing.mTabModelSelector.normal.add(current); changing.mTabsToSave.add(current);
+            int[] outcome = new int[2];
+            changing.saveStateBeforeLanduExit(() -> outcome[0]++, () -> outcome[1]++);
+            captureOnly();
+            check(captured == 1 && released == 0 && events.isEmpty() && changing.mLanduSavePaused,
+                    "UI capture returns before file I/O and retains native buffer");
+            long before = current.attributes.getLanduSaveRevision();
+            switch (mutation) {
+                case 0:
+                    // Same URL and already DIRTY: the upstream state transition
+                    // observer alone does not reveal this new navigation entry.
+                    current.value = "new-history-entry-same-url";
+                    current.attributes.dirty(DirtinessState.DIRTY);
+                    check(current.attributes.getLanduSaveRevision() == before + 1,
+                            "repeated DIRTY still advances revision");
+                    break;
+                case 1:
+                    current.attributes.dirty(DirtinessState.UNTIDY);
+                    check(current.attributes.mDirtinessState == DirtinessState.DIRTY
+                            && current.attributes.getLanduSaveRevision() == before + 1,
+                            "UNTIDY suppressed by DIRTY still invalidates snapshot");
+                    break;
+                case 2: changing.mTabModelSelector.selected = 1; break;
+                case 3: current.attributes = new TabStateAttributes(current); break;
+                case 4:
+                    changing.mTabModelSelector.normal.set(0, new Tab(20)); break;
+                case 5: current.destroyed = true; break;
+                case 6: current.attributes.mNumberOpenBatchEdits++; break;
+                default: throw new AssertionError();
+            }
+            drain();
+            check(outcome[0] == 0 && outcome[1] == 1 && captured == released,
+                    "concurrent mutation fails close and releases owned snapshot");
+            check(changing.mLastSavedMetadata == null && !changing.mTabsToSave.isEmpty()
+                    && changing.resumed == 1, "mutation never clears new pending changes");
+        }
+
+        reset(); Store batchEdit = new Store(); Tab batchTab = new Tab(21);
+        batchEdit.mTabModelSelector.normal.add(batchTab); batchTab.attributes.mNumberOpenBatchEdits = 1;
+        int[] failed = new int[1]; batchEdit.saveStateBeforeLanduExit(() -> {}, () -> failed[0]++); drain();
+        check(failed[0] == 1 && captured == 0 && events.isEmpty(), "open batch edit prevents capture and any I/O");
+
+        reset(); Store partial = new Store();
+        partial.mTabModelSelector.normal.add(new Tab(22));
+        Tab allocation = new Tab(23); allocation.oom = true; partial.mTabModelSelector.normal.add(allocation);
+        partial.saveStateBeforeLanduExit(() -> {}, () -> failed[0]++); drain();
+        check(failed[0] == 2 && captured == 1 && released == 1 && events.isEmpty(),
+                "later capture allocation failure releases earlier native buffer before any write");
+
+        reset(); Store early = new Store(), late = new Store();
+        early.mTabModelSelector.normal.add(new Tab(24)); late.mTabModelSelector.normal.add(new Tab(25));
+        TabStateFileManager.failId = 24;
+        early.saveStateBeforeLanduExit(() -> {}, () -> failed[0]++); captureOnly();
+        early.mSequencedTaskRunner.run(); while (!ui.isEmpty()) ui.remove().run();
+        check(captured == 2 && released == 0 && early.mLanduSavePaused && late.mLanduSavePaused,
+                "failed early I/O cannot release another queued writer's buffer");
+        late.mSequencedTaskRunner.run(); while (!ui.isEmpty()) ui.remove().run();
+        check(failed[0] == 3 && released == 2, "all background writes finish before releasing failed batch");
+
+        reset(); Store reentrant = new Store(); Tab notified = new Tab(26);
+        reentrant.mTabModelSelector.normal.add(notified); reentrant.mTabsToSave.add(notified);
+        notified.attributes.mObservers.add((tab, dirtiness) -> {
+            if (dirtiness == DirtinessState.CLEAN) notified.attributes.dirty(DirtinessState.DIRTY);
+        });
+        reentrant.saveStateBeforeLanduExit(() -> {}, () -> failed[0]++); drain();
+        check(failed[0] == 4 && !reentrant.mTabsToSave.isEmpty() && reentrant.resumed == 1,
+                "new dirtiness during release cannot be erased by successful queue cleanup");
+        check(captured == released, "reentrant failure still releases captured handle exactly once");
+        check(workerChecks > 0, "background assertions executed on real host worker threads");
+        System.out.println("Extracted legacy owner close tests passed: " + assertions + " assertions");
+    }
+}

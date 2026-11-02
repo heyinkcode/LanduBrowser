@@ -1,0 +1,84 @@
+package com.landu.browser.nativecore;
+
+import java.util.Map;
+
+/** Actual extraction method with host-only metadata/native-buffer dependencies. */
+public final class TabStateExtractionTest {
+    static final Thread UI = Thread.currentThread();
+    static int created, destroyed, assertions;
+    static boolean missingBuffer;
+    static Map<Integer, TabState> sTabStatesForTesting;
+    @interface Nullable { }
+    static class ThreadUtils {
+        static void assertOnUiThread() { if (Thread.currentThread() != UI) throw new AssertionError(); }
+    }
+    static class Buffer {
+        boolean dead;
+        Buffer() { created++; }
+        void destroy() {
+            ThreadUtils.assertOnUiThread();
+            if (dead) throw new AssertionError("double free");
+            dead = true; destroyed++;
+        }
+    }
+    static class TabState {
+        Buffer contentsState;
+        String openerAppId;
+        int parentId, tabLaunchTypeAtCreation, themeColor, rootId, userAgent;
+        long timestampMillis, lastNavigationCommittedTimestampMillis;
+        Object tabGroupId, url;
+        boolean tabHasSensitiveContent, isPinned;
+    }
+    static class Tab {
+        int failAt;
+        boolean initialized = true;
+        int read(int step) {
+            if (failAt == step) {
+                if (step % 2 == 0) throw new OutOfMemoryError("metadata allocation");
+                throw new IllegalStateException("metadata getter failed");
+            }
+            return step;
+        }
+        int getId() { return 1; }
+        boolean isInitialized() { return initialized; }
+        int getParentId() { return read(2); }
+        long getTimestampMillis() { return read(3); }
+        int getTabLaunchTypeAtCreation() { return read(4); }
+        int getRootId() { return read(6); }
+        int getUserAgent() { return read(7); }
+        long getLastNavigationCommittedTimestampMillis() { return read(8); }
+        Object getTabGroupId() { return read(9); }
+        boolean getTabHasSensitiveContent() { return read(10) != 0; }
+        boolean getIsPinned() { return read(11) != 0; }
+        Object getUrl() { return read(12); }
+    }
+    static class TabAssociatedApp {
+        static String getAppId(Tab tab) { return "app-" + tab.read(1); }
+    }
+    static Buffer getWebContentsState(Tab tab) { return missingBuffer ? null : new Buffer(); }
+    static int getThemeColorForSerialization(Tab tab) { return tab.read(5); }
+    /* LANDU_EXTRACTION_METHOD */
+    static void check(boolean value, String message) {
+        assertions++;
+        if (!value) throw new AssertionError(message);
+    }
+    public static void main(String[] args) {
+        for (int field = 1; field <= 12; field++) {
+            Tab tab = new Tab(); tab.failAt = field;
+            try { from(tab); throw new AssertionError("failed getter accepted"); }
+            catch (IllegalStateException | OutOfMemoryError expected) { }
+            check(created == destroyed, "failed metadata getter releases captured native navigation reference");
+        }
+        Tab tab = new Tab(); TabState state = from(tab);
+        check(created == destroyed + 1 && !state.contentsState.dead,
+                "successful snapshot hands a live reference to the caller");
+        state.contentsState.destroy();
+        check(created == destroyed, "successful caller can release its owned handle");
+        missingBuffer = true;
+        check(from(tab).contentsState == null && created == destroyed,
+                "missing native snapshot retains upstream null result for strict caller to reject");
+        tab.initialized = false;
+        check(from(tab) == null && created == destroyed, "uninitialized tab does not allocate snapshot");
+        System.out.println("Extracted tab-state ownership tests passed: " + assertions + " assertions");
+    }
+}

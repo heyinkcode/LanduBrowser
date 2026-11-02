@@ -1,108 +1,77 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="岚渡浏览器 Logo" width="96">
+<img src="Browserapp/assets/logo-landu.svg" alt="岚渡浏览器 Logo" width="88">
 
 # Landu Browser｜岚渡浏览器
 
-**让每个浏览器环境，各有自己的空间。**
+**基于原作，免费使用，让每个环境有自己的空间。**
 
-基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发的免费桌面浏览器环境管理工具。
-
-[访问官网](https://heyinkcode.github.io/LanduBrowser/) · [使用指南](docs/GETTING_STARTED.md) · [开源与致谢](docs/OPEN_SOURCE.md) · [版本发布](https://github.com/heyinkcode/LanduBrowser/releases)
+[官网](https://heyinkcode.github.io/LanduBrowser/) · [下载](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103) · [安卓指南](docs/ANDROID.md) · [应用源码](https://github.com/heyinkcode/LanduBrowser/tree/source) · [原作者与许可](docs/OPEN_SOURCE.md)
 
 </div>
 
----
+岚渡浏览器基于 **[sheying2013/OpenBrowser](https://github.com/sheying2013/OpenBrowser)** 二次开发。桌面端保留原项目的环境管理与业务逻辑，改进岚渡简约主题、排版和高分辨率体验；Android 端在固定 Chromium 源码上接入本地环境管理与原生指纹配置。感谢原作者 sheying2013、OpenBrowser 与 Chromium 的所有贡献者。
 
-## 先说清楚：基于原作，免费使用
+**软件免费，不设付费激活或订阅门槛。** 安卓在手机本地运行，使用用户自己的网络，不需要岚渡账号、自建服务器、云手机或流量中转。
 
-岚渡浏览器不是从零开发的浏览器内核。项目以 **OpenBrowser 原项目源码为底座**，保留原有的环境管理与业务逻辑，围绕中文使用体验、岚渡简约主题、界面排版和高分辨率适配等方面进行调整。
+## 下载与支持平台
 
-感谢原作者 **[sheying2013](https://github.com/sheying2013)** 及所有 OpenBrowser 贡献者。环境隔离、代理配置、指纹设置、自动化等核心能力来自原项目的工作，我们尊重并保留上游署名和许可证。
-
-**岚渡浏览器软件免费使用，不以订阅或付费激活作为使用门槛。** 自行选择的代理、VPN、服务器等第三方服务费用另计，不包含在软件中，也不是使用软件的必选条件。
-
-> **仓库与发行版**：`main` 分支存放官网、品牌资源和说明文档；Windows 客户端安装程序及对应应用源码包放在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases)。本仓库的 `npm start` 预览官网，不启动桌面客户端。
-
-## 免费下载 · v1.0.26
-
-**普通用户推荐 [Windows 64 位完整版安装程序](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-with-kernel.exe)**，下载后双击安装，无需 Node.js 或开发工具。
-
-| 文件 | 适合谁 |
+| 平台 | 当前状态 |
 | --- | --- |
-| [完整版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-with-kernel.exe) | 首次使用；内置独立内核和字体资源，体积较大。 |
-| [轻量版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-without-kernel.exe) | 已准备兼容内核的用户；未附带独立内核，首次运行需另外下载或配置。 |
-| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-1.0.26-source.zip) | 开发者；含岚渡修改、原生组件源码和构建说明，不含内核与个人数据。 |
-| [SHA-256 校验文件](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/SHA256SUMS.txt) | 核对下载是否完整。 |
+| Windows 10/11 x64 | [v1.0.26 稳定版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26) 保留；[新预览修复](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103) 提供带内核及轻量 EXE，整包核验已完成，完整升级/UI 验收待完成。 |
+| Android ARM64 | [完整内核 APK 预览](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Android-arm64-latest.apk)，约 531 MB；小米 Android 15/16 的 UA-CH 与 RAF 指定检查均通过。 |
+| macOS / Linux | 保留上游源码路径，暂未发布本次岚渡版本安装包或完成平台验收。 |
+| iOS | 暂无客户端；不提供云手机替代本地客户端。 |
 
-Windows 10/11 x64；尚未提供代码签名，可能出现未知发布者提示。请核对下载来源与校验值，不要关闭安全软件。详细步骤见 [下载、安装与更新](docs/DOWNLOADS.md)。
+安装文件、对应应用源码和 SHA-256 都在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103)。安装与更新见 [下载指南](docs/DOWNLOADS.md)，真机范围见 [测试记录](docs/TESTING.md)。预览版不代表全部功能已稳定或已完成安全审计。
 
-## 界面预览
+## 可以做什么
 
-![岚渡浏览器环境管理界面](assets/workspace.png)
+- 桌面端：沿用原项目的独立 Chromium Profile、分组、标签、代理、扩展、窗口同步、RPA、本地 API/MCP 等业务能力，使用岚渡简约主题。
+- 安卓端：本地环境列表、创建/编辑/启停、独立数据路径、分组/标签、配置导入导出、代理认证、区域策略和已接入的原生指纹选项；与桌面尚未完全对齐。
+- UA-CH：自动跟随真实内核，或自定义完整版本、平台、型号和品牌等字段；网页及请求头使用同一份配置。
+- RAF：独立选择跟随设备或 1–240 FPS 上限，保留真实回调时间戳；负载会影响实际帧率。
+- 网络：系统 VPN 或用户自备 HTTP/HTTPS/SOCKS5 代理。选择固定语言或时区不会自动改变公网出口。
 
-*岚渡简约主题，使用示例环境数据展示，不包含真实用户账号。*
+环境隔离不等于完全匿名。自定义身份、字体名称过滤不保证通过检测、改变 Emoji 渲染或避免账号限制；完整平台范围与未完成部分写在文档中。
 
-## 能做什么
+## 两个分支
 
-| 功能 | 说明 |
-| --- | --- |
-| 独立浏览器环境 | 为不同工作空间使用独立 Chromium Profile，分别管理 Cookie、缓存与本地存储。 |
-| 环境管理 | 使用分组、标签、批量操作管理多个环境，减少重复配置。 |
-| 代理与区域配置 | 为环境配置 HTTP / HTTPS / SOCKS 代理、语言、时区等参数。代理服务需自行准备。 |
-| 指纹参数 | 沿用原项目的 User-Agent、Canvas、WebGL、WebRTC 等配置能力。 |
-| 应用与扩展 | 管理浏览器扩展，按工作场景组织使用。 |
-| 自动化工具 | 沿用原项目的窗口同步、RPA、本地 API 与 MCP 接入能力。 |
-| 岚渡简约主题 | 蓝白配色、统一控件、可调整表格列宽与更清晰的界面层级。 |
+- [`main`](https://github.com/heyinkcode/LanduBrowser/tree/main)：官网静态页面、用户指南和公开测试汇总；根目录 `npm start` 仅预览官网。
+- [`source`](https://github.com/heyinkcode/LanduBrowser/tree/source)：桌面应用及 Chromium Android 覆盖源码，含构建说明与许可证；进入 `Browserapp` 才是桌面开发启动。
 
-环境隔离用于管理工作空间，**不代表完全匿名，也不保证通过任何第三方检测、避免账号限制或适配所有网站**。具体能力与兼容性以实际版本为准。
+大安装包放 Releases，不提交到 Git；个人环境、密码、Cookie、密钥、缓存和原始设备日志不上传。当前安卓配置备份不兼容桌面 JSON，也不是完整浏览数据备份。
 
-## 客户端与获取方式
+## 文档
 
-| 平台 | 当前说明 |
-| --- | --- |
-| Windows | 提供 v1.0.26 x64 完整版和轻量版安装程序；当前主要适配与验证平台。 |
-| macOS / Ubuntu | 上游提供支持与打包路径；本仓库暂未提供岚渡版本安装包或完成独立验证。 |
-| Android / iOS | 本仓库不提供手机客户端，也不提供手机远程管理端。 |
-
-1. 先阅读 [使用指南](docs/GETTING_STARTED.md)。
-2. 在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases) 下载 EXE 并核对校验值，再按安装向导操作。
-3. 需要岚渡客户端源码，请下载明确命名的 `LanduBrowser-1.0.26-source.zip`；GitHub 自动生成的 `Source code (zip)` 只对应官网分支。
-
-## 文档导航
-
-- [下载、安装与更新](docs/DOWNLOADS.md)：选择安装包、校验下载、升级与卸载。
-- [使用指南](docs/GETTING_STARTED.md)：环境、代理、扩展、自动化、数据和常见问题。
-- [开源说明与原作者致谢](docs/OPEN_SOURCE.md)：项目关系、MIT 许可证、免费范围与发布边界。
-- [推荐网络服务（推广）](docs/RECOMMENDED_SERVICES.md)：岚渡云的入口及服务说明。
-- [官网开发与维护](docs/WEBSITE.md)：本地预览、目录结构、GitHub Pages 发布与维护检查。
+- [下载与更新](docs/DOWNLOADS.md)
+- [桌面入门](docs/GETTING_STARTED.md)
+- [Android 本地内核版](docs/ANDROID.md)
+- [测试结果与剩余范围](docs/TESTING.md)
+- [本次更新说明](docs/RELEASE_NOTES.md)
+- [多端范围与后续计划](docs/MULTIPLATFORM_PLAN.md)
+- [原作者致谢与第三方许可](docs/OPEN_SOURCE.md)
+- [官网维护](docs/WEBSITE.md)
 
 ## 推荐网络服务（推广）
 
-**需要单独的 VPN / 网络服务，可以了解 [岚渡云](https://app.landucloud.com)。**
+需要独立的 VPN / 网络服务，可以了解 **[岚渡云 · app.landucloud.com](https://app.landucloud.com)**。这是维护者的推广推荐，不代表 OpenBrowser 原作者背书；服务可选、费用另计，**不购买也能免费使用岚渡浏览器**。详见 [推荐服务说明](docs/RECOMMENDED_SERVICES.md)。
 
-入口：**[app.landucloud.com](https://app.landucloud.com)**
+## 反馈与开源
 
-这是本项目维护者的推广推荐，并非 OpenBrowser 原作者的背书。岚渡云是可选的独立服务，套餐、价格与适用条件以服务页面为准；**不购买也不影响岚渡浏览器免费使用**。VPN 客户端与浏览器代理不是同一种配置方式，如何搭配请查看 [推荐服务说明](docs/RECOMMENDED_SERVICES.md)。
+在 [Issues](https://github.com/heyinkcode/LanduBrowser/issues) 提交系统、版本、复现步骤和脱敏截图；不要上传密码、Cookie、代理凭据或完整环境目录。
 
-## 本地预览官网
+保留 OpenBrowser 的 MIT 根许可证与署名。Windows 后台输入组件含 chrome-power 的 AGPL-3.0 来源实现，随包提供对应 C# 源码与许可；Chromium、字体和其他组件分别适用其许可，不将所有组件统称为 MIT。详见 [开源说明](docs/OPEN_SOURCE.md)。
 
-需要 Node.js 18 或更新版本，无需安装依赖：
+## 从应用源码启动
 
 ```bash
-git clone https://github.com/heyinkcode/LanduBrowser.git
-cd LanduBrowser
+git clone --branch source https://github.com/heyinkcode/LanduBrowser.git
+cd LanduBrowser/Browserapp
+npm ci --include=dev
 npm start
 ```
 
-然后打开 `http://127.0.0.1:4173`。这只启动官网预览，**不启动桌面浏览器**。
+Node.js 与兼容独立内核需自行准备。开发启动会使用实际本地数据目录，测试请另用隔离目录。Windows 构建见 [BUILD_LANDU.md](BUILD_LANDU.md)，Android 覆盖、版本锁和 Linux 构建见 [AndroidNative/README.md](AndroidNative/README.md)。
 
-## 反馈与贡献
-
-欢迎在 [Issues](https://github.com/heyinkcode/LanduBrowser/issues) 提交排版、文档和使用问题。请描述系统、版本、复现步骤，并附上脱敏截图；不要上传账号密码、代理凭据、Cookie、验证码或完整环境数据。
-
-## 许可证
-
-上游 OpenBrowser 根许可证为 MIT。本仓库保留其 [LICENSE](LICENSE) 与贡献者署名，官网代码亦按 MIT 提供。客户端 Windows 后台输入组件含 AGPL-3.0 来源实现，对应许可及 C# 源码随发行版提供；Chromium、字体、扩展等适用各自条款。不要将所有第三方组件统称为 MIT，详见 [开源说明](docs/OPEN_SOURCE.md)。
-
-**再次感谢 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 原作者及贡献者。岚渡基于原作继续改进，而非取代原作的贡献。**
+`Androidapp/` 是历史 WebView 原型，不是当前完整内核 APK 的源码入口。原始上游说明保留于 [README_UPSTREAM.md](README_UPSTREAM.md) 和 [README_UPSTREAM_CN.md](README_UPSTREAM_CN.md)。

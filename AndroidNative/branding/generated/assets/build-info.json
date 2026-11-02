@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "package": "com.landu.browser",
+  "displayName": "Landu Browser",
+  "displayNameZhCN": "岚渡浏览器",
+  "projectUrl": "https://github.com/heyinkcode/LanduBrowser",
+  "upstreamUrl": "https://github.com/sheying2013/OpenBrowser",
+  "website": "https://heyinkcode.github.io/LanduBrowser/",
+  "free": true,
+  "kernelVersion": "156.0.8078.48",
+  "kernelRevision": "d0c02bfad08ec92a6ffcf989e53cd995e6381a4c",
+  "kind": "bundled-source-reference"
+}

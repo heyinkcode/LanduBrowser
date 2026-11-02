@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "scope": "Explicit external entry restrictions for the pinned Chromium Android manifest; background scheduling is audited separately",
+  "allowedExternalAliases": {
+    "com.google.android.apps.chrome.Main": "com.landu.browser.nativecore.LanduManagerActivity",
+    "com.google.android.apps.chrome.IntentDispatcher": "com.landu.browser.nativecore.LanduLinkActivity"
+  },
+  "privateNotificationRoutes": [
+    {"name":"com.landu.browser.nativecore.LanduNotificationActivity","process":":landu_manager"},
+    {"name":"com.landu.browser.nativecore.LanduLaunchActivity","process":null},
+    {"name":"org.chromium.chrome.browser.notifications.NotificationIntentInterceptor$TrampolineActivity","process":null}
+  ],
+  "privateNotificationBackgroundRoutes": [
+    {"tag":"receiver","name":"com.landu.browser.nativecore.LanduNotificationReceiver","process":":landu_manager","permission":null},
+    {"tag":"service","name":"com.landu.browser.nativecore.LanduNotificationJobService","process":":landu_manager","permission":"android.permission.BIND_JOB_SERVICE"},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.notifications.NotificationIntentInterceptor$Receiver","process":null,"permission":null}
+  ],
+  "privateComponents": [
+    {"tag":"activity-alias","name":"org.chromium.chrome.browser.document.PdfLauncherActivityAlias"},
+    {"tag":"activity","name":"org.chromium.chrome.browser.media.MediaLauncherActivity"},
+    {"tag":"activity-alias","name":"org.chromium.chrome.browser.media.AudioLauncherActivity"},
+    {"tag":"activity","name":"org.chromium.chrome.browser.incognito.IncognitoTabLauncher"},
+    {"tag":"activity","name":"org.chromium.chrome.browser.AutofillOptionsLauncher"},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.safe_browsing.PasswordProtectionBroadcastReceiver"},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.notifications.channels.LocaleChangedBroadcastReceiver"},
+    {"tag":"activity","name":"org.chromium.chrome.browser.webapps.WebappLauncherActivity","disable":true},
+    {"tag":"activity","name":"org.chromium.chrome.browser.webapps.ActivateWebApkActivity","disable":true},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.browserservices.InstalledWebappBroadcastReceiver","disable":true},
+    {"tag":"activity","name":"org.chromium.chrome.browser.browserservices.ManageTrustedWebActivityDataActivity","disable":true},
+    {"tag":"service","name":"org.chromium.chrome.browser.actor.ActorForegroundService","disable":true,"originalExports":["true","false"]},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.quickactionsearchwidget.QuickActionSearchWidgetProvider$QuickActionSearchWidgetProviderSearch","disable":true},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.quickactionsearchwidget.QuickActionSearchWidgetProvider$QuickActionSearchWidgetProviderDino","disable":true},
+    {"tag":"receiver","name":"com.google.android.apps.chrome.appwidget.bookmarks.BookmarkThumbnailWidgetProvider","disable":true},
+    {"tag":"receiver","name":"org.chromium.chrome.browser.searchwidget.SearchWidgetProvider","disable":true},
+    {"tag":"activity","name":"org.chromium.chrome.browser.searchwidget.SearchActivity","disable":true},
+    {"tag":"service","name":"org.chromium.chrome.browser.customtabs.CustomTabsConnectionService","disable":true},
+    {"tag":"service","name":"org.chromium.components.payments.PaymentDetailsUpdateService","disable":true},
+    {"tag":"provider","name":"org.chromium.chrome.browser.provider.ChromeBrowserProvider"},
+    {"tag":"provider","name":"org.chromium.chrome.browser.autofill.AutofillThirdPartyModeContentProvider"}
+  ],
+  "libraryOverrides": [
+    {"tag":"receiver","name":"com.google.firebase.iid.FirebaseInstanceIdReceiver","disable":true}
+  ]
+}

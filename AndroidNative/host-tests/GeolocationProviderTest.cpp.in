@@ -1,0 +1,185 @@
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <optional>
+#include <utility>
+#include <cstdlib>
+#include "@POLICY_HEADER@"
+
+// Small platform protocol substitutes. The provider class below is extracted
+// unchanged from the staged production header; this is not an Android test.
+static std::function<void()> tick;
+static int timer_owner = 0;
+namespace base {
+using TimeDelta = int;
+inline int Seconds(int n) { return n; }
+struct Time { static long long Now() { static long long t = 0; return ++t; } };
+class RepeatingTimer {
+ public:
+  ~RepeatingTimer() { Stop(); }
+  template <class T> void Start(int, int, T* instance, void (T::*method)()) {
+    Stop(); static int next = 0; id_ = ++next; timer_owner = id_;
+    tick = [instance, method] { (instance->*method)(); };
+  }
+  void Stop() {
+    if (timer_owner == id_) { tick = {}; timer_owner = 0; }
+    id_ = -1;
+  }
+ private: int id_ = -1;
+};
+}
+#define FROM_HERE 0
+#define BUILDFLAG(x) 1
+namespace permissions::landu {
+static GeolocationPolicy configured_policy;
+inline GeolocationPolicy ReadGeolocationPolicy() { return configured_policy; }
+}
+enum class ContentSettingsType { GEOLOCATION, GEOLOCATION_WITH_OPTIONS, NOTIFICATIONS };
+enum class PermissionStatus { DENIED, GRANTED };
+namespace content {
+enum class PermissionStatusSource { UNSPECIFIED };
+struct PermissionResult {
+  PermissionStatus status;
+  PermissionResult(PermissionStatus s, PermissionStatusSource) : status(s) {}
+};
+}
+struct PermissionGateProbe {
+  ContentSettingsType content_settings_type_;
+  content::PermissionResult FromRequest() const {
+    namespace landu = permissions::landu;
+@GUARD_REQUEST@
+    // Adversarial stand-in for an upstream automatic grant or guest override.
+    return {PermissionStatus::GRANTED, content::PermissionStatusSource::UNSPECIFIED};
+  }
+  content::PermissionResult FromResolver() const {
+    namespace landu = permissions::landu;
+@GUARD_RESOLVER@
+    return {PermissionStatus::GRANTED, content::PermissionStatusSource::UNSPECIFIED};
+  }
+};
+namespace device::mojom {
+struct Geoposition {
+  double latitude = 0, longitude = 0, accuracy = 0;
+  long long timestamp = 0;
+  bool is_precise = true;
+  static auto New() { return std::make_unique<Geoposition>(); }
+};
+enum class GeopositionErrorCode { kPermissionDenied };
+struct GeopositionError {
+  static auto New(GeopositionErrorCode, const char*, const char*) {
+    return std::make_unique<GeopositionError>();
+  }
+};
+struct GeopositionResult;
+struct GeopositionResultPtr {
+  std::unique_ptr<GeopositionResult> p;
+  GeopositionResult* get() const { return p.get(); }
+  void reset() { p.reset(); }
+  GeopositionResultPtr Clone() const;
+};
+struct GeopositionResult {
+  std::optional<Geoposition> position;
+  bool error = false;
+  static GeopositionResultPtr NewPosition(std::unique_ptr<Geoposition> value) {
+    return {std::make_unique<GeopositionResult>(GeopositionResult{*value, false})};
+  }
+  static GeopositionResultPtr NewError(std::unique_ptr<GeopositionError>) {
+    return {std::make_unique<GeopositionResult>(GeopositionResult{{}, true})};
+  }
+};
+inline GeopositionResultPtr GeopositionResultPtr::Clone() const {
+  return {p ? std::make_unique<GeopositionResult>(*p) : nullptr};
+}
+struct GeolocationDiagnostics {
+  enum class ProviderState { kStopped, kHighAccuracy, kLowAccuracy };
+  ProviderState provider_state = ProviderState::kStopped;
+};
+}
+namespace device {
+class LocationProvider {
+ public:
+  class LocationProviderUpdateCallback {
+   public:
+    LocationProviderUpdateCallback() = default;
+    template<class F> LocationProviderUpdateCallback(F f) : callback_(std::move(f)) {}
+    bool is_null() const { return !callback_; }
+    void Run(const LocationProvider* p, mojom::GeopositionResultPtr value) const {
+      auto stable = callback_; stable(p, std::move(value));
+    }
+   private:
+    std::function<void(const LocationProvider*, mojom::GeopositionResultPtr)> callback_;
+  };
+  virtual ~LocationProvider() = default;
+  virtual void FillDiagnostics(mojom::GeolocationDiagnostics&) = 0;
+  virtual void SetUpdateCallback(const LocationProviderUpdateCallback&) = 0;
+  virtual void StartProvider(bool) = 0;
+  virtual void StopProvider() = 0;
+  virtual const mojom::GeopositionResult* GetPosition() = 0;
+  virtual void OnPermissionGranted() = 0;
+  virtual void OnPermissionManagerShuttingDown() {}
+};
+}
+namespace landu {
+@PROVIDER_CLASS@
+}
+
+int main() {
+  using permissions::landu::GeolocationMode;
+  using permissions::landu::GeolocationPolicy;
+  int checks = 0;
+  auto check = [&checks](bool ok) { ++checks; if (!ok) std::abort(); };
+  for (auto mode : {GeolocationMode::kSystem, GeolocationMode::kCustom, GeolocationMode::kBlocked}) {
+    permissions::landu::configured_policy.mode = mode;
+    for (auto type : {ContentSettingsType::GEOLOCATION, ContentSettingsType::GEOLOCATION_WITH_OPTIONS,
+                      ContentSettingsType::NOTIFICATIONS}) {
+      PermissionGateProbe gate{type};
+      const auto expected = mode == GeolocationMode::kBlocked && type != ContentSettingsType::NOTIFICATIONS
+                                ? PermissionStatus::DENIED : PermissionStatus::GRANTED;
+      check(gate.FromRequest().status == expected);
+      check(gate.FromResolver().status == expected);
+    }
+  }
+  GeolocationPolicy point{GeolocationMode::kCustom, 37.5, -122.25, 75};
+  {
+    landu::GeolocationProvider provider(point);
+    int updates = 0; long long timestamp = 0;
+    provider.SetUpdateCallback([&](const auto*, auto value) {
+      ++updates; check(!value.get()->error); check(value.get()->position->timestamp > timestamp);
+      timestamp = value.get()->position->timestamp;
+    });
+    provider.StartProvider(true);
+    check(updates == 0 && provider.GetPosition() == nullptr && !tick);
+    provider.OnPermissionGranted();
+    check(updates == 1 && tick && provider.GetPosition()->position->latitude == 37.5);
+    auto fire = tick; fire(); check(updates == 2);
+    provider.StartProvider(false);
+    check(!provider.GetPosition()->position->is_precise && provider.GetPosition()->position->accuracy >= 10000);
+    provider.StopProvider(); check(!tick && provider.GetPosition() == nullptr);
+    provider.StartProvider(true); check(tick && provider.GetPosition());
+    provider.OnPermissionManagerShuttingDown();
+    provider.StartProvider(true); check(!tick && provider.GetPosition() == nullptr);
+  }
+  {
+    landu::GeolocationProvider blocked({GeolocationMode::kBlocked, 0, 0, 0});
+    int errors = 0;
+    blocked.SetUpdateCallback([&](const auto*, auto value) { check(value.get()->error); ++errors; });
+    blocked.OnPermissionGranted(); check(errors == 0);
+    blocked.StartProvider(true); check(errors == 1);
+    blocked.StopProvider(); check(!tick);
+  }
+  {
+    auto provider = std::make_unique<landu::GeolocationProvider>(point);
+    provider->SetUpdateCallback([&](const auto*, auto) { provider.reset(); });
+    provider->OnPermissionGranted();
+    provider->StartProvider(true); // Must not touch members after callback deletes it.
+    check(!provider && !tick);
+  }
+  {
+    landu::GeolocationProvider provider(point);
+    provider.SetUpdateCallback([&](const auto*, auto) { provider.StopProvider(); });
+    provider.OnPermissionGranted(); provider.StartProvider(true);
+    check(!tick && provider.GetPosition() == nullptr);
+  }
+  std::cout << "{\"suite\":\"staged-geolocation-provider-protocol\",\"assertions\":" << checks
+            << ",\"passed\":true,\"platformSubstitutes\":true,\"deviceTested\":false}\n";
+}

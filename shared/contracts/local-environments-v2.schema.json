@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Landu local environments v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "environments"],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "environments": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "group", "startUrl", "createdAt", "revision", "pendingDeletion", "networkMode", "notes", "options"],
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "\\S" },
+          "group": { "type": "string", "maxLength": 40 },
+          "startUrl": { "type": "string", "maxLength": 2048, "pattern": "^(about:blank|https://[^\\s]+)$" },
+          "createdAt": { "type": "integer", "minimum": 1 },
+          "revision": { "type": "integer", "minimum": 1 },
+          "pendingDeletion": { "type": "boolean" },
+          "networkMode": { "enum": ["system", "proxy"] },
+          "notes": { "type": "string", "maxLength": 500 },
+          "options": { "$ref": "#/$defs/options" }
+        },
+        "allOf": [{
+          "if": { "properties": { "networkMode": { "const": "system" } } },
+          "then": { "properties": { "options": { "properties": { "proxyUrl": { "const": "" } } } } },
+          "else": { "properties": { "options": { "properties": {
+            "proxyUrl": { "minLength": 1 },
+            "proxyLimitationsAccepted": { "const": true }
+          } } } }
+        }]
+      }
+    }
+  },
+  "$defs": {
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["proxyUrl", "proxyLimitationsAccepted", "userAgent", "wideViewport", "textZoom", "fontSize", "fontFamily", "javaScript", "domStorage", "images", "thirdPartyCookies", "fileUploads"],
+      "properties": {
+        "proxyUrl": { "type": "string", "maxLength": 512, "pattern": "^$|^(http|https|socks5)://[^\\s/@?#]+:[0-9]+$" },
+        "proxyLimitationsAccepted": { "type": "boolean" },
+        "userAgent": { "type": "string", "maxLength": 1024, "pattern": "^[ -~]*$" },
+        "wideViewport": { "type": "boolean" },
+        "textZoom": { "type": "integer", "minimum": 75, "maximum": 200 },
+        "fontSize": { "type": "integer", "minimum": 12, "maximum": 32 },
+        "fontFamily": { "enum": ["sans-serif", "serif", "monospace"] },
+        "javaScript": { "type": "boolean" },
+        "domStorage": { "type": "boolean" },
+        "images": { "type": "boolean" },
+        "thirdPartyCookies": { "type": "boolean" },
+        "fileUploads": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,47 +1,42 @@
 # 下载、安装与更新
 
-[返回项目首页](../README.md) · [使用指南](GETTING_STARTED.md) · [所有版本](https://github.com/heyinkcode/LanduBrowser/releases)
+[项目首页](../README.md) · [安卓使用指南](ANDROID.md) · [测试范围](TESTING.md)
 
-## Windows 64 位 v1.0.26
+## 最新预览：v1.0.26-preview.20261103
 
-建议使用 Windows 10/11 x64。本次发布仅构建并在 Windows 上进行了本地验证，没有 macOS、Linux、Android 或 iOS 安装包。
+本预览包由本地构建并上传 GitHub Releases，没有使用 Actions 编译或 Artifact 保存安装包。Android 15/16 已完成指定 UA-CH / RAF 真机检查；Windows 候选包含自动 UA 完整版本和目录同步修复，完整安装升级与 UI 验收尚未完成。
 
-| 安装包 | 选择建议 |
+| 文件 | 用途 |
 | --- | --- |
-| [完整版 EXE · 约 1.23 GB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-with-kernel.exe) | 推荐首次使用。内置独立内核和字体资源，下载较大，但不需要自行准备内核。 |
-| [轻量版 EXE · 约 173 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-Windows-x86_64-without-kernel.exe) | 不带独立内核。需要另外下载或在「本地设置」指定兼容 Chromium；不同内核能力不完全相同。 |
+| [Android ARM64 APK · 约 531 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Android-arm64-latest.apk) | 完整 Chromium 本地内核，手机独立运行。开发签名预览版；不是几 MB 的 WebView 原型。 |
+| [Windows x64 完整版 EXE · 约 1.23 GB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-with-kernel.exe) | 包含独立内核及字体资源的本地候选安装程序。 |
+| [Windows x64 轻量版 EXE · 约 173 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-without-kernel.exe) | 不包含独立内核，需要自行配置兼容 Chromium。 |
+| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-1.0.26-preview-20261103-source.zip) | 桌面、Chromium Android 覆盖源码、构建脚本、许可和逐文件清单，不含内核、个人数据和原始设备日志。 |
+| [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/SHA256SUMS.txt) | 逐文件核对下载内容。 |
 
-这两种都是安装程序，普通用户无需 Node.js。不要把名称中含 `source` 的源码 ZIP 当成安装程序。
+源码也可在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source) 阅读。`main` 是官网；新预览标签指向应用源码，旧 v1.0.26 标签的 GitHub 自动源码 ZIP 则是当时的官网树。开发者优先使用明确命名的应用源码 ZIP 或检出 `source`。
 
-## 安装
+## 原 Windows 稳定版
 
-1. 下载所需 EXE 和同一版本的 [SHA256SUMS.txt](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/SHA256SUMS.txt)。
-2. 在 PowerShell 中计算文件校验值，与清单对应行比较：
+[v1.0.26 稳定版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26) 继续保留。新预览中的 Windows 应用内部版本仍为 1.0.26，按预览标签、文件校验值和说明区分，不把同版本号视为同一二进制。
 
-   ```powershell
-   Get-FileHash -Algorithm SHA256 "$HOME\Downloads\LanduBrowser-Windows-x86_64-with-kernel.exe"
-   ```
+## 核对与安装
 
-3. 双击 EXE，按安装向导操作。默认安装到当前用户的 `%LOCALAPPDATA%\Programs\LanduBrowser`。
-4. 从桌面或开始菜单的「岚渡浏览器」快捷方式打开。
-5. 第一次使用默认是岚渡简约主题；可创建独立环境再启动。已有配置会按原数据目录继续读取。
+下载同一发布页的安装文件和校验清单，计算 SHA-256 并逐行比对：
 
-**本版未进行代码签名。** Windows 可能显示未知发布者或信誉提示。请先确认来源和校验值；校验不一致或出现恶意软件警告时停止操作并反馈，不要关闭杀毒软件。SHA-256 用于核对文件一致性，不代替代码签名或安全审计。
+```powershell
+Get-FileHash -Algorithm SHA256 .\LanduBrowser-Android-arm64-latest.apk
+# Windows 安装包同样替换为对应文件名计算
+```
 
-## 更新和卸载
+Windows 10/11 x64 用户运行 EXE；完整内置版体积较大，轻量版需另备兼容内核。普通用户无需安装 Node.js。Windows 默认数据目录兼容 `%APPDATA%\openbrowser`，自定义路径以客户端为准。
 
-- 更新前关闭浏览器环境和管理程序，备份实际数据目录后安装新版本。
-- 为兼容原有 OpenBrowser 环境，默认数据目录仍为 `%APPDATA%\openbrowser`；若已自定义路径，以客户端实际显示为准。
-- 不要将旧版 OpenBrowser 和岚渡同时指向同一份运行中的数据。
-- 当前发布完整安装包，**未实现增量更新**。较大的完整版包含内核和字体，不只是界面代码。
-- 在 Windows「已安装的应用」中卸载岚渡浏览器。卸载程序不主动删除上述环境数据目录；如需彻底清理，请先自行确认备份与账号资料。
+安卓用户从文件管理器打开 APK，按系统提示授权当前安装来源。升级前保存编辑并正常关闭当前环境，再使用同签名包保留数据安装；不要卸载旧应用来解决签名冲突。详细步骤见 [安卓指南](ANDROID.md)。
 
-## 开发者源码
+Windows 包尚无代码签名，Android 当前为开发签名预览包。请核对来源、校验值与系统提示；不要关闭系统安全防护。SHA-256 核对文件一致性，不代替安全审计。当前按整包更新，没有增量补丁更新。
 
-下载 [LanduBrowser-1.0.26-source.zip](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26/LanduBrowser-1.0.26-source.zip)，阅读其中的 `BUILD_LANDU.md` 和 `README_LANDU.md`。包中有逐文件 SHA-256 清单，不含内核、依赖或用户 Profile。GitHub 自动附带的 `Source code (zip)` 仅对应本仓库官网分支。
+## 平台与费用
 
-## 免费与项目来源
+Windows 提供原稳定版及新候选；Android ARM64 提供完整内核预览；macOS/Linux 尚未发布本次岚渡包；iOS 没有客户端。软件免费，用户自行选择的网络、代理或 VPN 可能另外计费。
 
-岚渡浏览器基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发，感谢原作者与贡献者。软件免费，不要求购买 VPN 或其他服务。可选的 [岚渡云（推广）](https://app.landucloud.com) 属于独立网络服务，费用另计。
-
-遇到问题请提交 [Issue](https://github.com/heyinkcode/LanduBrowser/issues)，附系统版本、安装包名称和脱敏截图；不要附密码、Cookie、代理凭据或完整环境数据。
+基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发，感谢原作者及贡献者。可选 **[岚渡云（推广）](https://app.landucloud.com)** 与软件免费使用不绑定。

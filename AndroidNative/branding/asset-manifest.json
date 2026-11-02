@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "kind": "landu-android-brand-assets",
+  "inputs": [
+    {
+      "path": "Browserapp/assets/logo-landu.svg",
+      "sha256": "27d6663dc6b61ae93dac089cf4c4cd916cabe953fc73945e4fb4d15797e75d96"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "22cc4c52f33af3843ae5f01440796769b2125c89732e3db731b5e85376de85cb"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "branding/generated/assets/CHROMIUM-LICENSE.txt",
+      "sha256": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b",
+      "bytes": 1536
+    },
+    {
+      "path": "branding/generated/assets/OPENBROWSER-LICENSE.txt",
+      "sha256": "22cc4c52f33af3843ae5f01440796769b2125c89732e3db731b5e85376de85cb",
+      "bytes": 1102
+    },
+    {
+      "path": "branding/generated/assets/build-info.json",
+      "sha256": "c1e14c32cea140a277a0b359e018532959d04ea8a136827b813b9614e1ca5e04",
+      "bytes": 464
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi-v26/ic_launcher.xml",
+      "sha256": "bf36a2100c0e453205fb6e751c23ff4c8f72aaad65230dbb7b0e56c7f8550768",
+      "bytes": 360
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi-v26/ic_launcher_round.xml",
+      "sha256": "bf36a2100c0e453205fb6e751c23ff4c8f72aaad65230dbb7b0e56c7f8550768",
+      "bytes": 360
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi-v33/ic_launcher.xml",
+      "sha256": "002c052f10271d09ff30ae7623bb594cd921df7c94ecf672edaefb054c90df43",
+      "bytes": 347
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi-v33/ic_launcher_round.xml",
+      "sha256": "002c052f10271d09ff30ae7623bb594cd921df7c94ecf672edaefb054c90df43",
+      "bytes": 347
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi/ic_launcher.xml",
+      "sha256": "26497bb8fc7557e05958aa971bcc9005ccea714d98944ab129e14c01f2593dd0",
+      "bytes": 1671
+    },
+    {
+      "path": "branding/generated/res/drawable-anydpi/ic_launcher_round.xml",
+      "sha256": "26497bb8fc7557e05958aa971bcc9005ccea714d98944ab129e14c01f2593dd0",
+      "bytes": 1671
+    },
+    {
+      "path": "branding/generated/res/drawable/landu_launcher_background.xml",
+      "sha256": "ccb1f8e412ce19bafb6fd2c4dbdf26ffaed3e8ce323ed097e77cf36086cfb337",
+      "bytes": 780
+    },
+    {
+      "path": "branding/generated/res/drawable/landu_launcher_foreground.xml",
+      "sha256": "b2bb7232295a6b87ff74523c830bfb67aaab14eb13ab25a022cda9d6960e45a1",
+      "bytes": 1332
+    },
+    {
+      "path": "branding/generated/res/drawable/landu_launcher_monochrome.xml",
+      "sha256": "6636289e2772e7fc6987b62856b278f20bc9df5952effdc14d8e9b9a319b4023",
+      "bytes": 980
+    },
+    {
+      "path": "branding/generated/res/drawable/themed_app_icon.xml",
+      "sha256": "976a4d2e0b0ba6a68902a6646252278791456d816282dd8fb0e7324ad6e6bb02",
+      "bytes": 902
+    },
+    {
+      "path": "branding/generated/res/values-zh-rCN/landu_brand.xml",
+      "sha256": "e5aed018ec884181213ec66485bc89753318552f8fbdbeb952723f7ea780d5a4",
+      "bytes": 3200
+    },
+    {
+      "path": "branding/generated/res/values/landu_brand.xml",
+      "sha256": "41f54dbfabf66580871a15257bfc32e12d2176f2c4da18addbd02ab029f18e8a",
+      "bytes": 2451
+    }
+  ]
+}

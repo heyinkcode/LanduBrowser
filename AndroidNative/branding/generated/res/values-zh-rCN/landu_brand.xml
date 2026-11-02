@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name" translatable="false" tools:ignore="ExtraTranslation">岚渡浏览器</string>
+  <string name="bookmark_widget_title" translatable="false" tools:ignore="ExtraTranslation">岚渡浏览器 书签</string>
+  <string name="search_widget_title" translatable="false" tools:ignore="ExtraTranslation">岚渡浏览器 搜索</string>
+  <string name="quick_action_search_widget_title" translatable="false" tools:ignore="ExtraTranslation">岚渡浏览器 快捷搜索</string>
+  <string name="landu_import_complete" translatable="false" tools:ignore="ExtraTranslation">导入完成：环境新增 %1$d、更新 %2$d、跳过 %3$d；新增分组 %4$d%5$s</string>
+  <string name="landu_import_next_launch" translatable="false" tools:ignore="ExtraTranslation">。运行中的环境配置在下次启动后生效。</string>
+  <string name="landu_period" translatable="false" tools:ignore="ExtraTranslation">。</string>
+  <string name="landu_export_complete" translatable="false" tools:ignore="ExtraTranslation">已导出 %1$d 个环境、%2$d 个分组的配置</string>
+  <string name="landu_status" translatable="false" tools:ignore="ExtraTranslation">%1$s%2$s</string>
+  <string name="landu_choice" translatable="false" tools:ignore="ExtraTranslation">%1$s  ▾</string>
+  <string name="landu_cpu_count" translatable="false" tools:ignore="ExtraTranslation">%1$d 核</string>
+  <string name="landu_memory_count" translatable="false" tools:ignore="ExtraTranslation">%1$d GB</string>
+  <string name="landu_notification_switch" translatable="false" tools:ignore="ExtraTranslation">此通知属于「%1$s」。「%2$s」正在运行，保存并关闭后即可打开通知。</string>
+  <string name="landu_notification_pending" translatable="false" tools:ignore="ExtraTranslation">「%1$s」正在等待启动。取消该待启动请求后，打开「%2$s」的通知。</string>
+  <string name="landu_totp_empty" translatable="false" tools:ignore="ExtraTranslation">填写有效 2FA 密钥后显示验证码</string>
+  <string name="landu_totp_countdown" translatable="false" tools:ignore="ExtraTranslation">%1$d 秒后更新 · %2$d 位</string>
+  <string name="landu_totp_invalid" translatable="false" tools:ignore="ExtraTranslation">请检查 2FA 密钥格式和手机时间</string>
+  <string name="landu_cookie_importing" translatable="false" tools:ignore="ExtraTranslation">正在校验、导入并核对 Cookie…</string>
+  <string name="landu_cookie_exporting" translatable="false" tools:ignore="ExtraTranslation">正在读取此环境 Cookie…</string>
+  <string name="landu_cookie_import_complete" translatable="false" tools:ignore="ExtraTranslation">已导入并读回核对 %1$d 项 Cookie</string>
+  <string name="landu_cookie_export_complete" translatable="false" tools:ignore="ExtraTranslation">已导出并读回核对 %1$d 项 Cookie</string>
+  <string name="landu_cookie_export_skipped_complete" translatable="false" tools:ignore="ExtraTranslation">已导出并读回核对 %1$d 项 Cookie；%2$d 项临时分区 Cookie 无法持久化，已跳过</string>
+</resources>

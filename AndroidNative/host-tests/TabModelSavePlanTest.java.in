@@ -1,0 +1,158 @@
+package com.landu.browser.nativecore;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/** Runs the exact added method, with model fields and native replies supplied by the host fixture. */
+public final class TabModelSavePlanTest {
+    private static int assertions;
+    private static void check(boolean value, String message) {
+        assertions++;
+        if (!value) throw new AssertionError(message);
+    }
+    private static final class Synchronizer {
+        final List<Runnable> success = new ArrayList<>(), failure = new ArrayList<>();
+        boolean throwsOnSave;
+        void fullSaveForLandu(Runnable done, Runnable failed) {
+            if (throwsOnSave) throw new IllegalStateException("native failure");
+            success.add(done); failure.add(failed);
+        }
+    }
+    private static final class Probe {
+        Synchronizer mRegularSynchronizer, mIncognitoSynchronizer;
+        boolean mRegularModelCaughtUp, mIncognitoModelCaughtUp, mIsRestoreFinished;
+/* LANDU_MODEL_SAVE_METHOD */
+    }
+    private static Probe restored(boolean incognito) {
+        Probe model = new Probe(); model.mIsRestoreFinished = true;
+        model.mRegularSynchronizer = new Synchronizer();
+        if (incognito) model.mIncognitoSynchronizer = new Synchronizer();
+        return model;
+    }
+    private static int[] start(Probe model) {
+        int[] result = {0, 0};
+        model.saveAllBeforeLanduExit(() -> result[0]++, () -> result[1]++);
+        return result;
+    }
+    private static final class Store {
+        Probe mModelTrackingManager;
+        Object mTabStateStorageService;
+        boolean mIsDestroyed;
+        int ordinarySaves;
+        Runnable duringSave = () -> {};
+        void saveState() { ordinarySaves++; duringSave.run(); }
+/* LANDU_STORE_SAVE_METHOD */
+    }
+    private static Store readyStore() {
+        Store store = new Store();
+        store.mModelTrackingManager = restored(false);
+        store.mTabStateStorageService = new Object();
+        return store;
+    }
+    private static int[] start(Store store) {
+        int[] result = {0, 0};
+        store.saveStateBeforeLanduExit(() -> result[0]++, () -> result[1]++);
+        return result;
+    }
+    private static void changeLifecycle(Store store, int kind) {
+        if (kind == 0) store.mIsDestroyed = true;
+        else if (kind == 1) store.mModelTrackingManager = restored(false);
+        else store.mTabStateStorageService = new Object();
+    }
+    private static void checkStoreLifecycle() {
+        Store absent = new Store(); int[] missing = start(absent);
+        check(missing[0] == 0 && missing[1] == 1 && absent.ordinarySaves == 0,
+                "uninitialized store must fail before any ordinary save");
+        Store noService = readyStore(); noService.mTabStateStorageService = null;
+        int[] unavailable = start(noService);
+        check(unavailable[0] == 0 && unavailable[1] == 1 && noService.ordinarySaves == 0,
+                "missing storage service cannot begin shutdown persistence");
+        Store destroyed = readyStore(); destroyed.mIsDestroyed = true;
+        int[] gone = start(destroyed);
+        check(gone[0] == 0 && gone[1] == 1 && destroyed.ordinarySaves == 0,
+                "destroyed store cannot start a write");
+
+        Store stable = readyStore(); int[] normal = start(stable);
+        check(stable.ordinarySaves == 1 && normal[0] == 0 && normal[1] == 0,
+                "a ready store queues dirty state and awaits its full transaction");
+        stable.mModelTrackingManager.mRegularSynchronizer.success.get(0).run();
+        check(normal[0] == 1 && normal[1] == 0, "stable committed store may complete shutdown persistence");
+
+        // A real save can notify observers; distinguish changes during its
+        // synchronous work from changes while awaiting the native transaction.
+        for (int phase = 0; phase < 2; phase++) {
+            for (int kind = 0; kind < 3; kind++) {
+                Store changing = readyStore(); Probe original = changing.mModelTrackingManager;
+                final int change = kind;
+                if (phase == 0) changing.duringSave = () -> changeLifecycle(changing, change);
+                int[] result = start(changing);
+                if (phase == 0) {
+                    check(original.mRegularSynchronizer.success.isEmpty(),
+                            "a lifecycle change during ordinary save must not start a full transaction");
+                } else {
+                    changeLifecycle(changing, kind);
+                    original.mRegularSynchronizer.success.get(0).run();
+                }
+                check(result[0] == 0 && result[1] == 1,
+                        "destroyed or replaced store dependencies cannot acknowledge old writes");
+            }
+        }
+        Store failed = readyStore(); int[] error = start(failed);
+        failed.mModelTrackingManager.mRegularSynchronizer.failure.get(0).run();
+        check(error[0] == 0 && error[1] == 1, "transaction failure must remain a store-save failure");
+    }
+    public static void main(String[] args) {
+        // The authoritative store normally never sets shadow catch-up flags.
+        Probe authoritative = restored(false); int[] normal = start(authoritative);
+        check(authoritative.mRegularSynchronizer.success.size() == 1, "restored primary must save with false catch-up flags");
+        check(normal[0] == 0 && normal[1] == 0, "must await transaction result");
+        authoritative.mRegularSynchronizer.success.get(0).run();
+        check(normal[0] == 1 && normal[1] == 0, "successful primary transaction completes once");
+
+        Probe dual = restored(true); int[] both = start(dual);
+        check(dual.mRegularSynchronizer.success.size() == 1 && dual.mIncognitoSynchronizer.success.size() == 1, "every existing model gets a full snapshot");
+        dual.mRegularSynchronizer.success.get(0).run(); dual.mRegularSynchronizer.success.get(0).run();
+        check(both[0] == 0 && both[1] == 0, "repeated first model cannot replace the second");
+        dual.mIncognitoSynchronizer.success.get(0).run();
+        check(both[0] == 1 && both[1] == 0, "both committed models complete");
+
+        Probe restoring = new Probe(); restoring.mRegularSynchronizer = new Synchronizer();
+        int[] notReady = start(restoring);
+        check(notReady[1] == 1 && restoring.mRegularSynchronizer.success.isEmpty(), "do not overwrite an unfinished restore");
+        Probe absent = restored(false); absent.mRegularSynchronizer = null;
+        check(start(absent)[1] == 1, "missing regular model fails");
+
+        Probe cancelled = new Probe(); cancelled.mRegularSynchronizer = new Synchronizer();
+        cancelled.mRegularModelCaughtUp = true;
+        int[] caught = start(cancelled);
+        check(cancelled.mRegularSynchronizer.success.size() == 1, "committed cancellation catch-up may save");
+        cancelled.mRegularSynchronizer.success.get(0).run();
+        check(caught[0] == 1, "cancellation catch-up is not permanently blocked");
+        Probe partial = new Probe(); partial.mRegularSynchronizer = new Synchronizer(); partial.mIncognitoSynchronizer = new Synchronizer();
+        partial.mRegularModelCaughtUp = true;
+        check(start(partial)[1] == 1, "a present second model must be ready too");
+
+        Probe failed = restored(true); int[] failure = start(failed);
+        failed.mRegularSynchronizer.failure.get(0).run(); failed.mIncognitoSynchronizer.success.get(0).run();
+        check(failure[0] == 0 && failure[1] == 1, "transaction failure cannot become success");
+        int[] retry = start(failed);
+        check(failed.mRegularSynchronizer.success.size() == 2 && failed.mIncognitoSynchronizer.success.size() == 2, "retry rewrites the whole snapshot again");
+        failed.mRegularSynchronizer.success.get(1).run(); failed.mIncognitoSynchronizer.success.get(1).run();
+        check(retry[0] == 1 && retry[1] == 0, "a new successful transaction can recover from previous failure");
+
+        Probe changed = restored(false); Synchronizer original = changed.mRegularSynchronizer;
+        int[] replaced = start(changed); changed.mRegularSynchronizer = new Synchronizer(); original.success.get(0).run();
+        check(replaced[0] == 0 && replaced[1] == 1, "replacing the model invalidates pending save");
+        Probe created = restored(false); int[] appeared = start(created);
+        created.mIncognitoSynchronizer = new Synchronizer(); created.mRegularSynchronizer.success.get(0).run();
+        check(appeared[0] == 0 && appeared[1] == 1, "new model during save invalidates old snapshot");
+        Probe destroyed = restored(false); Synchronizer previous = destroyed.mRegularSynchronizer; int[] gone = start(destroyed);
+        destroyed.mRegularSynchronizer = null; previous.success.get(0).run();
+        check(gone[0] == 0 && gone[1] == 1, "destroyed model cannot advance shutdown");
+        Probe exception = restored(false); exception.mRegularSynchronizer.throwsOnSave = true;
+        check(start(exception)[1] == 1, "native call exception is a failure");
+        checkStoreLifecycle();
+        System.out.println("{\"suite\":\"host-extracted-model-save-plan\",\"assertions\":" + assertions
+                + ",\"passed\":true,\"androidRuntimeExecuted\":false,\"realDatabaseTested\":false}");
+    }
+}

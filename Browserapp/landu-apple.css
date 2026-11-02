@@ -1,0 +1,524 @@
+html[data-ui-theme="landu-apple"] {
+  color-scheme: light;
+  --landu-ink: #1d1d1f;
+  --landu-secondary: #6e6e73;
+  --landu-tertiary: #86868b;
+  --landu-canvas: #f5f5f7;
+  --landu-surface: #ffffff;
+  --landu-border: #e5e5ea;
+  --landu-border-strong: #d2d2d7;
+  --landu-blue: #007aff;
+  --landu-blue-hover: #0066d6;
+  --landu-blue-soft: #eaf3ff;
+  --landu-green: #34c759;
+  --landu-red: #ff3b30;
+  --landu-radius: 7px;
+  --landu-control-height: 34px;
+  --landu-field-gap: 6px;
+  --ui-control-height: var(--landu-control-height);
+  --ui-radius: 10px;
+  --ui-radius-sm: var(--landu-radius);
+  --ui-bg: var(--landu-canvas);
+  --ui-surface: var(--landu-surface);
+  --ui-text: var(--landu-ink);
+  --ui-muted: var(--landu-secondary);
+  --ui-border: var(--landu-border);
+  --ui-primary: var(--landu-blue);
+  --ui-accent: var(--landu-blue);
+  --ui-accent-soft: var(--landu-blue-soft);
+  --ui-border-strong: var(--landu-border-strong);
+  --border: var(--landu-border);
+  --blue: var(--landu-blue);
+  --muted: var(--landu-secondary);
+  --theme-text: var(--landu-ink);
+  --theme-muted: var(--landu-secondary);
+  --theme-surface: var(--landu-surface);
+  --theme-surface-alt: var(--landu-canvas);
+}
+
+html[data-ui-theme="landu-apple"] body {
+  color: var(--landu-ink);
+  background: var(--landu-canvas);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+html[data-ui-theme="landu-apple"] .app-shell { background: var(--landu-canvas); }
+html[data-ui-theme="landu-apple"] .sidebar {
+  color: #4b4b50;
+  background: #f5f5f7;
+  border-right: 1px solid var(--landu-border);
+  box-shadow: none;
+}
+#app-brand-logo { content: url("assets/logo-landu.svg?v=20261022"); image-rendering: auto; }
+html[data-ui-theme="landu-apple"] .brand { border-bottom-color: var(--landu-border); }
+html[data-ui-theme="landu-apple"] .brand strong,
+html[data-ui-theme="landu-apple"] .brand-name { color: var(--landu-ink); }
+html[data-ui-theme="landu-apple"] .brand small,
+html[data-ui-theme="landu-apple"] .nav-label,
+html[data-ui-theme="landu-apple"] .sidebar-footer { color: var(--landu-tertiary); }
+html[data-ui-theme="landu-apple"] .new-browser,
+html[data-ui-theme="landu-apple"] .primary {
+  border-color: var(--landu-blue);
+  border-radius: var(--landu-radius);
+  color: #fff;
+  background: var(--landu-blue);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .new-browser:hover,
+html[data-ui-theme="landu-apple"] .primary:hover { border-color: var(--landu-blue-hover); background: var(--landu-blue-hover); }
+html[data-ui-theme="landu-apple"] .nav { border-radius: var(--landu-radius); color: #4b4b50; }
+html[data-ui-theme="landu-apple"] .nav:hover { color: var(--landu-ink); background: #ebebed; }
+html[data-ui-theme="landu-apple"] .nav.active,
+html[data-ui-theme="landu-apple"] .nav[aria-current="page"] { color: var(--landu-ink); background: #e5e5ea; font-weight: 600; }
+
+html[data-ui-theme="landu-apple"] .content,
+html[data-ui-theme="landu-apple"] main { background: var(--landu-canvas); }
+html[data-ui-theme="landu-apple"] .content > header {
+  min-height: 58px;
+  border-bottom: 1px solid var(--landu-border);
+  color: var(--landu-secondary);
+  background: rgba(255, 255, 255, .92);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .content > header h1 { color: var(--landu-ink); font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
+html[data-ui-theme="landu-apple"] .content > header p,
+html[data-ui-theme="landu-apple"] .header-right { color: var(--landu-secondary); }
+html[data-ui-theme="landu-apple"] .content > header .engine-badge,
+html[data-ui-theme="landu-apple"] .content > header .theme-trigger {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px !important;
+  line-height: 1;
+}
+html[data-ui-theme="landu-apple"] .content > header .engine-badge {
+  gap: 7px;
+  border: 1px solid var(--landu-border);
+  color: var(--landu-secondary);
+  background: var(--landu-canvas);
+  font-size: 12px;
+  font-weight: 400;
+}
+html[data-ui-theme="landu-apple"] .content > header .engine-badge-ok {
+  border: 1px solid #ccebd6;
+  color: #278347;
+  background: #f0faf3;
+}
+html[data-ui-theme="landu-apple"] .content > header .engine-badge-missing {
+  border-color: #f5d2ce;
+  color: #bc392f;
+  background: #fff4f2;
+}
+html[data-ui-theme="landu-apple"] .engine-badge-dot {
+  width: 7px;
+  height: 7px;
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .engine-badge-ok .engine-badge-dot {
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, .14);
+}
+html[data-ui-theme="landu-apple"] .engine-badge-text { font-size: 12px; }
+html[data-ui-theme="landu-apple"] .content > header .theme-trigger {
+  gap: 8px;
+  border: 1px solid var(--landu-border-strong);
+  color: var(--landu-secondary);
+  background: #fff;
+  box-shadow: none;
+  font-size: 12px;
+  font-weight: 400;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+html[data-ui-theme="landu-apple"] .theme-trigger-dot {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007aff 0 52%, #8abfff 52% 100%);
+}
+html[data-ui-theme="landu-apple"] .content > header .theme-trigger:hover {
+  border-color: #b7d5f7;
+  color: var(--landu-ink);
+  background: #f7fbff;
+}
+html[data-ui-theme="landu-apple"] .content > header .theme-trigger:active { transform: scale(.98); }
+html[data-ui-theme="landu-apple"] .content > header .theme-trigger:focus-visible {
+  outline: 3px solid rgba(0, 122, 255, .2);
+  outline-offset: 2px;
+}
+
+html[data-ui-theme="landu-apple"] #view-profiles .group-chip-row { gap: 7px; }
+html[data-ui-theme="landu-apple"] #view-profiles .group-chip {
+  border: 1px solid var(--landu-border);
+  border-radius: 999px;
+  color: var(--landu-secondary);
+  background: var(--landu-surface);
+}
+html[data-ui-theme="landu-apple"] #view-profiles .group-chip.active { border-color: #b9d7ff; color: #005fc5; background: var(--landu-blue-soft); }
+html[data-ui-theme="landu-apple"] .toolbar,
+html[data-ui-theme="landu-apple"] .profile-primary-toolbar,
+html[data-ui-theme="landu-apple"] .profile-batch-toolbar { background: transparent; box-shadow: none; }
+html[data-ui-theme="landu-apple"] .outline,
+html[data-ui-theme="landu-apple"] .mini,
+html[data-ui-theme="landu-apple"] .row-actions button,
+html[data-ui-theme="landu-apple"] .editor-back {
+  border: 1px solid var(--landu-border-strong);
+  border-radius: var(--landu-radius);
+  color: var(--landu-ink);
+  background: var(--landu-surface);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .outline:hover,
+html[data-ui-theme="landu-apple"] .mini:hover,
+html[data-ui-theme="landu-apple"] .row-actions button:hover,
+html[data-ui-theme="landu-apple"] .editor-back:hover { border-color: #b7b7bc; color: var(--landu-ink); background: #f5f5f7; }
+html[data-ui-theme="landu-apple"] .danger { border-radius: var(--landu-radius); color: #fff; background: var(--landu-red); box-shadow: none; }
+
+html[data-ui-theme="landu-apple"] .search,
+html[data-ui-theme="landu-apple"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-ui-theme="landu-apple"] select,
+html[data-ui-theme="landu-apple"] textarea,
+html[data-ui-theme="landu-apple"] .themed-select-button {
+  border-color: var(--landu-border-strong);
+  border-radius: var(--landu-radius);
+  color: var(--landu-ink);
+  background: var(--landu-surface);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] input:focus,
+html[data-ui-theme="landu-apple"] select:focus,
+html[data-ui-theme="landu-apple"] textarea:focus,
+html[data-ui-theme="landu-apple"] .search:focus-within,
+html[data-ui-theme="landu-apple"] .themed-select-button:focus-visible {
+  border-color: var(--landu-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, .13);
+  outline: none;
+}
+html[data-ui-theme="landu-apple"] input::placeholder,
+html[data-ui-theme="landu-apple"] textarea::placeholder { color: #a1a1a6; }
+
+html[data-ui-theme="landu-apple"] .table-card,
+html[data-ui-theme="landu-apple"] .extension-card,
+html[data-ui-theme="landu-apple"] .settings-grid article,
+html[data-ui-theme="landu-apple"] .editor-form,
+html[data-ui-theme="landu-apple"] .profile-summary,
+html[data-ui-theme="landu-apple"] .advanced-card,
+html[data-ui-theme="landu-apple"] .local-status-card,
+html[data-ui-theme="landu-apple"] .rpa-section,
+html[data-ui-theme="landu-apple"] .rpa-panel {
+  border: 1px solid var(--landu-border);
+  border-radius: 10px;
+  color: var(--landu-ink);
+  background: var(--landu-surface);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .table-card { overflow: auto; }
+html[data-ui-theme="landu-apple"] table { color: var(--landu-ink); }
+html[data-ui-theme="landu-apple"] thead th {
+  border-bottom: 1px solid var(--landu-border);
+  color: var(--landu-secondary);
+  background: #fff;
+  font-weight: 500;
+}
+html[data-ui-theme="landu-apple"] tbody td { border-bottom: 1px solid #eeeef0; color: var(--landu-ink); }
+html[data-ui-theme="landu-apple"] tbody tr:hover { background: #f5f5f7; }
+html[data-ui-theme="landu-apple"] tbody tr.selected-row { background: var(--landu-blue-soft); }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card { border: 0; border-radius: 0; background: transparent; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card th,
+html[data-ui-theme="landu-apple"] #view-profiles .table-card td { padding-top: 11px; padding-bottom: 11px; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card th { border-top: 1px solid var(--landu-border); }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card tbody tr { border-bottom: 1px solid var(--landu-border); }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card th.col-actions,
+html[data-ui-theme="landu-apple"] #view-profiles .table-card td.col-actions { background: var(--landu-surface); }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card thead th.col-actions { background: #fff; }
+html[data-ui-theme="landu-apple"] .group-badge,
+html[data-ui-theme="landu-apple"] .env-browser-pill,
+html[data-ui-theme="landu-apple"] .net-badge { border-radius: 5px; box-shadow: none; }
+html[data-ui-theme="landu-apple"] .status-compact { border: 0; border-radius: 0; background: transparent; }
+html[data-ui-theme="landu-apple"] .status-compact.running { color: #2f7d45; }
+html[data-ui-theme="landu-apple"] .status-compact.running .status-dot { background: var(--landu-green); }
+html[data-ui-theme="landu-apple"] input[type="checkbox"],
+html[data-ui-theme="landu-apple"] input[type="radio"] { accent-color: var(--landu-blue); }
+
+html[data-ui-theme="landu-apple"] dialog,
+html[data-ui-theme="landu-apple"] .theme-popover,
+html[data-ui-theme="landu-apple"] .themed-select-menu,
+html[data-ui-theme="landu-apple"] .row-menu,
+html[data-ui-theme="landu-apple"] .toast {
+  border-color: var(--landu-border-strong);
+  border-radius: 10px;
+  color: var(--landu-ink);
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+html[data-ui-theme="landu-apple"] .theme-option:hover,
+html[data-ui-theme="landu-apple"] .theme-option.active,
+html[data-ui-theme="landu-apple"] .themed-select-option:hover,
+html[data-ui-theme="landu-apple"] .menu-item:hover { color: var(--landu-ink); background: #f2f2f7; }
+html[data-ui-theme="landu-apple"] .dialog-head,
+html[data-ui-theme="landu-apple"] .dialog-header { border-bottom-color: var(--landu-border); }
+html[data-ui-theme="landu-apple"] .dialog-foot,
+html[data-ui-theme="landu-apple"] .dialog-footer { border-top-color: var(--landu-border); background: #fff; }
+html[data-ui-theme="landu-apple"] .switch[aria-checked="true"] { border-color: var(--landu-blue); background: var(--landu-blue); }
+html[data-ui-theme="landu-apple"] .primary:focus-visible,
+html[data-ui-theme="landu-apple"] .outline:focus-visible,
+html[data-ui-theme="landu-apple"] .nav:focus-visible,
+html[data-ui-theme="landu-apple"] .new-browser:focus-visible { outline: 3px solid rgba(0, 122, 255, .35); outline-offset: 2px; }
+html[data-ui-theme="landu-apple"] .theme-option[data-ui-theme-option="landu-apple"] > i { background: linear-gradient(90deg, #f5f5f7 0 50%, #007aff 50%); }
+
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), select:not(.themed-select-native), .themed-select-button) {
+  box-sizing: border-box;
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  margin: 0;
+  padding-block: 0;
+  font-size: 12px;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) label:not(:is(.check-row, .check-grid label, .segmented label, .ua-ver, .extension-toggle, .assign-item)):not(:has(input[type="checkbox"], input[type="radio"])) {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--landu-field-gap);
+  min-width: 0;
+  margin: 0 0 12px;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) :is(.form-two, .form-three, .privacy-grid, .proxy-host-row) {
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) :is(.form-two, .form-three, .privacy-grid, .proxy-host-row) > label {
+  margin: 0;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .themed-select {
+  height: var(--landu-control-height);
+  align-self: stretch;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) textarea {
+  box-sizing: border-box;
+  min-height: 64px;
+  margin: 0;
+  padding: 8px 10px;
+  line-height: 20px;
+  scroll-margin-block: 20px 90px;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .environment-editor {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  min-width: 0;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-form {
+  min-width: 0;
+}
+html[data-ui-theme="landu-apple"] #view-system .settings-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+html[data-ui-theme="landu-apple"] #view-system .settings-grid > article { min-width: 0; }
+html[data-ui-theme="landu-apple"] #view-system .form-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html[data-ui-theme="landu-apple"] #view-system input { min-width: 0; max-width: 100%; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .form-three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .form-two > .check-row {
+  min-height: var(--landu-control-height);
+  margin: 0 !important;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .form-two:has(> label:not(.check-row)) > .check-row {
+  align-self: start;
+  margin-top: calc(20px + var(--landu-field-gap)) !important;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) :is(.check-row, .check-grid label, .assign-item) > input:is([type="checkbox"], [type="radio"]) {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
+  margin: 0;
+  padding: 0;
+}
+html[data-ui-theme="landu-apple"] dialog .assign-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-field-group > label {
+  margin-bottom: var(--landu-field-gap);
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .segmented {
+  align-items: stretch;
+  width: fit-content;
+  max-width: 100%;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .segmented > label {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 28px;
+  padding: 4px 12px;
+  margin: 0 !important;
+  line-height: 20px;
+  white-space: nowrap;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor :is(.ua-tools, .storage-actions, .field-inline-group) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .ua-tools .ua-ver {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--landu-field-gap);
+  margin: 0;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] :is(#view-profile-editor, .settings-grid) :is(.ua-tools, .storage-actions, .field-inline-group, .editor-actions, label > div:has(> input)) > button,
+html[data-ui-theme="landu-apple"] dialog :is(.dialog-actions, .store-source-tabs, label > div:has(> input)) > button {
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0;
+  font-size: 12px;
+}
+html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .proxy-host-row > button {
+  align-self: end;
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  margin: 0;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-actions {
+  border-top: 1px solid var(--landu-border);
+  gap: 8px;
+  padding-block: 12px;
+  border-radius: 0 0 10px 10px;
+}
+html[data-ui-theme="landu-apple"] #view-profiles .toolbar-pagination {
+  border-left: 0;
+  padding-left: 0;
+  margin-left: 0;
+}
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-head {
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0;
+  margin-bottom: 16px;
+}
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-actions {
+  align-items: center;
+  padding: 12px 0 0;
+  gap: 8px;
+}
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-head h2 {
+  margin: 0;
+  line-height: 24px;
+}
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-head > button {
+  display: grid;
+  flex: 0 0 32px;
+  align-self: flex-start;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: var(--landu-secondary);
+  background: transparent;
+  box-shadow: none;
+  font-size: 22px !important;
+  line-height: 1;
+}
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-head > button:hover { background: var(--landu-canvas); }
+html[data-ui-theme="landu-apple"] dialog[open] .dialog-head > button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--landu-blue) 35%, transparent);
+  outline-offset: 2px;
+}
+html[data-ui-theme="landu-apple"] #add-app-dialog {
+  box-sizing: border-box;
+  padding: 20px;
+}
+html[data-ui-theme="landu-apple"] #add-app-dialog .store-source-tabs {
+  margin-bottom: 16px;
+  padding-inline: 0;
+}
+html[data-ui-theme="landu-apple"] #add-app-dialog .assign-item { padding-inline: 0; }
+html[data-ui-theme="landu-apple"] #sync-settings-dialog .sync-setting-grid > label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] #sync-settings-dialog .sync-setting-grid > label > span:first-child { flex: 0 0 72px; }
+html[data-ui-theme="landu-apple"] #sync-settings-dialog .sync-setting-grid > label > input {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
+  margin: 0;
+}
+html[data-ui-theme="landu-apple"] .theme-popover {
+  padding: 12px;
+  border: 1px solid var(--landu-border);
+  box-shadow: 0 12px 32px rgba(29, 29, 31, .12);
+}
+html[data-ui-theme="landu-apple"] .theme-popover-head { padding: 4px 6px 8px; margin-bottom: 4px; }
+html[data-ui-theme="landu-apple"] .theme-popover-head span { color: var(--landu-secondary); }
+html[data-ui-theme="landu-apple"] .theme-grid { gap: 4px; }
+html[data-ui-theme="landu-apple"] .theme-option {
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px 32px 8px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--landu-ink);
+  box-shadow: none;
+}
+html[data-ui-theme="landu-apple"] .theme-option.active {
+  border-color: #d5e6ff;
+  background: var(--landu-blue-soft);
+}
+html[data-ui-theme="landu-apple"] .theme-option > i {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid rgba(29, 29, 31, .12);
+  border-radius: 7px;
+  overflow: hidden;
+}
+html[data-ui-theme="landu-apple"] .theme-option strong { font-size: 12px; line-height: 20px; }
+html[data-ui-theme="landu-apple"] .theme-option small { color: var(--landu-secondary); line-height: 18px; }
+html[data-ui-theme="landu-apple"] .theme-option.active::after { border-color: var(--landu-blue); }
+
+@media (max-width: 1180px) {
+  html[data-ui-theme="landu-apple"] #view-profile-editor .environment-editor { grid-template-columns: minmax(0, 1fr); }
+  html[data-ui-theme="landu-apple"] #view-profile-editor .profile-summary { position: static; }
+  html[data-ui-theme="landu-apple"] #view-system .settings-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  html[data-ui-theme="landu-apple"] #view-profile-editor :is(.form-two, .form-three) { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui-theme="landu-apple"] *,
+  html[data-ui-theme="landu-apple"] *::before,
+  html[data-ui-theme="landu-apple"] *::after { scroll-behavior: auto !important; }
+}

@@ -8,7 +8,7 @@
 
 - 客户端请认准 [heyinkcode/LanduBrowser 的 Releases](https://github.com/heyinkcode/LanduBrowser/releases)，以实际发布的资产为准。
 - GitHub 的 `Source code (zip)`、`Download ZIP` 是源码压缩包，**不是可双击运行的 Windows 安装程序**。
-- 本仓库的 `npm start` 只预览官网，不启动客户端。
+- `main` 分支的根目录 `npm start` 只预览官网；桌面客户端源码在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)，进入 `Browserapp` 后启动。
 - 岚渡桌面端对应源码单独命名为 `LanduBrowser-1.0.26-source.zip`，构建说明在包内 `BUILD_LANDU.md`。
 - 原项目的源码启动方法请查看 [OpenBrowser 中文 README](https://github.com/sheying2013/OpenBrowser/blob/main/README_CN.md)，不要把上游安装包误认为已换肤的岚渡版本。
 
@@ -80,7 +80,7 @@
 
 ### 安卓和 iPhone 能用吗？
 
-本仓库没有 Android / iOS 客户端，也没有手机远程管理端。手机能浏览官网，不代表能在手机上运行桌面环境。
+Android ARM64 已提供完整 Chromium 本地内核预览包，小米 Android 15/16 的指定检查已通过，详见 [Android 指南](ANDROID.md) 与 [测试范围](TESTING.md)。iOS 没有客户端；安卓不是桌面远程管理端。
 
 ### macOS 和 Linux 呢？
 
@@ -97,3 +97,7 @@
 ### 怎么反馈问题？
 
 在 [Issues](https://github.com/heyinkcode/LanduBrowser/issues) 提交系统版本、应用版本、复现步骤、预期结果和脱敏截图。截图中请遮挡密码、Cookie、令牌、代理地址及个人信息。
+
+## 9. 最新预览版
+
+最新预览包含完整内核 Android APK 和 Windows 自动 UA 完整版本修复。下载、SHA-256、安装更新及范围见 [DOWNLOADS.md](DOWNLOADS.md)。Android 的配置路径与桌面不同，不要直接套用桌面的 JSON 导入方式。
