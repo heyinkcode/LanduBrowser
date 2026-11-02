@@ -136,10 +136,10 @@ h2 { font-size: 38px; line-height: 1.35; letter-spacing: -.035em; }
 .license-pill { display: inline-block; margin-top: 19px; padding: 5px 10px; border-radius: 5px; background: #eff5fe; color: #5280b8; font-size: 9px; letter-spacing: .07em; }
 .start-section { padding-top: 0; }
 .start-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 50px; }
-.release-card { border: 1px solid #e0e9f6; border-radius: 18px; padding: 32px; background: #fafcff; }
+.release-card { display: flex; flex-direction: column; align-items: flex-start; border: 1px solid #e0e9f6; border-radius: 18px; padding: 32px; background: #fafcff; }
 .release-state { display: inline-flex; align-items: center; gap: 7px; color: #57799f; font-size: 11px; background: #edf3fa; padding: 5px 10px; border-radius: 6px; }
 .release-card h3 { font-size: 25px; margin-top: 19px; }
-.release-card > p:not(.release-note) { color: var(--muted); font-size: 14px; margin-top: 14px; line-height: 1.9; }
+.release-card > p:not(.release-note) { flex: 1; color: var(--muted); font-size: 14px; margin-top: 14px; line-height: 1.9; }
 .release-card .button { margin-top: 24px; }
 .release-note { font-size: 11px; color: #8b99ac; margin-top: 12px; }
 .resource-list { display: flex; flex-direction: column; justify-content: center; }

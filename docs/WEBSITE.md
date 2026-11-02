@@ -68,3 +68,7 @@ npm start
 3. 上传到 GitHub Releases，核对文件大小和哈希后公开发行版。大文件放在 Release 资产，不提交到 Git 历史。
 4. 更新首页、README 和 `docs/DOWNLOADS.md` 的版本与真实下载链接，再推送官网。
 5. 检查 Pages 构建与公开下载地址。变更 GitHub 用户名时，同步仓库、官网 canonical、客户端更新检查和文档链接。
+
+## 当前分支与预览维护
+
+main 保留静态官网，source 公开完整应用源码；新的预览标签指向应用源码。更新官网的安卓状态时同步 ANDROID.md、TESTING.md、DOWNLOADS.md 和 RELEASE_NOTES.md。只使用已经公开且经大小/哈希核对的 Release 资产链接；保留原 Windows 稳定版入口，不把预览包标成完整产品已验收。
