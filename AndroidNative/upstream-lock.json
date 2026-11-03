@@ -197,6 +197,12 @@
     "net/socket/socks_connect_job.cc": "51dd1df07f0b04e50db182804d4db0396d1f00da01679cd7d2bebeac1c47bd09",
     "third_party/blink/renderer/core/execution_context/navigator_base.cc": "64b29bb294db26511bd68cb304837bca69fd13b16daf318eae6efbe0565d944b",
     "third_party/blink/renderer/core/dom/frame_request_callback_collection.cc": "a90d2e4a9da017f821d146f2165db4bcd9a1757adbef3b2e5de4590e26f6c01c",
-    "third_party/blink/renderer/core/animation_frame/worker_animation_frame_provider.cc": "ce73b22093a181c3863ecbb7a5654f6c70c84dcbbaf9f8830c9e4c4ec9510e9e"
+    "third_party/blink/renderer/core/animation_frame/worker_animation_frame_provider.cc": "ce73b22093a181c3863ecbb7a5654f6c70c84dcbbaf9f8830c9e4c4ec9510e9e",
+    "components/signin/public/android/java/src/org/chromium/components/signin/NullAccountManagerDelegate.java": "add06fd34e11906f980abae66c786e8996d82bb3b4cb065a9387db3cdb28c32c",
+    "components/signin/public/android/java/src/org/chromium/components/signin/AccountManagerFacadeProvider.java": "d55d8a8e7760c69f8a74e96d7cc501d8cbfc7cfc76e4ffb35b4e011030bd8690",
+    "chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/SigninUtils.java": "45b358725b1f2afb982ddc90628b35b210ce072560a712f8efdb02a72b6d90b5",
+    "chrome/browser/language/android/java/src/org/chromium/chrome/browser/translate/TranslateBridge.java": "a4a131071b3608aeae0f760c7ed739994f91ce5dae51d65524c504f527d623b3",
+    "chrome/browser/language/android/BUILD.gn": "b44675d9b9b29d880f1feeb78c1b829c26b8e52db96689cf3db57eb62c28058a",
+    "third_party/android_deps/BUILD.gn": "4da76a33c862ff99504c0ca2b8264af73d5a46ada028a3efdac31f50e9a1774e"
   }
 }

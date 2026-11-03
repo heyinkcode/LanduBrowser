@@ -80,6 +80,22 @@ GN 参数应预先写入 `out/LanduBaseline/args.gn`；阶段生成不等于 APK
 
 品牌生成器会核对仓库 Logo 与根 LICENSE 的哈希。修改这些输入后需按生成器和版本锁重新审查，不要跳过哈希检查。重新签名和换包名也不是对既有安装的数据兼容承诺。
 
+## Google 网页登录
+
+头像中的添加账号入口会在当前环境内打开 Google 登录网页。系统公开 Chromium 的账号后端缺失时，使用明确的网页登录确认入口，并处理空添加账号 Intent。
+
+## 原页翻译
+
+菜单“翻译”直接处理当前页面。原生 Chromium 翻译服务可用时沿用原生流程，否则使用 Google ML Kit 的手机本地语言模型，将正文和按钮的文字节点译为简体中文。翻译状态栏显示 Google Translate 署名，点击“原文”恢复本次译文。
+
+页面处理保留元素、网址、链接、表单提交地址及事件监听。输入框、选择框、密码、可编辑区域、代码块和标记为禁止翻译的区域会跳过。翻译期间网页自行更新过的文本节点会保持网页的新内容。当前批次覆盖点击时主文档中可显示的文字，图像文字、内嵌框架、Shadow DOM 和后续异步新增内容需要另外处理。
+
+首次使用需要通过手机网络下载语言模型。模型缓存后，文本翻译在手机上执行。该模式使用 ML Kit 的端侧翻译能力，服务条款和署名要求见 [ML Kit 文档](https://developers.google.com/ml-kit/language/translation/translation-terms)及 [Google Translate 署名要求](https://cloud.google.com/translate/attribution)。机器译文可能存在误差，以原文为准。
+
+构建前，在源码目录执行 `python3 -B scripts/fetch-translation-deps.py`，下载并核验 `translation-dependencies.json` 固定的 SDK 文件。它们存放在忽略的 `.local/translation/` 目录，源码分发包含依赖锁、下载脚本和第三方许可。ARM64 翻译库采用 16 KB ELF 对齐。
+
+运行 DOM 回归检查时，先启动一个使用独立临时配置目录并开启 CDP 的测试浏览器，再执行 `node tests/page-translation.browser.cjs <CDP端口>`。测试会创建并关闭自己的空白标签页，使用虚构表单数据验证元素、输入值、链接、事件及原文恢复。
+
 ## 能力边界
 
 字体隔离是已列本地字体名称过滤，不是全字体白名单或跨设备字形/Emoji 统一。UA-CH 自定义不会更换实际内核。RAF 只推迟真实网页回调并保留取消语义，设备负载决定能达到的实际帧率。

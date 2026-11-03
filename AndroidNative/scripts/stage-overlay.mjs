@@ -40,7 +40,8 @@ if (resourceFiles.length) {
 // Bind the stage to the exact patch builder and local integration revision.
 const builderInputs = ['scripts/overlay-plan.mjs', 'scripts/stage-overlay.mjs',
   'scripts/manifest-policy.mjs', 'manifest-component-policy.json',
-  'upstream-lock.json', 'overlay-inventory.json', ...brandBuilders].map(relative => ({
+  'upstream-lock.json', 'overlay-inventory.json', 'translation-dependencies.json',
+  'scripts/fetch-translation-deps.py', ...brandBuilders].map(relative => ({
     path: relative, sha256: digest(fs.readFileSync(path.join(nativeRoot, relative))),
   }));
 const behaviorSources = [];

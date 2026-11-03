@@ -2,13 +2,21 @@
 
 [项目首页](../README.md) · [安卓使用指南](ANDROID.md) · [测试范围](TESTING.md)
 
-## 最新预览：v1.0.26-preview.20261103
+## Android 登录与翻译修复预览
+
+- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/LanduBrowser-Android-arm64-latest.apk)
+- [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/LanduBrowser-1.0.26-android-20261104-1-source.zip)
+- [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/SHA256SUMS.txt)
+- [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1)
+
+修复添加账号闪退，提供 Google 网页登录和手机本地原页翻译。点击“翻译”在原页面显示中文，首次使用通过手机网络下载语言模型。原生 Chromium 翻译在存在可用服务配置时保留。更新前保存编辑、关闭环境，再同签名覆盖安装。当前为开发签名预览包。
+
+## Windows 预览：v1.0.26-preview.20261103
 
 本预览包由本地构建并上传 GitHub Releases，没有使用 Actions 编译或 Artifact 保存安装包。Android 15/16 已完成指定 UA-CH / RAF 真机检查；Windows 候选包含自动 UA 完整版本和目录同步修复，完整安装升级与 UI 验收尚未完成。
 
 | 文件 | 用途 |
 | --- | --- |
-| [Android ARM64 APK · 约 531 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Android-arm64-latest.apk) | 完整 Chromium 本地内核，手机独立运行。开发签名预览版；不是几 MB 的 WebView 原型。 |
 | [Windows x64 完整版 EXE · 约 1.23 GB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-with-kernel.exe) | 包含独立内核及字体资源的本地候选安装程序。 |
 | [Windows x64 轻量版 EXE · 约 173 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-without-kernel.exe) | 不包含独立内核，需要自行配置兼容 Chromium。 |
 | [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-1.0.26-preview-20261103-source.zip) | 桌面、Chromium Android 覆盖源码、构建脚本、许可和逐文件清单，不含内核、个人数据和原始设备日志。 |

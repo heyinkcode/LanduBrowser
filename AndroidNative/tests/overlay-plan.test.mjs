@@ -51,12 +51,43 @@ test('adds native sources to the early-loading base module', () => {
 test('native APK uses a separate Landu package and the overriding brand resources', () => {
   const input = Buffer.from('  # *_bundle variants). This defaults to the Chromium browser package name.\n' +
     '  chrome_public_manifest_package = "org.chromium.chrome"\n' +
-    '          "//chrome/android:chrome_public_apk_base_module_resources",\n');
+    '          "//chrome/android:chrome_public_apk_base_module_resources",\n' +
+    '    library_always_compress = []\n');
   const result = preparePatchedFile(apkTemplatePath, input, digest(input));
   assert.match(result.content, /chrome_public_manifest_package = "com.landu.browser"/);
   assert.match(result.content, /"\/\/chrome\/android:landu_brand_resources"/);
   assert.doesNotMatch(result.content, /chrome_public_manifest_package = "org.chromium.chrome"/);
   assert.equal(preparePatchedFile(apkTemplatePath, Buffer.from(result.content), digest(input)).alreadyPatched, true);
+});
+
+test('the unavailable account backend returns through the existing null-intent callback', () => {
+  const file = 'components/signin/public/android/java/src/org/chromium/components/signin/NullAccountManagerDelegate.java';
+  const original = Buffer.from('        throw new UnsupportedOperationException(\n' +
+    '                "NullAccountManagerDelegate does not implement createAddAccountIntent");');
+  const result = preparePatchedFile(file, original, digest(original));
+  assert.match(result.content, /callback\.onResult\(null\);/);
+  assert.doesNotMatch(result.content, /throw new UnsupportedOperationException/);
+  assert.equal(preparePatchedFile(file, Buffer.from(result.content), digest(original)).content, result.content);
+});
+
+test('manual translation keeps the native path and falls back inside the current document',
+  { skip: !process.env.LANDU_SOURCE_REFERENCE }, () => {
+    const file = 'chrome/browser/language/android/java/src/org/chromium/chrome/browser/translate/TranslateBridge.java';
+    const original = fs.readFileSync(path.join(process.env.LANDU_SOURCE_REFERENCE, file));
+    const { content } = preparePatchedFile(file, original, digest(original));
+    assert.match(content, /LanduPageTranslator\.translate\(tab\)/);
+    assert.match(content, /manualTranslateWhenReady\(contents\)/);
+    assert.match(content, /canTranslateInPlace\(tab\)/);
+    assert.doesNotMatch(content, /translate\.google|translate\.goog|tab\.loadUrl/);
+  });
+
+test('page translation uses the production isolated-world API and checks frame lifetime', () => {
+  const helper = fs.readFileSync(new URL(
+    '../chromium/org/chromium/chrome/browser/translate/LanduPageTranslator.java', import.meta.url), 'utf8');
+  assert.equal((helper.match(/executeJavaScriptInIsolatedWorld\(/g) || []).length, 2);
+  assert.match(helper, /ISOLATED_WORLD_ID_CONTENT_END \+ 1/);
+  assert.match(helper, /mFrame\.isRenderFrameLive\(\)/);
+  assert.doesNotMatch(helper, /\.evaluateJavaScript(?:ForTests)?\(/);
 });
 
 test('all pinned source patches reapply without drift and reject later edits',

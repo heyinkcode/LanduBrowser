@@ -1,6 +1,6 @@
 # 岚渡浏览器发行说明
 
-本次公开预览：[v1.0.26-preview.20261103](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103)。Windows 应用版本仍为 1.0.26，Android 内核为 156.0.8078.48。
+Android 当前修复预览为 [v1.0.26-android.20261104.1](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1)，内核为 156.0.8078.48。各平台下载见 [下载指南](docs/DOWNLOADS.md)。
 
 基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发，软件免费。Windows 普通用户运行 EXE，Android ARM64 用户安装 APK，无需 Node.js 或维护者服务器。更新前先保存并关闭环境，保留实际数据目录。
 

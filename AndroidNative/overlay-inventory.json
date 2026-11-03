@@ -323,6 +323,22 @@
     [
       "native/landu_raf_limiter.h",
       "third_party/blink/public/common/landu/landu_raf_limiter.h"
+    ],
+    [
+      "chromium/org/chromium/chrome/browser/translate/LanduPageTranslator.java",
+      "chrome/browser/language/android/java/src/org/chromium/chrome/browser/translate/LanduPageTranslator.java"
+    ],
+    [
+      ".local/translation/translate-17.0.3.aar",
+      "chrome/browser/language/android/landu_deps/translate-17.0.3.aar"
+    ],
+    [
+      ".local/translation/okhttp-3.0.0.jar",
+      "chrome/browser/language/android/landu_deps/okhttp-3.0.0.jar"
+    ],
+    [
+      "translation/translate.info",
+      "chrome/browser/language/android/landu_deps/translate.info"
     ]
   ],
   "resourceFiles": [
@@ -385,6 +401,14 @@
     [
       "branding/generated/res/values/landu_brand.xml",
       "chrome/android/landu/res/values/landu_brand.xml"
+    ],
+    [
+      "assets/page-translation.js",
+      "chrome/android/landu/assets/page-translation.js"
+    ],
+    [
+      "assets/TRANSLATION-NOTICES.txt",
+      "chrome/android/landu/assets/TRANSLATION-NOTICES.txt"
     ]
   ]
 }

@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "artifacts": [
+    {
+      "name": "translate-17.0.3.aar",
+      "url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/translate/17.0.3/translate-17.0.3.aar",
+      "sha256": "b6194f7b42034309cf8299784b2d5d70a82a2e9287fbe1650dea4d1f3ad1fe55"
+    },
+    {
+      "name": "okhttp-3.0.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp/3.0.0/okhttp-3.0.0.jar",
+      "sha256": "8f25394193dffd55b11d70eede78086afef736174ccdf74a1e3f6f51b1a2e4aa"
+    }
+  ]
+}

@@ -18,7 +18,7 @@ NATIVE_ROOT = Path(__file__).resolve().parents[1]
 MARKER = '.landu-native-overlay.json'
 BUILDERS = ('scripts/overlay-plan.mjs', 'scripts/stage-overlay.mjs',
             'scripts/manifest-policy.mjs', 'manifest-component-policy.json',
-            'upstream-lock.json', 'overlay-inventory.json')
+            'upstream-lock.json', 'overlay-inventory.json', 'translation-dependencies.json', 'scripts/fetch-translation-deps.py')
 BRAND_BUILDERS = ('scripts/generate-brand-assets.py', 'branding/product.json',
                   'branding/asset-manifest.json', 'branding/CHROMIUM-LICENSE.txt')
 EXTERNAL_BRAND_INPUTS = ('Browserapp/assets/logo-landu.svg', 'LICENSE')

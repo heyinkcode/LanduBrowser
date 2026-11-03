@@ -2400,6 +2400,69 @@ for (const [target, changes] of [
   else replacements.set(target, changes);
 }
 
+// Graceful Google account fallback when the Android backend is unavailable.
+for (const [target, changes] of [
+  [
+    "components/signin/public/android/java/src/org/chromium/components/signin/NullAccountManagerDelegate.java",
+    [
+      [
+        "        throw new UnsupportedOperationException(\n                \"NullAccountManagerDelegate does not implement createAddAccountIntent\");",
+        "        // Callers already handle an unavailable account backend through a null intent.\n        callback.onResult(null);"
+      ]
+    ]
+  ],
+  [
+    "components/signin/public/android/java/src/org/chromium/components/signin/AccountManagerFacadeProvider.java",
+    [
+      [
+        "        private static final AccountManagerFacade INSTANCE;",
+        "        private static final AccountManagerFacade INSTANCE;\n        private static final boolean HAS_ACCOUNT_MANAGER;"
+      ],
+      [
+        "                    ServiceLoaderUtil.maybeCreate(AccountManagerDelegate.class);\n            if (delegate == null) {",
+        "                    ServiceLoaderUtil.maybeCreate(AccountManagerDelegate.class);\n            HAS_ACCOUNT_MANAGER = delegate != null;\n            if (delegate == null) {"
+      ],
+      [
+        "    /** Sets the test instance. */",
+        "    /** Whether this build has an Android account backend instead of the empty fallback. */\n    @AnyThread\n    public static boolean isAccountManagerAvailable() {\n        return sInstanceForTesting != null || Holder.HAS_ACCOUNT_MANAGER;\n    }\n\n    /** Sets the test instance. */"
+      ]
+    ]
+  ],
+  [
+    "chrome/browser/ui/android/signin/java/src/org/chromium/chrome/browser/ui/signin/SigninUtils.java",
+    [
+      [
+        "import android.app.Activity;",
+        "import android.app.Activity;\nimport android.app.AlertDialog;"
+      ],
+      [
+        "import android.content.res.Configuration;",
+        "import android.content.res.Configuration;\nimport android.net.Uri;"
+      ],
+      [
+        "import org.chromium.components.sync.UserActionableError;",
+        "import org.chromium.components.signin.AccountManagerFacadeProvider;\nimport org.chromium.components.sync.UserActionableError;"
+      ],
+      [
+        "    public static boolean openSettingsForAllAccounts(Activity activity) {\n        Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);",
+        "    public static boolean openSettingsForAllAccounts(Activity activity) {\n        if (!AccountManagerFacadeProvider.isAccountManagerAvailable()) {\n            if (activity.isFinishing() || activity.isDestroyed()) return false;\n            new AlertDialog.Builder(activity)\n                    .setTitle(\"Google 网页登录\")\n                    .setMessage(\"当前版本支持在环境内登录 Google 网页。浏览器账号同步尚未接入，书签和密码保存在当前环境内。\")\n                    .setNegativeButton(android.R.string.cancel, null)\n                    .setPositiveButton(\n                            \"打开网页登录\",\n                            (dialog, which) -> {\n                                Intent webSignin = new Intent(\n                                        Intent.ACTION_VIEW, Uri.parse(\"https://accounts.google.com/\"));\n                                // An explicit in-process activity keeps the selected environment.\n                                webSignin.setClassName(\n                                        activity,\n                                        \"org.chromium.chrome.browser.ChromeTabbedActivity\");\n                                webSignin.addFlags(\n                                        Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);\n                                if (!IntentUtils.safeStartActivity(activity, webSignin)) {\n                                    org.chromium.ui.widget.Toast.makeText(\n                                                    activity,\n                                                    \"暂时无法打开 Google 网页，请在地址栏访问 accounts.google.com\",\n                                                    org.chromium.ui.widget.Toast.LENGTH_LONG)\n                                            .show();\n                                }\n                            })\n                    .show();\n            return true;\n        }\n        Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);"
+      ]
+    ]
+  ]
+]) {
+  replacements.set(target, changes);
+}
+
+// User-triggered website translation when the native service is unavailable.
+// Native translation when configured, otherwise on-device text translation.
+replacements.set("chrome/browser/language/android/java/src/org/chromium/chrome/browser/translate/TranslateBridge.java", [["import org.jni_zero.CalledByNative;", "import android.net.Uri;\n\nimport org.jni_zero.CalledByNative;"], ["        RecordUserAction.record(\"Android.ManualTranslate\");\n        TranslateBridgeJni.get().manualTranslateWhenReady(assertNonNull(tab.getWebContents()));", "        RecordUserAction.record(\"Android.ManualTranslate\");\n        WebContents contents = tab.getWebContents();\n        if (contents == null || tab.isDestroyed()) return;\n        if (canManuallyTranslate(contents, false)) {\n            TranslateBridgeJni.get().manualTranslateWhenReady(contents);\n        } else if (canTranslateInPlace(tab)) {\n            LanduPageTranslator.translate(tab);\n        }"], ["    public static boolean canManuallyTranslate(Tab tab, boolean menuLogging) {\n        return canManuallyTranslate(assertNonNull(tab.getWebContents()), menuLogging);\n    }", "    public static boolean canManuallyTranslate(Tab tab, boolean menuLogging) {\n        WebContents contents = tab.getWebContents();\n        return contents != null\n                && (canManuallyTranslate(contents, menuLogging) || canTranslateInPlace(tab));\n    }"], ["    /** Returns true iff we're in a state where the manual translate IPH could be shown. */", "    private static boolean canTranslateInPlace(Tab tab) {\n        if (tab.isDestroyed() || tab.isNativePage() || tab.getWebContents() == null) return false;\n        String scheme = Uri.parse(tab.getUrl().getSpec()).getScheme();\n        return \"https\".equals(scheme) || \"http\".equals(scheme);\n    }\n\n    /** Returns true iff we're in a state where the manual translate IPH could be shown. */"]]);
+
+replacements.set("chrome/browser/language/android/BUILD.gn", [["    \"java/src/org/chromium/chrome/browser/translate/TranslateBridge.java\",\n    \"java/src/org/chromium/chrome/browser/translate/TranslationObserver.java\",\n  ]\n  deps = [", "    \"java/src/org/chromium/chrome/browser/translate/TranslateBridge.java\",\n    \"java/src/org/chromium/chrome/browser/translate/LanduPageTranslator.java\",\n    \"java/src/org/chromium/chrome/browser/translate/TranslationObserver.java\",\n  ]\n  deps = ["], ["    \":base_module_java\",\n    \":java_resources\",\n    \"//base:base_java\",\n    \"//base:ui_java\",", "    \":base_module_java\",\n    \":java_resources\",\n    \"//third_party/android_deps:landu_translation_java\",\n    \"$google_play_services_package:google_play_services_tasks_java\",\n    \"//third_party/android_deps:com_google_mlkit_common_java\",\n    \"//base:base_java\",\n    \"//base:ui_java\","], ["    \"//ui/accessibility:ax_base_java\",\n    \"//ui/android:ui_full_java\",\n    \"//ui/android:ui_no_recycler_view_java\",", "    \"//ui/accessibility:ax_base_java\",\n    \"//ui/android:ui_full_java\",\n    \"//ui/android:ui_no_recycler_view_java\",\n    \"//url:url_java\","]]);
+
+replacements.set("third_party/android_deps/BUILD.gn", [["# Targets are declared inside a template", "\njava_prebuilt(\"landu_okhttp_java\") {\n  jar_path = \"//chrome/browser/language/android/landu_deps/okhttp-3.0.0.jar\"\n  deps = [ \":com_squareup_okio_okio_jvm_java\" ]\n}\n\nandroid_aar_prebuilt(\"landu_translation_java\") {\n  aar_path = \"//chrome/browser/language/android/landu_deps/translate-17.0.3.aar\"\n  info_path = \"//chrome/browser/language/android/landu_deps/translate.info\"\n  extract_native_libraries = true\n  deps = [\n    \":landu_okhttp_java\",\n    \"//third_party/android_deps:com_google_mlkit_common_java\",\n    \"$google_play_services_package:google_play_services_base_java\",\n    \"$google_play_services_package:google_play_services_basement_java\",\n    \"$google_play_services_package:google_play_services_tasks_java\",\n    \"//third_party/android_deps:google_android_datatransport_transport_api_java\",\n    \"//third_party/android_deps:google_android_datatransport_transport_backend_cct_java\",\n    \"//third_party/android_deps:google_android_datatransport_transport_runtime_java\",\n    \"//third_party/android_deps:google_firebase_firebase_components_java\",\n    \"//third_party/android_deps:google_firebase_firebase_encoders_java\",\n    \"//third_party/android_deps:google_firebase_firebase_encoders_json_java\",\n    \"//third_party/androidx:androidx_core_core_java\",\n  ]\n}\n\n# Targets are declared inside a template"]]);
+
+replacements.get(apkTemplatePath).push(["    library_always_compress = []", "    # ML Kit's AAR extraction is separate from APK native-library packaging.\n    _landu_translate_unpack = \"//third_party/android_deps:landu_translation_J__unpack_aar\"\n    asset_deps += [ _landu_translate_unpack ]\n    _landu_translate_libs = get_label_info(_landu_translate_unpack, \"target_out_dir\") +\n                            \"/landu_translation_java/jni\"\n    if (android_64bit_target_cpu && !_is_64_bit_browser) {\n      secondary_abi_loadable_modules += [\n        \"$_landu_translate_libs/$android_app_secondary_abi/libtranslate_jni.so\",\n      ]\n    } else {\n      loadable_modules += [\n        \"$_landu_translate_libs/$android_app_abi/libtranslate_jni.so\",\n      ]\n    }\n\n    library_always_compress = []"]);
+
 function replaceExactlyOnce(value, before, after) {
   const position = value.indexOf(before);
   if (position < 0 || value.indexOf(before, position + before.length) !== -1) {

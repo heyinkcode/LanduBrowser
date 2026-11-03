@@ -52,8 +52,12 @@
 
 ## 本次 Android 与源码同步
 
-应用完整源码现公开在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)；[本次预览标签](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103) 指向应用源码，main 继续维护官网。安装包、对应源码 ZIP 和校验清单由本地构建后上传 Releases。
+应用完整源码现公开在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)；[Android 修复预览标签](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1) 指向应用源码，main 继续维护官网。安装包、对应源码 ZIP 和校验清单由本地构建后上传 Releases。
 
 Android 以 Chromium 固定提交 `d0c02bfad08ec92a6ffcf989e53cd995e6381a4c`（156.0.8078.48）为底座，公开 `AndroidNative/` 的管理、原生实现、覆盖生成与构建脚本；不宣称 Chromium 内核为岚渡原创。Chromium 原许可证随资源和 APK 提供，固定版本及源文件哈希见源码版本锁。原项目桌面参考提交为 `0b57e39595b02ff9662da3d807b413f3393ce166`。
 
 原始开发记录、个人环境、密钥、真实代理与设备日志不属于公开源码。公开验证仅保留 [脱敏汇总](TESTING.md)；无法从当前两台手机的局部结果推断所有功能或第三方网站兼容性。
+
+## 端侧翻译依赖
+
+手机本地翻译使用 Google ML Kit Translate 17.0.3，依赖文件由固定官方 URL 与 SHA-256 锁定。源码包保留下载脚本、依赖锁和第三方许可，SDK 文件通过构建前下载获得。翻译结果标明 Google Translate，相关条款见 [ML Kit](https://developers.google.com/ml-kit/language/translation/translation-terms)及 [Google Translate 署名要求](https://cloud.google.com/translate/attribution)。

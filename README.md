@@ -6,7 +6,7 @@
 
 **基于原作，免费使用，让每个环境有自己的空间。**
 
-[官网](https://heyinkcode.github.io/LanduBrowser/) · [下载](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103) · [安卓指南](docs/ANDROID.md) · [应用源码](https://github.com/heyinkcode/LanduBrowser/tree/source) · [原作者与许可](docs/OPEN_SOURCE.md)
+[官网](https://heyinkcode.github.io/LanduBrowser/) · [下载](docs/DOWNLOADS.md) · [安卓指南](docs/ANDROID.md) · [应用源码](https://github.com/heyinkcode/LanduBrowser/tree/source) · [原作者与许可](docs/OPEN_SOURCE.md)
 
 </div>
 
@@ -19,11 +19,11 @@
 | 平台 | 当前状态 |
 | --- | --- |
 | Windows 10/11 x64 | [v1.0.26 稳定版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26) 保留；[新预览修复](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103) 提供带内核及轻量 EXE，整包核验已完成，完整升级/UI 验收待完成。 |
-| Android ARM64 | [完整内核 APK 预览](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Android-arm64-latest.apk)，约 531 MB；小米 Android 15/16 的 UA-CH 与 RAF 指定检查均通过。 |
+| Android ARM64 | [原页翻译修复预览](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/LanduBrowser-Android-arm64-latest.apk)，约 549 MB，提供 Google 网页登录及手机本地原页翻译，Android 15 指定操作验证通过。 |
 | macOS / Linux | 保留上游源码路径，暂未发布本次岚渡版本安装包或完成平台验收。 |
 | iOS | 暂无客户端；不提供云手机替代本地客户端。 |
 
-安装文件、对应应用源码和 SHA-256 都在 [Releases](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103)。安装与更新见 [下载指南](docs/DOWNLOADS.md)，真机范围见 [测试记录](docs/TESTING.md)。预览版不代表全部功能已稳定或已完成安全审计。
+安装包、对应源码和 SHA-256 见 [下载指南](docs/DOWNLOADS.md)，真机范围见 [测试记录](docs/TESTING.md)。Android 当前修复预览见 [发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1)。
 
 ## 可以做什么
 
