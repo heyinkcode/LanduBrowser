@@ -2,14 +2,14 @@
 
 [项目首页](../README.md) · [安卓使用指南](ANDROID.md) · [测试范围](TESTING.md)
 
-## Android 登录与翻译修复预览
+## Android 侧边翻译按钮预览
 
-- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/LanduBrowser-Android-arm64-latest.apk)
-- [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/LanduBrowser-1.0.26-android-20261104-1-source.zip)
-- [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.1/SHA256SUMS.txt)
-- [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1)
+- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-Android-arm64-latest.apk)
+- [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-1.0.26-android-20261104-2-source.zip)
+- [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/SHA256SUMS.txt)
+- [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2)
 
-修复添加账号闪退，提供 Google 网页登录和手机本地原页翻译。点击“翻译”在原页面显示中文，首次使用通过手机网络下载语言模型。原生 Chromium 翻译在存在可用服务配置时保留。更新前保存编辑、关闭环境，再同签名覆盖安装。当前为开发签名预览包。
+本次安卓更新将翻译状态收为侧边小按钮，点击可展开查看状态与恢复原文，面板5秒后自动收起。安装包约548 MB，提供 Google 网页登录和手机本地原页翻译。首次翻译通过手机网络下载语言模型。更新前保存编辑并关闭环境，再同签名覆盖安装。当前为开发签名预览包，验证范围见测试记录。
 
 ## Windows 预览：v1.0.26-preview.20261103
 

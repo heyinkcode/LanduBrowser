@@ -52,7 +52,7 @@
 
 ## 本次 Android 与源码同步
 
-应用完整源码现公开在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)；[Android 修复预览标签](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1) 指向应用源码，main 继续维护官网。安装包、对应源码 ZIP 和校验清单由本地构建后上传 Releases。
+应用完整源码现公开在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)；[Android 修复预览标签](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) 指向应用源码，main 继续维护官网。安装包、对应源码 ZIP 和校验清单由本地构建后上传 Releases。
 
 Android 以 Chromium 固定提交 `d0c02bfad08ec92a6ffcf989e53cd995e6381a4c`（156.0.8078.48）为底座，公开 `AndroidNative/` 的管理、原生实现、覆盖生成与构建脚本；不宣称 Chromium 内核为岚渡原创。Chromium 原许可证随资源和 APK 提供，固定版本及源文件哈希见源码版本锁。原项目桌面参考提交为 `0b57e39595b02ff9662da3d807b413f3393ce166`。
 
