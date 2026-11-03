@@ -4,6 +4,22 @@ package org.chromium.chrome.browser.translate;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.animation.PathInterpolator;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.google.mlkit.common.sdkinternal.MlKitContext;
 import com.google.mlkit.nl.translate.TranslateLanguage;
@@ -19,9 +35,6 @@ import org.chromium.base.ContextUtils;
 import org.chromium.base.Callback;
 import org.chromium.chrome.browser.tab.Tab;
 import org.chromium.chrome.browser.tab.TabObserver;
-import org.chromium.chrome.browser.ui.messages.snackbar.Snackbar;
-import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManager;
-import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManagerProvider;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.RenderFrameHost;
 import org.chromium.content_public.common.IsolatedWorldIds;
@@ -38,7 +51,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /** User-triggered, on-device translation of the current document's text nodes. */
-final class LanduPageTranslator implements TabObserver, SnackbarManager.SnackbarController {
+final class LanduPageTranslator implements TabObserver {
     // Reserved for Chrome Translate in chrome/common/chrome_isolated_world_ids.h.
     private static final int TRANSLATION_WORLD = IsolatedWorldIds.ISOLATED_WORLD_ID_CONTENT_END + 1;
     private static final Map<Tab, LanduPageTranslator> SESSIONS = new HashMap<>();
@@ -47,7 +60,7 @@ final class LanduPageTranslator implements TabObserver, SnackbarManager.Snackbar
     private final RenderFrameHost mFrame;
     private final String mKey = "__landuTranslation_" + UUID.randomUUID().toString().replace("-", "");
     private Translator mTranslator;
-    private SnackbarManager mSnackbar;
+    private TranslationBubble mBubble;
     private boolean mClosed;
     private boolean mTruncated;
     private int mTranslated;
@@ -69,8 +82,6 @@ final class LanduPageTranslator implements TabObserver, SnackbarManager.Snackbar
         mTab = tab;
         mContents = tab.getWebContents();
         mFrame = mContents.getMainFrame();
-        WindowAndroid window = tab.getWindowAndroid();
-        if (window != null) mSnackbar = SnackbarManagerProvider.from(window);
     }
 
     private boolean active() {
@@ -215,10 +226,10 @@ final class LanduPageTranslator implements TabObserver, SnackbarManager.Snackbar
     }
 
     private void status(String text, String action) {
-        if (mSnackbar == null) return;
-        mSnackbar.dismissSnackbars(this);
-        mSnackbar.showSnackbar(Snackbar.make(text, this, Snackbar.TYPE_PERSISTENT,
-                Snackbar.UMA_UNKNOWN).setAction(action, null));
+        View anchor = mTab.getView();
+        if (anchor == null || !anchor.isAttachedToWindow()) return;
+        if (mBubble == null) mBubble = new TranslationBubble(anchor, this::restore);
+        mBubble.update(text, action);
     }
 
     private void fail(String message) {
@@ -241,14 +252,234 @@ final class LanduPageTranslator implements TabObserver, SnackbarManager.Snackbar
         releaseTranslator();
         mTab.removeObserver(this);
         SESSIONS.remove(mTab);
-        if (mSnackbar != null) mSnackbar.dismissSnackbars(this);
+        if (mBubble != null) { mBubble.dismiss(); mBubble = null; }
+    }
+
+    /** A native, edge-docked control whose touch area is limited to the visible control. */
+    private static final class TranslationBubble {
+        private static final long PANEL_DURATION_MS = 300;
+        private static final long BUTTON_DURATION_MS = 180;
+        private static final long COLLAPSE_DELAY_MS = 5000;
+        private final View mAnchor;
+        private final Runnable mRestore;
+        private final PopupWindow mPopup;
+        private final LinearLayout mRoot;
+        private final TextView mButton;
+        private final LinearLayout mDetails;
+        private final TextView mStatus;
+        private final TextView mAction;
+        private final Rect mBounds = new Rect();
+        private final Runnable mCollapse = () -> setExpanded(false);
+        private final View.OnLayoutChangeListener mLayoutListener =
+                (view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> position();
+        private final View.OnAttachStateChangeListener mAttachListener = new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View view) {}
+
+            @Override
+            public void onViewDetachedFromWindow(View view) { mRestore.run(); }
+        };
+        private final int mTextColor;
+        private ValueAnimator mDockAnimator;
+        private boolean mExpanded;
+        private boolean mDockRight = true;
+        private boolean mDragging;
+        private boolean mDismissed;
+        private float mVerticalFraction = 0.55f;
+        private float mDownX;
+        private float mDownY;
+        private int mDragStartX;
+        private int mDragStartY;
+        private int mX;
+        private int mY;
+
+        TranslationBubble(View anchor, Runnable restore) {
+            mAnchor = anchor;
+            mRestore = restore;
+            boolean dark = (anchor.getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+            mTextColor = dark ? 0xffd7e6ff : 0xff315e99;
+            mRoot = new LinearLayout(anchor.getContext());
+            mRoot.setOrientation(LinearLayout.VERTICAL);
+            GradientDrawable background = new GradientDrawable();
+            background.setColor(dark ? 0xff26364a : 0xfff4f8ff);
+            background.setCornerRadius(dp(16));
+            background.setStroke(dp(1), dark ? 0xff526784 : 0xffdce4f2);
+            mRoot.setBackground(background);
+            mRoot.setClipToOutline(true);
+            mButton = button("译");
+            mButton.setTextSize(18);
+            mButton.setOnClickListener(view -> setExpanded(true));
+            mButton.setOnTouchListener(this::drag);
+            mDetails = new LinearLayout(anchor.getContext());
+            mDetails.setOrientation(LinearLayout.VERTICAL);
+            mDetails.setPadding(dp(12), dp(10), dp(12), dp(4));
+            mStatus = new TextView(anchor.getContext());
+            mStatus.setTextSize(13);
+            mStatus.setTextColor(mTextColor);
+            mStatus.setMaxLines(4);
+            mDetails.addView(mStatus);
+            LinearLayout actions = new LinearLayout(anchor.getContext());
+            mAction = button("");
+            mAction.setOnClickListener(view -> mRestore.run());
+            TextView collapse = button("收起");
+            collapse.setOnClickListener(view -> setExpanded(false));
+            actions.addView(mAction, new LinearLayout.LayoutParams(0, dp(44), 1));
+            actions.addView(collapse, new LinearLayout.LayoutParams(0, dp(44), 1));
+            mDetails.addView(actions);
+            mRoot.addView(mButton, new LinearLayout.LayoutParams(dp(44), dp(44)));
+            mRoot.addView(mDetails);
+            mDetails.setVisibility(View.GONE);
+            mPopup = new PopupWindow(mRoot, dp(44), dp(44), false);
+            mPopup.setElevation(dp(4));
+            mPopup.setOutsideTouchable(false);
+            mPopup.setTouchModal(false);
+            mPopup.setIsLaidOutInScreen(true);
+            mPopup.setIsClippedToScreen(true);
+            anchor.addOnLayoutChangeListener(mLayoutListener);
+            anchor.addOnAttachStateChangeListener(mAttachListener);
+        }
+
+        private int dp(int value) {
+            return Math.round(value * mAnchor.getResources().getDisplayMetrics().density);
+        }
+
+        private TextView button(String text) {
+            TextView view = new TextView(mAnchor.getContext());
+            view.setText(text);
+            view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            view.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            view.setTextColor(mTextColor);
+            view.setGravity(Gravity.CENTER);
+            view.setMinHeight(dp(44));
+            view.setMinWidth(dp(44));
+            view.setBackground(new RippleDrawable(ColorStateList.valueOf(0x22315e99), null, null));
+            view.setFocusable(true);
+            return view;
+        }
+
+        void update(String text, String action) {
+            mStatus.setText(text);
+            mAction.setText(action);
+            mButton.setContentDescription(text + "，点按展开翻译操作，可拖动到屏幕边缘");
+            position();
+        }
+
+        private void setExpanded(boolean expanded) {
+            if (mDismissed) return;
+            mAnchor.removeCallbacks(mCollapse);
+            mExpanded = expanded;
+            mButton.setVisibility(expanded ? View.GONE : View.VISIBLE);
+            mDetails.setVisibility(expanded ? View.VISIBLE : View.GONE);
+            position();
+            // 贴边展开与收回沿同一路径，只改变透明度和位移。
+            mRoot.animate().cancel();
+            mRoot.setAlpha(0.5f);
+            mRoot.setTranslationX(dp(8) * (mDockRight ? 1 : -1));
+            mRoot.animate().alpha(1).translationX(0)
+                    .setDuration(ValueAnimator.areAnimatorsEnabled()
+                            ? (expanded ? PANEL_DURATION_MS : BUTTON_DURATION_MS) : 0)
+                    .setInterpolator(new PathInterpolator(0, 0, 0.2f, 1)).start();
+            if (expanded) mAnchor.postDelayed(mCollapse, COLLAPSE_DELAY_MS);
+        }
+
+        private boolean measureBounds() {
+            Rect display = new Rect();
+            mAnchor.getWindowVisibleDisplayFrame(display);
+            if (!mAnchor.getGlobalVisibleRect(mBounds) || !mBounds.intersect(display)) return false;
+            mBounds.inset(dp(8), dp(48));
+            return mBounds.width() >= dp(44) && mBounds.height() >= dp(44);
+        }
+
+        private void position() {
+            if (mDismissed || !mAnchor.isAttachedToWindow()) return;
+            if (!measureBounds()) { mPopup.dismiss(); return; }
+            int width = mExpanded ? Math.min(dp(260), mBounds.width()) : dp(44);
+            mRoot.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(mBounds.height(), View.MeasureSpec.AT_MOST));
+            int height = mExpanded ? mRoot.getMeasuredHeight() : dp(44);
+            mX = mDockRight ? mBounds.right - width : mBounds.left;
+            mY = mBounds.top + Math.round((mBounds.height() - height) * mVerticalFraction);
+            if (mPopup.isShowing()) {
+                mPopup.update(mX, mY, width, height);
+            } else {
+                mPopup.setWidth(width);
+                mPopup.setHeight(height);
+                mPopup.showAtLocation(mAnchor, Gravity.TOP | Gravity.LEFT, mX, mY);
+            }
+        }
+
+        private boolean drag(View view, MotionEvent event) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (mDockAnimator != null) mDockAnimator.cancel();
+                    mRoot.animate().cancel();
+                    view.setPressed(true);
+                    mRoot.setTranslationX(0);
+                    mRoot.setScaleX(0.97f);
+                    mRoot.setScaleY(0.97f);
+                    mDownX = event.getRawX();
+                    mDownY = event.getRawY();
+                    mDragStartX = mX;
+                    mDragStartY = mY;
+                    mDragging = false;
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    float dx = event.getRawX() - mDownX;
+                    float dy = event.getRawY() - mDownY;
+                    mDragging |= Math.hypot(dx, dy) > ViewConfiguration.get(view.getContext()).getScaledTouchSlop();
+                    if (mDragging && measureBounds()) {
+                        mX = Math.max(mBounds.left, Math.min(mBounds.right - dp(44), mDragStartX + Math.round(dx)));
+                        mY = Math.max(mBounds.top, Math.min(mBounds.bottom - dp(44), mDragStartY + Math.round(dy)));
+                        mPopup.update(mX, mY, -1, -1);
+                    }
+                    return true;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    view.setPressed(false);
+                    mRoot.setScaleX(1);
+                    mRoot.setScaleY(1);
+                    if (mDragging && measureBounds()) {
+                        mDockRight = mX + dp(22) >= mBounds.centerX();
+                        mVerticalFraction = (mY - mBounds.top) / (float) Math.max(1, mBounds.height() - dp(44));
+                        int oldX = mX;
+                        position();
+                        mDockAnimator = ValueAnimator.ofInt(oldX, mX);
+                        mDockAnimator.setDuration(ValueAnimator.areAnimatorsEnabled() ? BUTTON_DURATION_MS : 0);
+                        mDockAnimator.setInterpolator(new PathInterpolator(0, 0, 0.2f, 1));
+                        mDockAnimator.addUpdateListener(animation -> {
+                            mX = (Integer) animation.getAnimatedValue();
+                            mPopup.update(mX, mY, -1, -1);
+                        });
+                        mDockAnimator.start();
+                    } else if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                        view.performClick();
+                    }
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        void dismiss() {
+            mDismissed = true;
+            mAnchor.removeCallbacks(mCollapse);
+            mAnchor.removeOnLayoutChangeListener(mLayoutListener);
+            mAnchor.removeOnAttachStateChangeListener(mAttachListener);
+            if (mDockAnimator != null) mDockAnimator.cancel();
+            mRoot.animate().cancel();
+            mPopup.dismiss();
+        }
     }
 
     @Override
-    public void onAction(Object data) { restore(); }
+    public void onPageLoadStarted(Tab tab, GURL url) { close(); }
 
     @Override
-    public void onPageLoadStarted(Tab tab, GURL url) { close(); }
+    public void onContentChanged(Tab tab) { close(); }
+
+    @Override
+    public void onActivityAttachmentChanged(Tab tab, WindowAndroid window) { restore(); }
 
     @Override
     public void onDestroyed(Tab tab) { close(); }

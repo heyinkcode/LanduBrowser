@@ -4,7 +4,7 @@
 
 ## 当前版本
 
-[v1.0.26-android.20261104.1 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1) 提供完整 Chromium Android 内核，运行在手机本地。不是桌面远程控制，也不是早期几 MB 的系统 WebView 原型。APK 约 531 MB，ARM64，内核 `156.0.8078.48`，包名 `com.landu.browser`。
+[v1.0.26-android.20261104.2 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) 提供完整 Chromium Android 内核，在手机本地运行。APK约548 MB，ARM64，内核为 `156.0.8078.48`，包名为 `com.landu.browser`。
 
 构建最低系统为 Android 10；本次真机仅覆盖小米 Android 15 和 16 的指定检查，不能据此宣称所有机型和系统均已兼容。当前为开发签名预览包，尚未上架应用商店，完整功能仍在验收。
 
@@ -12,7 +12,7 @@
 
 ## 安装与更新
 
-1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
+1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
 2. 首次安装时，按 Android 提示授权当前浏览器或文件管理器安装该 APK；无需关闭系统安全防护。
 3. 更新前保存编辑，在管理页选择“更多 → 关闭当前环境”，等环境退出后安装新包。已验证本次同签名保留数据更新；不要通过卸载旧版来解决签名冲突，先备份并反馈。
 4. 打开岚渡，新建环境，填写名称和启动地址，保存后启动。若出现浏览器首次启动引导，按自己的选择完成后继续。
@@ -41,7 +41,7 @@
 
 头像中的添加账号入口会显示“Google 网页登录”确认框，确认后在当前环境内打开 Google 登录网页。浏览器账号同步尚未接入。
 
-打开外语网页后，在浏览器菜单点击“翻译”，当前页面直接显示译文。地址栏保留原网址，输入框、表单地址与按钮事件保留。翻译完成后可点击底部“原文”恢复。
+打开外语网页后，在浏览器菜单点击“翻译”，当前页面直接显示译文。翻译状态收在侧边“译”按钮中，点击可展开查看状态和“原文”操作，面板5秒后自动收起。控件提供拖动与贴边交互，相关完整真机验收范围见测试记录。
 
 - 本地原页翻译使用 Google ML Kit 的端侧模型，默认译为简体中文，正文在手机本地处理。首次使用通过手机网络下载所需语言模型，缓存后可离线翻译。
 - 原生整页翻译沿用 Chromium 流程。存在可用服务配置时优先采用原生翻译，否则自动使用本地原页翻译。

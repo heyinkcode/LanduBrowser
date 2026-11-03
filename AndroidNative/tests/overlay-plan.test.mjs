@@ -90,6 +90,20 @@ test('page translation uses the production isolated-world API and checks frame l
   assert.doesNotMatch(helper, /\.evaluateJavaScript(?:ForTests)?\(/);
 });
 
+test('translation feedback defaults to an edge button with bounded touch area and timed collapse', () => {
+  const helper = fs.readFileSync(new URL(
+    '../chromium/org/chromium/chrome/browser/translate/LanduPageTranslator.java', import.meta.url), 'utf8');
+  assert.doesNotMatch(helper, /Snackbar|TYPE_PERSISTENT/);
+  assert.match(helper, /new PopupWindow\(mRoot, dp\(44\), dp\(44\), false\)/);
+  assert.match(helper, /mPopup\.setTouchModal\(false\)/);
+  assert.match(helper, /mDetails\.setVisibility\(View\.GONE\)/);
+  assert.match(helper, /COLLAPSE_DELAY_MS = 5000/);
+  assert.match(helper, /mAnchor\.postDelayed\(mCollapse, COLLAPSE_DELAY_MS\)/);
+  assert.match(helper, /mAnchor\.removeCallbacks\(mCollapse\)/);
+  assert.match(helper, /mAnchor\.removeOnLayoutChangeListener\(mLayoutListener\)/);
+  assert.match(helper, /mPopup\.dismiss\(\)/);
+});
+
 test('all pinned source patches reapply without drift and reject later edits',
   { skip: !process.env.LANDU_SOURCE_REFERENCE }, () => {
     const lock = JSON.parse(fs.readFileSync(new URL('../upstream-lock.json', import.meta.url), 'utf8'));

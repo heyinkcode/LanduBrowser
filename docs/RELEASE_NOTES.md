@@ -1,26 +1,33 @@
-# Android 登录与翻译修复预览
+# Android 侧边翻译按钮预览
 
-本地构建的 Android ARM64 更新包，内核为 `156.0.8078.48`。软件免费，基于 OpenBrowser 和 Chromium 二次开发，保留原作者与第三方署名。
+`v1.0.26-android.20261104.2` 为本地构建的 Android ARM64 预览包，约548 MB，内核为 `156.0.8078.48`。
 
-## 更新内容
+## 本次更新
 
-- 修复“向设备添加账号”触发未处理异常、浏览器退出的问题。
-- 添加账号入口改为明确的 Google 网页登录确认，在当前环境内打开登录网页。
-- 点击“翻译”直接把当前页面可显示的文字译为简体中文，保留原网址及表单行为，提供恢复原文操作。
-- 接入 Google ML Kit 端侧模型，首次通过手机网络下载语言模型，之后在手机本地处理正文。
-- 原生 Chromium 翻译在服务配置可用时保留，当前安装包通过本地原页模式使用翻译。
-- 当前处理点击时主文档的文字，输入值、可编辑区、代码块和禁止翻译区会跳过。图片文字、内嵌框架、Shadow DOM 与后续新增内容需要另外处理。
+- 原页翻译状态收为44dp侧边“译”按钮。
+- 点击按钮展开翻译状态、Google Translate 署名和“原文”操作。
+- 展开面板5秒后自动收起，并提供拖动与贴边交互。
+- 导航、切换环境及页面销毁时清理翻译控件。
 
 ## 验证范围
 
-三个改动 Java 模块的编译、依赖与 Error Prone 检查，以及 9 项覆盖补丁回归检查通过。Android 15 真机同签名覆盖更新后，核对本地模型原页翻译和表单行为。APK 完整性、签名、既有内核库哈希及新增翻译库均已核对。
+- Java 编译、依赖与 Error Prone 检查通过，10项源码回归检查通过。
+- APK 签名、ZIP 完整性及16 KB对齐检查通过，9个既有 ARM64 原生库逐项哈希一致。
+- Redmi Note 12 Turbo / Android 15 已完成同签名保留数据更新，设备安装包哈希与分发文件一致。
+- 真机确认本地模型译文、原网址、输入值及按钮元素身份，侧边按钮显示与展开已确认，展开后已观察到收起状态。
 
-有效服务配置下的原生翻译尚未完成本次运行验收。浏览器账号同步尚未接入。
+拖动贴边和展开后“原文”操作的完整真机验收待完成。Android 16 上的新控件验收待完成，先前 UA-CH 和 RAF 结果见测试记录。
 
-## 下载与使用
+## 下载与安装
 
-[APK 与源码](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1) · [安装指南](ANDROID.md) · [测试记录](TESTING.md) · [应用源码](https://github.com/heyinkcode/LanduBrowser/tree/source)
+[APK、对应源码与校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) · [安卓指南](ANDROID.md) · [测试记录](TESTING.md)
 
-安装前保存编辑并关闭环境，采用同签名覆盖安装。校验下载内容时使用随包的 `SHA256SUMS.txt`。
+安装前保存编辑并关闭环境，使用同签名 APK 覆盖安装。核对随包的 `SHA256SUMS.txt`。
 
-[先前桌面与 Android 预览记录](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-preview.20261103)
+APK SHA-256 为 `0eadc4024156492d354d1c63b0d58259a28eab129e3c258d39a67df5378646e2`。
+
+## 原作者与许可
+
+岚渡浏览器基于 [sheying2013/OpenBrowser](https://github.com/sheying2013/OpenBrowser) 和 Chromium 二次开发，软件免费使用。感谢原作者及贡献者，源码保留相应许可证和第三方署名。
+
+[前一版原页翻译预览](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.1)
