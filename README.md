@@ -18,7 +18,7 @@
 
 | 平台 | 当前状态 |
 | --- | --- |
-| Windows 10/11 x64 | [v1.0.27](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.27) 提供完整版和轻量版，修复认证代理检测误报，支持联网自动检查和新版提示。验证范围见测试记录。 |
+| Windows 10/11 x64 | [v1.0.28](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.28) 提供完整版和轻量版，修复认证代理检测误报，支持联网自动检查和新版提示。验证范围见测试记录。 |
 | Android ARM64 | [侧边翻译按钮预览](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-Android-arm64-latest.apk)，约548 MB，提供 Google 网页登录、本地原页翻译及侧边状态按钮。真机验证范围见测试记录。 |
 | macOS / Linux | 保留上游源码路径，暂未发布本次岚渡版本安装包或完成平台验收。 |
 | iOS | 暂无客户端；不提供云手机替代本地客户端。 |

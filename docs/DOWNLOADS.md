@@ -2,19 +2,19 @@
 
 [项目首页](../README.md) · [Android 指南](ANDROID.md) · [测试范围](TESTING.md)
 
-## Windows v1.0.27
+## Windows v1.0.28
 
 | 文件 | 用途 |
 | --- | --- |
-| [Windows x64 完整版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-with-kernel.exe) | 推荐版本，包含独立 Chromium 内核和字体资源。 |
-| [Windows x64 完整版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-with-kernel.zip) | 完整解压后运行 START.cmd 或 runtime/LanduBrowser.exe。 |
-| [Windows x64 轻量版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-without-kernel.exe) | 需要下载或自行配置兼容内核。 |
-| [Windows x64 轻量版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-without-kernel.zip) | 轻量便携目录。 |
-| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-1.0.27-source.zip) | Windows 应用与 Android 覆盖源码、构建脚本和许可。 |
-| [SHA-256 清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/SHA256SUMS.txt) | 核对下载文件是否完整。 |
-| [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.27) | 本次修复与验证范围。 |
+| [Windows x64 完整版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/LanduBrowser-Windows-x86_64-with-kernel.exe) | 推荐版本，包含独立 Chromium 内核和字体资源。 |
+| [Windows x64 完整版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/LanduBrowser-Windows-x86_64-with-kernel.zip) | 完整解压后运行 START.cmd 或 runtime/LanduBrowser.exe。 |
+| [Windows x64 轻量版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/LanduBrowser-Windows-x86_64-without-kernel.exe) | 需要下载或自行配置兼容内核。 |
+| [Windows x64 轻量版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/LanduBrowser-Windows-x86_64-without-kernel.zip) | 轻量便携目录。 |
+| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/LanduBrowser-1.0.28-source.zip) | Windows 应用与 Android 覆盖源码、构建脚本和许可。 |
+| [SHA-256 清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.28/SHA256SUMS.txt) | 核对下载文件是否完整。 |
+| [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.28) | 本次修复与验证范围。 |
 
-本次修复认证代理检测误报，并完善新版提示。Windows 10/11 x64 普通用户无需 Node.js。安装前保存编辑并关闭所有环境，再运行安装程序。既有默认数据目录兼容 %APPDATA%/openbrowser，自定义数据路径以客户端为准。
+本次修复更新详情文案和下载按钮显隐，包含此前认证代理检测修复。Windows 10/11 x64 普通用户无需 Node.js。安装前保存编辑并关闭所有环境，再运行安装程序。既有默认数据目录兼容 %APPDATA%/openbrowser，自定义数据路径以客户端为准。
 
 ## 软件内更新
 
