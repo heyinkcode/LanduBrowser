@@ -1,50 +1,38 @@
 # 下载、安装与更新
 
-[项目首页](../README.md) · [安卓使用指南](ANDROID.md) · [测试范围](TESTING.md)
+[项目首页](../README.md) · [Android 指南](ANDROID.md) · [测试范围](TESTING.md)
 
-## Android 侧边翻译按钮预览
-
-- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-Android-arm64-latest.apk)
-- [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-1.0.26-android-20261104-2-source.zip)
-- [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/SHA256SUMS.txt)
-- [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2)
-
-本次安卓更新将翻译状态收为侧边小按钮，点击可展开查看状态与恢复原文，面板5秒后自动收起。安装包约548 MB，提供 Google 网页登录和手机本地原页翻译。首次翻译通过手机网络下载语言模型。更新前保存编辑并关闭环境，再同签名覆盖安装。当前为开发签名预览包，验证范围见测试记录。
-
-## Windows 预览：v1.0.26-preview.20261103
-
-本预览包由本地构建并上传 GitHub Releases，没有使用 Actions 编译或 Artifact 保存安装包。Android 15/16 已完成指定 UA-CH / RAF 真机检查；Windows 候选包含自动 UA 完整版本和目录同步修复，完整安装升级与 UI 验收尚未完成。
+## Windows v1.0.27
 
 | 文件 | 用途 |
 | --- | --- |
-| [Windows x64 完整版 EXE · 约 1.23 GB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-with-kernel.exe) | 包含独立内核及字体资源的本地候选安装程序。 |
-| [Windows x64 轻量版 EXE · 约 173 MB](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-Windows-x86_64-without-kernel.exe) | 不包含独立内核，需要自行配置兼容 Chromium。 |
-| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/LanduBrowser-1.0.26-preview-20261103-source.zip) | 桌面、Chromium Android 覆盖源码、构建脚本、许可和逐文件清单，不含内核、个人数据和原始设备日志。 |
-| [SHA-256 校验清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-preview.20261103/SHA256SUMS.txt) | 逐文件核对下载内容。 |
+| [Windows x64 完整版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-with-kernel.exe) | 推荐版本，包含独立 Chromium 内核和字体资源。 |
+| [Windows x64 完整版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-with-kernel.zip) | 完整解压后运行 START.cmd 或 runtime/LanduBrowser.exe。 |
+| [Windows x64 轻量版 EXE](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-without-kernel.exe) | 需要下载或自行配置兼容内核。 |
+| [Windows x64 轻量版 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-Windows-x86_64-without-kernel.zip) | 轻量便携目录。 |
+| [对应应用源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/LanduBrowser-1.0.27-source.zip) | Windows 应用与 Android 覆盖源码、构建脚本和许可。 |
+| [SHA-256 清单](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.27/SHA256SUMS.txt) | 核对下载文件是否完整。 |
+| [发布说明](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.27) | 本次修复与验证范围。 |
 
-源码也可在 [`source` 分支](https://github.com/heyinkcode/LanduBrowser/tree/source) 阅读。`main` 是官网；新预览标签指向应用源码，旧 v1.0.26 标签的 GitHub 自动源码 ZIP 则是当时的官网树。开发者优先使用明确命名的应用源码 ZIP 或检出 `source`。
+本次修复认证代理检测误报，并完善新版提示。Windows 10/11 x64 普通用户无需 Node.js。安装前保存编辑并关闭所有环境，再运行安装程序。既有默认数据目录兼容 %APPDATA%/openbrowser，自定义数据路径以客户端为准。
 
-## 原 Windows 稳定版
+## 软件内更新
 
-[v1.0.26 稳定版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26) 继续保留。新预览中的 Windows 应用内部版本仍为 1.0.26，按预览标签、文件校验值和说明区分，不把同版本号视为同一二进制。
+客户端联网启动后自动检查 GitHub 最新正式版，持续运行时每6小时复查，也可在“本地设置 → 软件更新”手动检查。v1.0.26 发现更新后，左下角版本标记变红，点击可查看并下载。v1.0.27 起增加“查看更新 / 稍后”提示窗口。
 
-## 核对与安装
+更新按完整安装包下载，完成后运行安装程序。关闭应用期间不会即时收到通知。GitHub 网络不可达时，可访问[官网](https://heyinkcode.github.io/LanduBrowser/)或[发布列表](https://github.com/heyinkcode/LanduBrowser/releases)手动下载。
 
-下载同一发布页的安装文件和校验清单，计算 SHA-256 并逐行比对：
+## Android 最新预览
 
-```powershell
-Get-FileHash -Algorithm SHA256 .\LanduBrowser-Android-arm64-latest.apk
-# Windows 安装包同样替换为对应文件名计算
-```
+- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-Android-arm64-latest.apk)
+- [安卓发布说明和校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2)
 
-Windows 10/11 x64 用户运行 EXE；完整内置版体积较大，轻量版需另备兼容内核。普通用户无需安装 Node.js。Windows 默认数据目录兼容 `%APPDATA%\openbrowser`，自定义路径以客户端为准。
+APK约548 MB，提供完整 Chromium 156 内核、Google 网页登录、本地原页翻译及侧边状态按钮。首次翻译通过手机网络下载语言模型。当前为开发签名预览包，更新前保存编辑并关闭环境，再同签名覆盖安装。真机范围见[测试记录](TESTING.md)。
 
-安卓用户从文件管理器打开 APK，按系统提示授权当前安装来源。升级前保存编辑并正常关闭当前环境，再使用同签名包保留数据安装；不要卸载旧应用来解决签名冲突。详细步骤见 [安卓指南](ANDROID.md)。
+## 源码与校验
 
-Windows 包尚无代码签名，Android 当前为开发签名预览包。请核对来源、校验值与系统提示；不要关闭系统安全防护。SHA-256 核对文件一致性，不代替安全审计。当前按整包更新，没有增量补丁更新。
+应用源码在[source 分支](https://github.com/heyinkcode/LanduBrowser/tree/source)，main 分支维护官网。下载文件的 SHA-256 应与同一发布页的 SHA256SUMS.txt 一致。安装程序和便携目录按平台分发，完整解压 ZIP 后运行。
 
-## 平台与费用
+Windows 当前无代码签名，Android 为开发签名预览包，安装时按系统提示核对来源。macOS/Linux 尚未发布本次岚渡安装包，iOS 暂无客户端。
 
-Windows 提供原稳定版及新候选；Android ARM64 提供完整内核预览；macOS/Linux 尚未发布本次岚渡包；iOS 没有客户端。软件免费，用户自行选择的网络、代理或 VPN 可能另外计费。
-
-基于 [OpenBrowser](https://github.com/sheying2013/OpenBrowser) 二次开发，感谢原作者及贡献者。可选 **[岚渡云（推广）](https://app.landucloud.com)** 与软件免费使用不绑定。
+基于[OpenBrowser](https://github.com/sheying2013/OpenBrowser)二次开发，感谢原作者及贡献者。软件免费。[岚渡云（推广）](https://app.landucloud.com)是可选的独立网络服务，费用另计。
