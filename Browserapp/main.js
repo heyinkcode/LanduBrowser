@@ -64,7 +64,6 @@ const PROJECT_REPOSITORY = 'heyinkcode/LanduBrowser';
 const UPDATE_REPOSITORY = PROJECT_REPOSITORY;
 const UPDATE_API_URL = `https://api.github.com/repos/${UPDATE_REPOSITORY}/releases/latest`;
 const UPDATE_LATEST_HTML = `https://github.com/${UPDATE_REPOSITORY}/releases/latest`;
-const UPDATE_RELEASES_ATOM = `https://github.com/${UPDATE_REPOSITORY}/releases.atom`;
 const UPDATE_ASSETS = Object.freeze({
   'darwin:x64': 'LanduBrowser-macOS-x86_64.dmg',
   'darwin:arm64': 'LanduBrowser-macOS-arm64-with-kernel.dmg',
@@ -107,7 +106,7 @@ function normalizeRemoteTag(value) {
 
 function metaFromTag(tag, source, releaseUrl) {
   const remoteVersion = normalizeRemoteTag(tag);
-  if (!remoteVersion) return null;
+  if (!/^\d+\.\d+\.\d+(?:\.\d+)?$/.test(remoteVersion)) return null;
   return {
     remoteVersion,
     releaseName: remoteVersion,
@@ -119,32 +118,14 @@ function metaFromTag(tag, source, releaseUrl) {
 /**
  * Resolve latest release tag without relying solely on GitHub API
  * (unauthenticated REST hits rate limits → false "unknown/yellow" light).
- * Priority: Atom feed → HTML follow/redirect → REST API.
+ * Read the designated stable latest release so Android previews do not replace desktop updates.
  */
 async function resolveLatestReleaseMeta() {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), UPDATE_TIMEOUT_MS);
   const htmlHeaders = { 'User-Agent': updateUserAgent(), Accept: 'text/html,application/xhtml+xml,*/*' };
   try {
-    // 1) Atom feed — no API quota, works in Electron without redirect:manual quirks
-    try {
-      const response = await fetch(UPDATE_RELEASES_ATOM, {
-        headers: { 'User-Agent': updateUserAgent(), Accept: 'application/atom+xml,application/xml,text/xml,*/*' },
-        signal: controller.signal,
-      });
-      if (response.ok) {
-        const atom = await response.text();
-        // Prefer entry-level ids/links (first entry is newest)
-        const entry = atom.match(/<entry\b[\s\S]*?<\/entry>/i)?.[0] || atom;
-        const fromAtom = entry.match(/\/releases\/tag\/([^<"'\s]+)/i)
-          || entry.match(/<id>tag:github\.com,\d+:Repository\/\d+\/([^<]+)<\/id>/i)
-          || atom.match(/\/releases\/tag\/([^<"'\s]+)/i);
-        const meta = fromAtom ? metaFromTag(decodeURIComponent(fromAtom[1]), 'atom') : null;
-        if (meta) return meta;
-      }
-    } catch (_) { /* try next */ }
-
-    // 2) /releases/latest — follow redirects; final URL or body contains /releases/tag/vX.Y.Z
+    // 1) /releases/latest — follow redirects; final URL or body contains /releases/tag/vX.Y.Z
     //    (prefer follow over manual: Electron Chromium often hides Location on opaqueredirect)
     try {
       const response = await fetch(UPDATE_LATEST_HTML, {
@@ -167,7 +148,7 @@ async function resolveLatestReleaseMeta() {
       }
     } catch (_) { /* try next */ }
 
-    // 2b) manual redirect Location (Node undici / some hosts)
+    // 1b) manual redirect Location (Node undici / some hosts)
     try {
       const response = await fetch(UPDATE_LATEST_HTML, {
         method: 'GET',
@@ -184,7 +165,7 @@ async function resolveLatestReleaseMeta() {
       }
     } catch (_) { /* try next */ }
 
-    // 3) REST API (last resort; unauthenticated often 403 rate-limit)
+    // 2) REST API (last resort; unauthenticated often 403 rate-limit)
     const response = await fetch(UPDATE_API_URL, {
       headers: {
         Accept: 'application/vnd.github+json',
@@ -437,6 +418,28 @@ async function saveCachedAppUpdateStatus(result) {
  * Check GitHub latest release and push status to all windows (traffic light).
  * green = up to date; red = newer release available; unknown = check failed (gray).
  */
+let notifiedAppUpdateVersion = null;
+
+async function offerAppUpdate(result) {
+  if (result?.upToDate !== false || !result.canDownload || !result.remoteVersion) return;
+  if (!mainWindow || mainWindow.isDestroyed() || !mainWindow.isVisible()) return;
+  if (notifiedAppUpdateVersion === result.remoteVersion) return;
+  notifiedAppUpdateVersion = result.remoteVersion;
+  const { response } = await dialog.showMessageBox(mainWindow, {
+    type: 'info',
+    title: '岚渡浏览器有新版本',
+    message: `发现新版本 v${result.remoteVersion}`,
+    detail: `当前版本 v${result.currentVersion}。查看更新后可下载并安装新版。`,
+    buttons: ['查看更新', '稍后'],
+    defaultId: 0,
+    cancelId: 1,
+    noLink: true,
+  });
+  if (response === 0 && mainWindow && !mainWindow.isDestroyed()) {
+    emit({ type: 'app-update-open' });
+  }
+}
+
 async function pushAppUpdateStatus({ check = true } = {}) {
   try {
     const result = check ? await checkAppUpdate() : lastAppUpdateStatus;
@@ -471,6 +474,7 @@ async function pushAppUpdateStatus({ check = true } = {}) {
       ...result,
     };
     emit(payload);
+    if (check) offerAppUpdate(result).catch(() => {});
     return payload;
   } catch (error) {
     // Prefer last successful green/red over a confusing amber "error" light

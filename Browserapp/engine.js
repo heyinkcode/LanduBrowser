@@ -4915,8 +4915,8 @@ class BrowserEngine {
     try {
       const result = await lookupProxyCountry(resolved.config, {
         force: true,
-        totalTimeoutMs: options.totalTimeoutMs || 6500,
-        attemptTimeoutMs: options.attemptTimeoutMs || 2200,
+        totalTimeoutMs: options.totalTimeoutMs,
+        attemptTimeoutMs: options.attemptTimeoutMs,
         includeRisk: options.includeRisk === true,
         ipChannel: profile.proxyMeta?.ipChannel,
         // Cold cache + a rate-limited probe service: the profile's last known exit is a valid

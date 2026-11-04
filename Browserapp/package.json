@@ -1,7 +1,7 @@
 {
   "name": "openbrowser",
   "productName": "Landu Browser",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "岚渡浏览器：基于 OpenBrowser 二次开发的免费本地浏览器环境管理器",
   "main": "main.js",
   "private": true,

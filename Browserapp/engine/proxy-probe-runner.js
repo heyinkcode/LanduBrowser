@@ -1,6 +1,10 @@
 'use strict';
 
-async function runProxyProbes(tasks, { totalTimeoutMs = 6500, attemptTimeoutMs = 2200, isLinkError = () => false } = {}) {
+// A probe includes proxy authentication, the remote connection and the response.
+// Cross-region SOCKS5 routes can need several seconds even when healthy.
+const DEFAULT_PROXY_PROBE_TIMEOUTS = Object.freeze({ totalTimeoutMs: 24000, attemptTimeoutMs: 8000 });
+
+async function runProxyProbes(tasks, { totalTimeoutMs = DEFAULT_PROXY_PROBE_TIMEOUTS.totalTimeoutMs, attemptTimeoutMs = DEFAULT_PROXY_PROBE_TIMEOUTS.attemptTimeoutMs, isLinkError = () => false } = {}) {
   const deadline = Date.now() + totalTimeoutMs;
   const values = [];
   const errors = [];
@@ -29,4 +33,4 @@ async function runProxyProbes(tasks, { totalTimeoutMs = 6500, attemptTimeoutMs =
   return values;
 }
 
-module.exports = { runProxyProbes };
+module.exports = { runProxyProbes, DEFAULT_PROXY_PROBE_TIMEOUTS };

@@ -6103,6 +6103,10 @@ $('#reset-profile-storage').addEventListener('click', resetProfileStorage);
 $('#open-profile-storage').addEventListener('click', async () => { try { await window.ops.openProfileStorage(); } catch (error) { toast(error.message); log('Error', error.message); } });
 
 window.ops.onEvent(async (value) => {
+  if (value?.type === 'app-update-open') {
+    openAppUpdatePanel();
+    return;
+  }
   if (value?.type === 'app-update-progress') {
     appUpdateState.progress = value;
     renderAppUpdateState();
