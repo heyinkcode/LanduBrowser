@@ -2463,6 +2463,43 @@ replacements.set("third_party/android_deps/BUILD.gn", [["# Targets are declared 
 
 replacements.get(apkTemplatePath).push(["    library_always_compress = []", "    # ML Kit's AAR extraction is separate from APK native-library packaging.\n    _landu_translate_unpack = \"//third_party/android_deps:landu_translation_J__unpack_aar\"\n    asset_deps += [ _landu_translate_unpack ]\n    _landu_translate_libs = get_label_info(_landu_translate_unpack, \"target_out_dir\") +\n                            \"/landu_translation_java/jni\"\n    if (android_64bit_target_cpu && !_is_64_bit_browser) {\n      secondary_abi_loadable_modules += [\n        \"$_landu_translate_libs/$android_app_secondary_abi/libtranslate_jni.so\",\n      ]\n    } else {\n      loadable_modules += [\n        \"$_landu_translate_libs/$android_app_abi/libtranslate_jni.so\",\n      ]\n    }\n\n    library_always_compress = []"]);
 
+// Keep Android application identity independent of Chromium's actual engine version.
+const landuRelease = JSON.parse(fs.readFileSync(new URL('../branding/product.json', import.meta.url), 'utf8'));
+if (!/^[0-9]+(?:\.[0-9]+){2,4}$/.test(landuRelease.releaseVersion)
+    || !Number.isInteger(landuRelease.androidVersionCode)
+    || landuRelease.androidVersionCode < 1 || landuRelease.androidVersionCode > 2100000000) {
+  throw new Error('Invalid Landu Android release version');
+}
+replacements.get(apkTemplatePath).push(
+  ['      version_name = chrome_version_name\n', `      version_name = "${landuRelease.releaseVersion}"\n`],
+  ['    _version_code = chrome_version_code\n', `    _version_code = "${landuRelease.androidVersionCode}"\n`],
+);
+
+// Adreno can label this exact advisory as ERROR | VALIDATION with no message ID.
+// Reproduced on Android 15: Dawn otherwise aborts the GPU in OnDebugUtilsCallback.
+// Keep genuine Vulkan validation failures and unknown driver messages unchanged.
+replacements.set('third_party/dawn/src/dawn/native/vulkan/BackendVk.cpp', [[
+  '    // The Vulkan spec does allow pMessageIdName to be nullptr, but it may still contain a valid\n',
+  `    // Adreno's VKDBGUTILWARN003 is a render-pass advisory, even when the driver
+    // sends ERROR | VALIDATION and a null message ID. Match the complete known
+    // diagnostic rather than suppressing Vulkan validation errors generally.
+    // https://issuetracker.unity.com/issues/19435/warning-androidplayer-device-vulkan-general-warning-the-following-warning-was-triggered-vkdbgutilwarn003-spammed-every-frame-when-the-application-is-actively-running-on-a-device
+    if (message == "The following warning was triggered: VKDBGUTILWARN003. Please refer to the "
+                   "Adreno Game Developer Guide for more information: "
+                   "https://developer.qualcomm.com/docs/adreno-gpu/developer-guide/index.html") {
+        return false;
+    }
+
+    // The Vulkan spec does allow pMessageIdName to be nullptr, but it may still contain a valid
+`
+]]);
+
+
+// Virtual geolocation keeps site consent while avoiding Android sensor permission requests.
+replacements.set("components/location/android/java/src/org/chromium/components/location/LocationUtils.java", [["    private boolean hasPermission(String name) {\n", "    /** Virtual positions come from the immutable environment, without Android sensor access. */\n    public static boolean usesVirtualLocation() {\n        if (!org.chromium.base.CommandLine.isInitialized()) return false;\n        org.chromium.base.CommandLine command = org.chromium.base.CommandLine.getInstance();\n        if (!\"custom\".equals(command.getSwitchValue(\"landu-geolocation-mode\"))) return false;\n        String position = command.getSwitchValue(\"landu-geolocation-position\");\n        if (position == null || position.length() > 128) return false;\n        String[] parts = position.split(\",\", -1);\n        if (parts.length != 3) return false;\n        try {\n            double latitude = Double.parseDouble(parts[0]);\n            double longitude = Double.parseDouble(parts[1]);\n            double accuracy = Double.parseDouble(parts[2]);\n            return Double.isFinite(latitude) && Double.isFinite(longitude) && Double.isFinite(accuracy)\n                    && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180\n                    && accuracy >= 1 && accuracy <= 1000000;\n        } catch (NumberFormatException invalidPosition) {\n            return false;\n        }\n    }\n\n    private boolean hasPermission(String name) {\n"]]);
+replacements.set("components/location/android/java/src/org/chromium/components/location/LocationSettings.java", [["        return LocationUtils.getInstance().hasAndroidLocationPermission();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().hasAndroidLocationPermission();"], ["        return LocationUtils.getInstance().hasAndroidFineLocationPermission();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().hasAndroidFineLocationPermission();"], ["        return LocationUtils.getInstance().isSystemLocationSettingEnabled();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().isSystemLocationSettingEnabled();"]]);
+replacements.set("components/permissions/android/java/src/org/chromium/components/permissions/PermissionUtil.java", [["    public static String[] getRequiredAndroidPermissionsForContentSetting(int contentSettingType) {\n", "    public static String[] getRequiredAndroidPermissionsForContentSetting(int contentSettingType) {\n        if ((contentSettingType == ContentSettingsType.GEOLOCATION\n                || contentSettingType == ContentSettingsType.GEOLOCATION_WITH_OPTIONS)\n                && org.chromium.components.location.LocationUtils.usesVirtualLocation()) {\n            return EMPTY_PERMISSIONS;\n        }\n"], ["    public static String[] getOptionalAndroidPermissionsForContentSetting(int contentSettingType) {\n", "    public static String[] getOptionalAndroidPermissionsForContentSetting(int contentSettingType) {\n        if ((contentSettingType == ContentSettingsType.GEOLOCATION\n                || contentSettingType == ContentSettingsType.GEOLOCATION_WITH_OPTIONS)\n                && org.chromium.components.location.LocationUtils.usesVirtualLocation()) {\n            return EMPTY_PERMISSIONS;\n        }\n"]]);
+
 function replaceExactlyOnce(value, before, after) {
   const position = value.indexOf(before);
   if (position < 0 || value.indexOf(before, position + before.length) !== -1) {

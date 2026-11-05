@@ -131,9 +131,16 @@ def build_assets(native=NATIVE):
     if not inputs['LICENSE'].startswith(b'MIT License') or b'OpenBrowser' not in inputs['LICENSE']:
         raise ValueError('Expected the original OpenBrowser MIT notice')
     product = json.loads(checked_file(native, 'branding/product.json').read_text(encoding='utf-8'))
-    keys = {'format', 'package', 'displayName', 'displayNameZhCN', 'projectUrl', 'upstreamUrl', 'website', 'free'}
+    keys = {'format', 'package', 'displayName', 'displayNameZhCN', 'projectUrl', 'upstreamUrl', 'website', 'free', 'releaseVersion', 'androidVersionCode'}
     if set(product) != keys or product['format'] != 1 or product['free'] is not True or product['package'] != 'com.landu.browser':
         raise ValueError('Unexpected product identity; review package and distribution settings')
+    release = product['releaseVersion']
+    code = product['androidVersionCode']
+    if (not isinstance(release, str) or len(release) > 64
+            or not re.fullmatch(r'[0-9]+(?:\.[0-9]+){2,4}', release)
+            or any(int(part) >= 2**32 for part in release.split('.'))
+            or type(code) is not int or not 1 <= code <= 2100000000):
+        raise ValueError('Invalid Android release version')
     for key in ('displayName', 'displayNameZhCN'):
         value = product[key]
         if not isinstance(value, str) or not value.strip() or len(value) > 60 or any(ord(c) < 32 for c in value):

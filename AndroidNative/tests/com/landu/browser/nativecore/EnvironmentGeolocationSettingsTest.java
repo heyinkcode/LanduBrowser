@@ -82,8 +82,8 @@ public final class EnvironmentGeolocationSettingsTest {
         check(migrated.geolocation.mode == 0 && Arrays.equals(v10, Files.readAllBytes(legacy.resolve("environments.bin"))),
                 "V10 reads must keep the device policy and must not rewrite old data");
         old.save(7, migrated.withGeolocation(point));
-        check(ByteBuffer.wrap(Files.readAllBytes(legacy.resolve("environments.bin"))).getInt(4) == 17
-                && old.read().find(initial.identity).geolocation.latitude == 37.5, "First edit must atomically upgrade to V17");
+        check(ByteBuffer.wrap(Files.readAllBytes(legacy.resolve("environments.bin"))).getInt(4) == 18
+                && old.read().find(initial.identity).geolocation.latitude == 37.5, "First edit must atomically upgrade to V18");
         byte[] bytes = old.exportConfiguration();
         // Locate the actual custom-position record independently of trailing version fields.
         byte[] location = ByteBuffer.allocate(25).put((byte) point.mode).putDouble(point.latitude)

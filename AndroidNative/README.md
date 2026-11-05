@@ -10,6 +10,8 @@
 
 配置导出不包含完整浏览数据和手机保存的密码，不能当作整个 Profile 备份。没有宣称与桌面扩展、RPA、窗口同步或 API/MCP 完全一致。
 
+当前安卓修复预览为 [v1.0.26-android.20261105.1](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1)。岚渡发行版本 `1.0.26.20261105.1`、Android 版本码 `807804805` 与真实内核版本分开；包含 Adreno GPU 崩溃修复。验证范围见 [GPU 稳定性记录](../docs/ANDROID-GPU-STABILITY.md)。
+
 ## 源码入口
 
 | 目录或文件 | 用途 |
@@ -101,3 +103,15 @@ GN 参数应预先写入 `out/LanduBaseline/args.gn`；阶段生成不等于 APK
 字体隔离是已列本地字体名称过滤，不是全字体白名单或跨设备字形/Emoji 统一。UA-CH 自定义不会更换实际内核。RAF 只推迟真实网页回调并保留取消语义，设备负载决定能达到的实际帧率。
 
 源码包含更多已接入的指纹与隔离实现，但完整表单、所有存储屏障、后台、媒体/GPU 后端、代理失败分支和所有网站兼容性仍需持续验收。不要把组件编译、模拟器或主机测试当作整个 Android 产品已完成。
+
+## 发行版本规则
+
+岚渡应用版本和真实 Chromium 内核版本分别维护。每次发布先更新 `branding/product.json` 中的 `releaseVersion`，并把 `androidVersionCode` 设置为高于上一次公开 APK 的值，再运行 `scripts/generate-brand-assets.py --write` 生成包内元信息。不要把岚渡发行版本用于 UA 自动推荐。
+
+打包后执行以下检查；`PREVIOUS_CODE` 必须来自上一次已发布 APK，不能填当前值来跳过递增核验：
+
+```sh
+python3 scripts/verify-release-version.py --apk "$APK" --aapt2 "$AAPT2" --previous-version-code "$PREVIOUS_CODE"
+```
+
+核验安装包、包内品牌信息和配置版本一致，确认 Android 版本码递增，并在真机的“关于岚渡浏览器”检查发行版本、版本码与真实内核三项，再上传发布。

@@ -34,7 +34,7 @@ public final class EnvironmentRegionalPersistenceTest {
         EnvironmentDefinition configured = manual.withRegionalPolicy(policy);
         EnvironmentCatalog.Snapshot saved = catalog.save(old.revision, configured);
         EnvironmentDefinition restored = new EnvironmentCatalog(control).read().find(manual.identity);
-        check(ByteBuffer.wrap(Files.readAllBytes(file)).getInt(4) == 17, "Write upgrades to V17");
+        check(ByteBuffer.wrap(Files.readAllBytes(file)).getInt(4) == 18, "Write upgrades to V18");
         check(restored.regionalPolicy.equals(policy), "All modes and preferred languages survive reopen");
         check(restored.createdAt == manual.createdAt && restored.fingerprint.seed.equals(manual.fingerprint.seed)
                 && restored.identity.equals(manual.identity), "Upgrade preserves identity, creation and fingerprint");

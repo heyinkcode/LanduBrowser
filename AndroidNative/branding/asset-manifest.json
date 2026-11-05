@@ -24,8 +24,8 @@
     },
     {
       "path": "branding/generated/assets/build-info.json",
-      "sha256": "c1e14c32cea140a277a0b359e018532959d04ea8a136827b813b9614e1ca5e04",
-      "bytes": 464
+      "sha256": "03e53c2368d1524107037d9a0484200117e486de9b350b3ba43b9f29864daba2",
+      "bytes": 540
     },
     {
       "path": "branding/generated/res/drawable-anydpi-v26/ic_launcher.xml",

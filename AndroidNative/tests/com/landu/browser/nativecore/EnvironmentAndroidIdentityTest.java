@@ -32,6 +32,28 @@ public final class EnvironmentAndroidIdentityTest {
         for (String model : new String[] {"x;y", "x/y", "x\"y", "x\ty", "x\ny", "x\u007fy", "x\0y", "小米", "x".repeat(81)}) {
             rejects(() -> new EnvironmentAndroidIdentity("15", model));
         }
+        java.util.Random random = new java.util.Random(51415);
+        java.util.Set<String> models = new java.util.HashSet<>();
+        String previousModel = "";
+        for (int i = 0; i < 100; i++) {
+            EnvironmentAndroidIdentity generated = EnvironmentAndroidIdentity.random(random, previousModel);
+            check(!generated.isSystem() && !generated.model.equals(previousModel), "Random choices must change model and remain explicit");
+            check(generated.platformVersion.equals("15.0.0") || generated.platformVersion.equals("16.0.0"), "Model and supported Android version must be selected together");
+            EnvironmentUserAgentSettings ua = EnvironmentUserAgentSettings.androidWithMajor("156.0.8078.48", "156", generated);
+            check(ua.values()[1].equals("156.0.8078.48") && ua.values()[6].equals(generated.model), "Generated identity must keep the real complete kernel version and paired UA-CH model");
+            check(ua.values()[0].contains(generated.model) && ua.mobile, "Generated mobile UA must use the same device model");
+            models.add(generated.model); previousModel = generated.model;
+        }
+        check(models.size() == 9, "Random generation must use the complete curated device pool");
+        EnvironmentAndroidIdentity randomIdentity = EnvironmentAndroidIdentity.random(random, previousModel);
+        EnvironmentUserAgentSettings manual = EnvironmentUserAgentSettings.androidWithMajor("156.0.8078.48", "131", randomIdentity);
+        check(manual.values()[1].equals("131.0.0.0") && manual.values()[0].contains("Chrome/131.0.0.0"), "Explicit major versions must update UA and Client Hints together");
+        rejects(() -> EnvironmentUserAgentSettings.androidWithMajor("156.0.8078.48", "1560", randomIdentity));
+        EnvironmentCatalog randomCatalog = new EnvironmentCatalog(root.resolve("random-roundtrip"));
+        EnvironmentDefinition randomEnvironment = EnvironmentDefinition.create("random", "", "").withAndroidIdentity(randomIdentity);
+        randomCatalog.save(0, randomEnvironment);
+        EnvironmentAndroidIdentity restoredRandom = randomCatalog.read().find(randomEnvironment.identity).androidIdentity;
+        check(restoredRandom.model.equals(randomIdentity.model) && restoredRandom.platformVersion.equals(randomIdentity.platformVersion), "Generated identity must persist without changing on catalog reload");
         Switches switches = new Switches();
         switches.values.put("accept-lang", "ja-JP,ja");
         switches.values.put("landu-canvas-seed", "kept");
@@ -90,7 +112,7 @@ public final class EnvironmentAndroidIdentityTest {
                 && next.fingerprint.doNotTrack == old.fingerprint.doNotTrack
                 && next.network.proxyUri.equals(old.network.proxyUri) && next.region.languages.equals(old.region.languages),
                 "Migration must preserve all previous environment policies");
-        check(ByteBuffer.wrap(Files.readAllBytes(file)).getInt(4) == 17, "Saving must upgrade to current V17");
+        check(ByteBuffer.wrap(Files.readAllBytes(file)).getInt(4) == 18, "Saving must upgrade to current V18");
     }
 
     private static byte[] fixture(int version, String androidVersion, String model) throws Exception {

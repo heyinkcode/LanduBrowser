@@ -6,5 +6,7 @@
   "projectUrl": "https://github.com/heyinkcode/LanduBrowser",
   "upstreamUrl": "https://github.com/sheying2013/OpenBrowser",
   "website": "https://heyinkcode.github.io/LanduBrowser/",
-  "free": true
+  "free": true,
+  "releaseVersion": "1.0.26.20261105.1",
+  "androidVersionCode": 807804805
 }

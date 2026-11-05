@@ -11,6 +11,7 @@
 static std::function<void()> tick;
 static int timer_owner = 0;
 namespace base {
+class CommandLine { public: static CommandLine* ForCurrentProcess() { static CommandLine value; return &value; } bool HasSwitch(const char*) const { return false; } };
 using TimeDelta = int;
 inline int Seconds(int n) { return n; }
 struct Time { static long long Now() { static long long t = 0; return ++t; } };
@@ -34,10 +35,10 @@ namespace permissions::landu {
 static GeolocationPolicy configured_policy;
 inline GeolocationPolicy ReadGeolocationPolicy() { return configured_policy; }
 }
-enum class ContentSettingsType { GEOLOCATION, GEOLOCATION_WITH_OPTIONS, NOTIFICATIONS };
+enum class ContentSettingsType { GEOLOCATION, GEOLOCATION_WITH_OPTIONS, NOTIFICATIONS, MEDIASTREAM_MIC, MEDIASTREAM_CAMERA, CAMERA_PAN_TILT_ZOOM };
 enum class PermissionStatus { DENIED, GRANTED };
 namespace content {
-enum class PermissionStatusSource { UNSPECIFIED };
+enum class PermissionStatusSource { UNSPECIFIED, KILL_SWITCH };
 struct PermissionResult {
   PermissionStatus status;
   PermissionResult(PermissionStatus s, PermissionStatusSource) : status(s) {}

@@ -65,9 +65,27 @@ class BrandAssetsTests(unittest.TestCase):
         self.assertTrue(info['free'])
         self.assertEqual(info['package'], 'com.landu.browser')
         self.assertEqual(info['kind'], 'bundled-source-reference')
+        product = json.loads((self.native / 'branding/product.json').read_text())
+        self.assertEqual(info['releaseVersion'], product['releaseVersion'])
+        self.assertEqual(info['androidVersionCode'], product['androidVersionCode'])
+        self.assertEqual(info['kernelVersion'], json.loads((self.native / 'upstream-lock.json').read_text())['version'])
         self.assertNotIn(str(self.repo).encode(), raw)
         self.assertNotIn(b'F:', raw)
         self.assertNotIn(b'C:', raw)
+
+    def test_release_metadata_rejects_invalid_android_versions(self):
+        path = self.native / 'branding/product.json'
+        original = json.loads(path.read_text())
+        for field, value in [('releaseVersion', '1.0.26-preview'),
+                             ('releaseVersion', '1.0.4294967296'),
+                             ('androidVersionCode', 0),
+                             ('androidVersionCode', 2100000001),
+                             ('androidVersionCode', True)]:
+            product = dict(original)
+            product[field] = value
+            path.write_text(json.dumps(product))
+            with self.subTest(field=field, value=value), self.assertRaisesRegex(ValueError, 'Invalid Android release version'):
+                brand.build_assets(self.native)
 
     def test_local_generated_edits_are_preserved_before_any_other_write(self):
         brand.write_assets(self.native)

@@ -159,6 +159,7 @@ public final class LanduManagerActivity extends Activity {
     private Switch uaWow64Choice;
     private LinearLayout uaCustomFields;
     private EditText[] uaFields;
+    private EditText chromeMajorField;
     private Switch deviceRafChoice;
     private EditText rafRateField;
     private Switch followPhoneIdentity;
@@ -1079,12 +1080,21 @@ public final class LanduManagerActivity extends Activity {
         updateGeolocationFields();
         location.addView(text("基于 IP 使用出口服务提供的大致坐标，不读取手机 GPS；网站仍需定位授权。检测不到坐标时阻止定位并提示。自定义坐标、询问网站和禁止定位可分别选择。", 14, 300, MUTED));
         content.addView(location, block(-2, 0, 20));
+        if (environment != null) {
+            TextView regionalPreview = text("正在读取上次启动的实际出口…", 14, 300, MUTED);
+            content.addView(regionalPreview, block(-2, 0, 20));
+            loadRegionalPreview(environment, regionalPreview);
+        }
+
         LinearLayout browserIdentity = card();
         browserIdentity.addView(text("Android 浏览器身份", 18, 500, TEXT));
         browserIdentity.addView(text("默认 UA 自动匹配当前浏览器内核版本，无需手动填写主版本号。", 14, 300, MUTED), block(-2, 8, 12));
-        EnvironmentAndroidIdentity identity = environment == null ? EnvironmentAndroidIdentity.system() : environment.androidIdentity;
+        EnvironmentAndroidIdentity identity = environment == null
+                ? EnvironmentAndroidIdentity.random(new java.security.SecureRandom(), "") : environment.androidIdentity;
         followPhoneIdentity = toggle("跟随手机的版本与型号", identity.isSystem());
         browserIdentity.addView(followPhoneIdentity, block(-2, 8, 12));
+        browserIdentity.addView(actionRow(button("独立随机", false, this::randomizeAndroidIdentity),
+                button("跟随本机", false, this::followDeviceIdentity)), block(BUTTON_HEIGHT, 0, 12));
         androidVersionField = field(browserIdentity, "Android 版本", "例如：15 或 15.1.2", identity.platformVersion, true, false);
         androidVersionField.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(16)});
         androidModelField = field(browserIdentity, "设备型号（可选）", "例如：Pixel 8；留空不报告型号", identity.model, false, false);
@@ -1092,21 +1102,22 @@ public final class LanduManagerActivity extends Activity {
         followPhoneIdentity.setOnCheckedChangeListener((button, checked) -> updateIdentityFields());
         updateIdentityFields();
         browserIdentity.addView(text("自定义版本与型号用于网页身份和 Client Hints。内核版本及 UA 缩减规则保留；这不会改变实际系统或 GPU。修改后需关闭环境再启动。", 14, 300, MUTED));
+        browserIdentity.addView(text("新环境随机选择 Android 版本与型号，保存后随环境固定；点击独立随机可更换。", 14, 300, MUTED), block(-2, 8, 0));
         content.addView(browserIdentity, block(-2, 0, 20));
         LinearLayout uaCard = card();
         uaCard.addView(text("User-Agent 与 UA-CH", 18, 500, TEXT));
         uaCard.addView(text("自动模式使用真实内核版本；自定义设置同时用于请求头、网页及 Worker。", 14, 300, MUTED), block(-2, 8, 12));
         EnvironmentUserAgentSettings ua = environment == null ? EnvironmentUserAgentSettings.automatic() : environment.fingerprint.userAgent;
-        uaCard.addView(text("当前内核：Chrome " + recommendedUserAgent().values()[1], 14, 400, TEXT), block(-2, 0, 12));
+        uaCard.addView(text("当前内核：Chrome " + installedKernelVersion(), 14, 400, TEXT), block(-2, 0, 12));
         automaticUaChoice = toggle("自动匹配当前内核（推荐）", !ua.custom);
         uaCard.addView(automaticUaChoice, block(-2, 8, 12));
-        uaCard.addView(button("读取当前内核推荐值", false, () -> {
-            EnvironmentUserAgentSettings recommended = recommendedUserAgent();
-            String[] values = recommended.values();
-            for (int i = 0; i < uaFields.length; i++) uaFields[i].setText(values[i]);
-            uaMobileChoice.setChecked(recommended.mobile); uaWow64Choice.setChecked(recommended.wow64);
-            automaticUaChoice.setChecked(false);
-        }), block(BUTTON_HEIGHT, 0, 16));
+        chromeMajorField = field(uaCard, "Chrome 主版本", "留用当前内核推荐版本",
+                (ua.custom ? ua.values()[1] : recommendedUserAgent().values()[1]).split("\\.")[0], true, false);
+        chromeMajorField.setInputType(InputType.TYPE_CLASS_NUMBER);
+        chromeMajorField.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(3)});
+        uaCard.addView(actionRow(button("按系统生成 UA", false, () -> generateUserAgent(false)),
+                button("随机 UA", false, () -> generateUserAgent(true))), block(BUTTON_HEIGHT, 0, 12));
+        uaCard.addView(button("跟随自动", false, this::followAutomaticUserAgent), block(BUTTON_HEIGHT, 0, 16));
         uaCustomFields = vertical();
         uaFields = new EditText[EnvironmentUserAgentSettings.FIELD_COUNT];
         String[] uaValues = (ua.custom ? ua : recommendedUserAgent()).values();
@@ -1247,16 +1258,19 @@ public final class LanduManagerActivity extends Activity {
                 if (!info.getBoolean("free") || !getPackageName().equals(info.getString("package"))) {
                     throw new IOException("安装包品牌信息不一致");
                 }
+                android.content.pm.PackageInfo installed = getPackageManager().getPackageInfo(getPackageName(), 0);
                 String description = "免费开源 · 本地运行\n使用你自己的网络，环境数据保存在手机。\n\n"
                         + "基于 OpenBrowser 开发，保留原作者的开源许可与贡献说明。"
                         + "浏览器内核来自 Chromium。\n\n"
+                        + "岚渡发行版本：" + installed.versionName + "\n"
+                        + "构建版本码：" + installed.getLongVersionCode() + "\n"
                         + "内核源码版本：" + info.getString("kernelVersion") + "\n"
                         + "项目：" + project + "\n原项目：" + upstream + "\n\n"
                         + "OpenBrowser · MIT License\n" + readNotice("OPENBROWSER-LICENSE.txt")
                         + "\n\nChromium · BSD License\n" + readNotice("CHROMIUM-LICENSE.txt")
                         + "\n\nChromium 第三方组件声明可在浏览器中打开 chrome://credits 查看。";
                 return new String[] {description, project, upstream};
-            } catch (org.json.JSONException | IllegalArgumentException error) {
+            } catch (org.json.JSONException | android.content.pm.PackageManager.NameNotFoundException | IllegalArgumentException error) {
                 throw new IOException("无法读取安装包内的开源声明", error);
             }
         }, value -> {
@@ -2378,13 +2392,105 @@ public final class LanduManagerActivity extends Activity {
     private Button cpuChoice;
     private Button memoryChoice;
 
-    private EnvironmentUserAgentSettings recommendedUserAgent() {
+    private String installedKernelVersion() {
         final String version;
-        try { version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; }
-        catch (android.content.pm.PackageManager.NameNotFoundException error) { throw new IllegalStateException("无法读取当前内核版本", error); }
-        String platformVersion = Build.VERSION.RELEASE.matches("[0-9]{1,3}(\\.[0-9]{1,5}){0,2}") ? Build.VERSION.RELEASE : "15";
-        String model = Build.MODEL.matches("[A-Za-z0-9 ._()/-]{0,80}") ? Build.MODEL : "";
-        return EnvironmentUserAgentSettings.androidDefaults(version, platformVersion, model);
+        // The application release version is independent of the Chromium engine.
+        try { version = new org.json.JSONObject(readNotice("build-info.json")).getString("kernelVersion"); }
+        catch (IOException | org.json.JSONException error) { throw new IllegalStateException("无法读取当前内核版本", error); }
+        return version;
+    }
+
+    private EnvironmentUserAgentSettings recommendedUserAgent() {
+        EnvironmentAndroidIdentity identity = selectedAndroidIdentity();
+        return EnvironmentUserAgentSettings.androidDefaults(installedKernelVersion(), identity.platformVersion, identity.model);
+    }
+
+    private EnvironmentAndroidIdentity selectedAndroidIdentity() {
+        if (followPhoneIdentity.isChecked()) {
+            String version = Build.VERSION.RELEASE.matches("[1-9][0-9](\\.(0|[1-9][0-9]{0,2})){0,2}")
+                    ? Build.VERSION.RELEASE : "15";
+            String model = Build.MODEL.replaceAll("[^A-Za-z0-9 ._-]", " ").trim();
+            if (model.length() > 80) model = model.substring(0, 80);
+            return new EnvironmentAndroidIdentity(version, model);
+        }
+        return new EnvironmentAndroidIdentity(androidVersionField.getText().toString(), androidModelField.getText().toString());
+    }
+
+    private void showAndroidIdentity(EnvironmentAndroidIdentity identity) {
+        followPhoneIdentity.setChecked(false);
+        androidVersionField.setText(identity.platformVersion);
+        androidModelField.setText(identity.model);
+    }
+
+    private void fillUserAgent(EnvironmentUserAgentSettings settings) {
+        String[] values = settings.values();
+        for (int i = 0; i < uaFields.length; i++) uaFields[i].setText(values[i]);
+        uaMobileChoice.setChecked(settings.mobile);
+        uaWow64Choice.setChecked(settings.wow64);
+    }
+
+    private void randomizeAndroidIdentity() {
+        if (!automaticUaChoice.isChecked()) { generateUserAgent(true); return; }
+        showAndroidIdentity(EnvironmentAndroidIdentity.random(new java.security.SecureRandom(), androidModelField.getText().toString()));
+        fillUserAgent(recommendedUserAgent());
+    }
+
+    private void followDeviceIdentity() {
+        followPhoneIdentity.setChecked(true);
+        EnvironmentAndroidIdentity identity = selectedAndroidIdentity();
+        androidVersionField.setText(identity.platformVersion);
+        androidModelField.setText(identity.model);
+        if (automaticUaChoice.isChecked()) fillUserAgent(recommendedUserAgent());
+        else generateUserAgent(false);
+    }
+
+    private void generateUserAgent(boolean randomDevice) {
+        try {
+            String requestedMajor = chromeMajorField.getText().toString().trim();
+            if (!requestedMajor.matches("[1-9][0-9]{1,2}")) throw new IllegalArgumentException("Chrome 主版本须为 10–999");
+            EnvironmentAndroidIdentity identity = randomDevice
+                    ? EnvironmentAndroidIdentity.random(new java.security.SecureRandom(), androidModelField.getText().toString())
+                    : selectedAndroidIdentity();
+            EnvironmentUserAgentSettings generated = EnvironmentUserAgentSettings.androidWithMajor(installedKernelVersion(), requestedMajor, identity);
+            if (randomDevice) showAndroidIdentity(identity);
+            fillUserAgent(generated);
+            automaticUaChoice.setChecked(false);
+            chromeMajorField.setError(null);
+        } catch (IllegalArgumentException error) {
+            chromeMajorField.setError(error.getMessage());
+            chromeMajorField.requestFocus();
+        }
+    }
+
+    private void followAutomaticUserAgent() {
+        chromeMajorField.setText(installedKernelVersion().split("\\.")[0]);
+        automaticUaChoice.setChecked(true);
+        try { fillUserAgent(recommendedUserAgent()); }
+        catch (IllegalArgumentException error) { androidVersionField.setError(error.getMessage()); }
+    }
+
+    private void loadRegionalPreview(EnvironmentDefinition environment, TextView label) {
+        final long generation = uiGeneration;
+        worker.execute(() -> {
+            String summary = "保存并启动环境后显示实际出口、时区与坐标。";
+            try {
+                EnvironmentRegionalLaunchStore.Receipt receipt = new EnvironmentRegionalLaunchStore(
+                        getNoBackupFilesDir().toPath().resolve("landu-control")).read(environment);
+                if (receipt.measured != null) {
+                    EnvironmentExitInfo exit = receipt.measured;
+                    summary = "上次启动实际出口：" + exit.ip + " · " + exit.countryCode + " · " + exit.city
+                            + "\n生效语言：" + receipt.resolved.region.languages
+                            + "\n生效时区：" + receipt.resolved.region.timeZone
+                            + "\n" + receipt.resolved.geolocation.summary()
+                            + "\n检测时间：" + android.text.format.DateFormat.format("MM-dd HH:mm", exit.checkedAt)
+                            + "\n修改网络或区域策略后，保存并重新启动以更新此结果。";
+                }
+            } catch (IOException ignored) { }
+            final String value = summary;
+            main.post(() -> {
+                if (!isDestroyed() && editing && uiGeneration == generation && label.isAttachedToWindow()) label.setText(value);
+            });
+        });
     }
 
     private String[] userAgentFieldValues() {

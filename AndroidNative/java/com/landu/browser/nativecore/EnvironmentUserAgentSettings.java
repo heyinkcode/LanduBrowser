@@ -95,6 +95,16 @@ public final class EnvironmentUserAgentSettings {
         return new EnvironmentUserAgentSettings(true, values, true, false);
     }
 
+    public static EnvironmentUserAgentSettings androidWithMajor(String kernelVersion, String major,
+            EnvironmentAndroidIdentity identity) {
+        String actual = normalizeVersion(kernelVersion);
+        if (major == null || !major.matches("[1-9][0-9]{1,2}")) {
+            throw new IllegalArgumentException("Chrome 主版本须为 10–999");
+        }
+        String version = major.equals(actual.split("\\.")[0]) ? actual : major + ".0.0.0";
+        return androidDefaults(version, identity.platformVersion, identity.model);
+    }
+
     public String[] values() { return fields.clone(); }
     public static String label(int i) { return LABELS[i]; }
 

@@ -4,15 +4,17 @@
 
 ## 当前版本
 
-[v1.0.26-android.20261104.2 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) 提供完整 Chromium Android 内核，在手机本地运行。APK约548 MB，ARM64，内核为 `156.0.8078.48`，包名为 `com.landu.browser`。
+[v1.0.26-android.20261105.1 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1) 提供完整 Chromium Android 内核，在手机本地运行。APK约548 MB，ARM64，内核为 `156.0.8078.48`，包名为 `com.landu.browser`。
 
-构建最低系统为 Android 10；本次真机仅覆盖小米 Android 15 和 16 的指定检查，不能据此宣称所有机型和系统均已兼容。当前为开发签名预览包，尚未上架应用商店，完整功能仍在验收。
+构建最低系统为 Android 10；既有 UA-CH 与 RAF 指定检查覆盖小米 Android 15 和 16；本次 GPU 修复仅在 Redmi Note 12 Turbo / Android 15 复测，不能据此宣称所有机型和系统均已兼容。当前为开发签名预览包，尚未上架应用商店，完整功能仍在验收。
 
 软件免费，不需要岚渡账号、自建服务器、云手机或付费激活。直接使用手机自己的 Wi-Fi、移动数据或系统 VPN；GitHub 只分发代码、文档和安装包，不转发网页流量。
 
+本次岚渡发行版本为 **1.0.26.20261105.1**，Android 版本码为 **807804805**，内核版本独立保留。“关于岚渡浏览器”同时显示两者；发行版本不用于生成 UA。GPU 修复详见[稳定性记录](ANDROID-GPU-STABILITY.md)，历史变更见[更新日志](CHANGELOG.md)。
+
 ## 安装与更新
 
-1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
+1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
 2. 首次安装时，按 Android 提示授权当前浏览器或文件管理器安装该 APK；无需关闭系统安全防护。
 3. 更新前保存编辑，在管理页选择“更多 → 关闭当前环境”，等环境退出后安装新包。已验证本次同签名保留数据更新；不要通过卸载旧版来解决签名冲突，先备份并反馈。
 4. 打开岚渡，新建环境，填写名称和启动地址，保存后启动。若出现浏览器首次启动引导，按自己的选择完成后继续。
@@ -36,6 +38,16 @@
 **RAF 动画帧率** 是独立设置：跟随设备，或指定 1–240 FPS 上限。30 FPS 对应约 33.3 ms，60 FPS 对应约 16.7 ms 的理想间隔；设备刷新率、前后台状态和页面负载会影响实际值。设置不会伪造回调时间戳，也不能让繁忙页面强行保持恒定帧率。
 
 两项都需保存并关闭、重启环境后生效。自定义 UA-CH 不会替换真实内核，也不保证消除第三方启发式版本告警。具体实测见 [测试记录](TESTING.md)。
+
+## 随机 UA 与设备型号
+
+新建环境时预选独立随机档案，可在“Android 浏览器身份”点击“独立随机”更换 Android 版本和型号，或选择“跟随本机”。当前档案池覆盖 Pixel 7、7 Pro、8、8 Pro、9，以及 Galaxy S23/S23+、S24/S24+ 的国际型号，共 9 种型号和 Android 15/16 组合。生成结果随环境保存，每次启动读取已保存值。
+
+在“User-Agent 与 UA-CH”填写 Chrome 主版本后，点击“按系统生成 UA”使用当前所选 Android 身份，点击“随机 UA”同时抽取新的型号和 Android 版本。UA 文本、UA-CH 型号、平台版本、品牌和版本列表一起更新。“跟随自动”使用真实内核版本。
+
+区域编辑页显示上次启动检测出的真实出口和最终区域配置。网络或区域设置修改后，保存并关闭、重启环境以重新检测。IP 定位使用出口服务返回的城市级坐标，网站定位授权后才能读取相应位置。
+
+档案的 Android 16 支持范围参考 Google 和 Samsung 的官方资料。[Google 设备列表](https://developer.android.com/about/versions/16/get?hl=en) · [Samsung 更新列表](https://www.samsung.com/us/support/answer/ANS10007435/)
 
 ## Google 网页登录与原页翻译
 
@@ -63,3 +75,13 @@
 本地环境与指纹设置按移动端能力接入；扩展中心、窗口同步、RPA、桌面 Local API/MCP、桌面环境整包迁移和团队云管理没有在安卓版中实现同等能力。请以实际界面和测试范围为准。
 
 需要可选网络服务，可了解 **[岚渡云（推广）](https://app.landucloud.com)**。这是维护者推广，不代表 OpenBrowser 原作者背书；服务独立计费，不购买也能免费使用软件。
+
+## 出口查询与网页定位
+
+出口检测使用环境配置的网络路线与代理认证。优先访问 ipwho.is，发生限流或失败时使用 ipapi.co 的调用方 IP 查询接口，最多各请求一次。服务会获得查询请求的出口 IP。IP 地理数据库可能与其他网站显示不同城市，坐标代表数据库估计位置。
+
+按出口 IP 的时区、语言和定位在启动时生成，并绑定该次运行。修改网络或区域配置后，关闭当前环境再启动。编辑页的“上次启动”区域可以核对已生效的出口、坐标与时间，尚未重启的表单修改不会改变这份记录。
+
+按出口 IP 和自定义坐标使用环境内的虚拟位置，无需授予手机定位权限。网站仍会询问是否允许访问位置，允许后才返回相应坐标。跟随设备模式才会检查 Android 应用定位权限及系统位置服务。按出口 IP 查询失败则停止启动，服务缺少坐标则阻止定位。
+
+备用服务字段与接口见 [ipapi.co 官方文档](https://ipapi.co/api/)。

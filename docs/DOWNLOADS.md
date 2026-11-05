@@ -18,16 +18,19 @@
 
 ## 软件内更新
 
-客户端联网启动后自动检查 GitHub 最新正式版，持续运行时每6小时复查，也可在“本地设置 → 软件更新”手动检查。v1.0.26 发现更新后，左下角版本标记变红，点击可查看并下载。v1.0.27 起增加“查看更新 / 稍后”提示窗口。
+客户端联网启动后自动检查 GitHub 最新正式版，持续运行时每6小时复查，也可在“本地设置 → 软件更新”手动检查。建议 v1.0.26 用户先通过本页安装 Windows v1.0.28；旧版检查可能被安卓预览发布影响。v1.0.27 起增加“查看更新 / 稍后”提示窗口。
 
 更新按完整安装包下载，完成后运行安装程序。关闭应用期间不会即时收到通知。GitHub 网络不可达时，可访问[官网](https://heyinkcode.github.io/LanduBrowser/)或[发布列表](https://github.com/heyinkcode/LanduBrowser/releases)手动下载。
 
 ## Android 最新预览
 
-- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261104.2/LanduBrowser-Android-arm64-latest.apk)
-- [安卓发布说明和校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261104.2)
+- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.1/LanduBrowser-Android-arm64-latest.apk)
+- [对应安卓源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.1/LanduBrowser-1.0.26-android-20261105-1-source.zip)
+- [安卓发布说明和校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1)
 
-APK约548 MB，提供完整 Chromium 156 内核、Google 网页登录、本地原页翻译及侧边状态按钮。首次翻译通过手机网络下载语言模型。当前为开发签名预览包，更新前保存编辑并关闭环境，再同签名覆盖安装。真机范围见[测试记录](TESTING.md)。
+发行版本 `1.0.26.20261105.1`，Android 版本码 `807804805`，APK约548 MB，真实内核仍为 `156.0.8078.48`。本次修复指定 Adreno GPU 崩溃，保留 Google 网页登录、本地原页翻译及侧边状态按钮。首次翻译通过手机网络下载语言模型。当前为开发签名预览包，更新前保存编辑并关闭环境，再同签名覆盖安装。真机范围见[测试记录](TESTING.md)。
+
+Android 当前通过本页或官网手动下载 APK 覆盖更新，未宣称具有与 Windows 相同的自动更新提示。
 
 ## 源码与校验
 

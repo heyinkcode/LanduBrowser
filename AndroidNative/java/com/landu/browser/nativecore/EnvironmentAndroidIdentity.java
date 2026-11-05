@@ -31,6 +31,22 @@ public final class EnvironmentAndroidIdentity {
         this.model = selectedModel;
     }
 
+    // Curated Android 15/16 models supported by the OEM update lists.
+    // The selected literals use the existing persisted custom-identity format.
+    private static final String[] RANDOM_MODELS = {
+        "Pixel 7", "Pixel 7 Pro", "Pixel 8", "Pixel 8 Pro", "Pixel 9",
+        "SM-S911B", "SM-S916B", "SM-S921B", "SM-S926B"
+    };
+
+    public static EnvironmentAndroidIdentity random(java.util.Random random, String previousModel) {
+        java.util.Objects.requireNonNull(random, "random");
+        int index = random.nextInt(RANDOM_MODELS.length);
+        if (RANDOM_MODELS[index].equals(previousModel)) {
+            index = (index + 1 + random.nextInt(RANDOM_MODELS.length - 1)) % RANDOM_MODELS.length;
+        }
+        return new EnvironmentAndroidIdentity(random.nextBoolean() ? "15" : "16", RANDOM_MODELS[index]);
+    }
+
     public static EnvironmentAndroidIdentity system() { return new EnvironmentAndroidIdentity("", ""); }
     public boolean isSystem() { return platformVersion.isEmpty(); }
 
