@@ -4,17 +4,17 @@
 
 ## 当前版本
 
-[v1.0.26-android.20261105.1 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1) 提供完整 Chromium Android 内核，在手机本地运行。APK约548 MB，ARM64，内核为 `156.0.8078.48`，包名为 `com.landu.browser`。
+[v1.0.26-android.20261105.2 预览版](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.2) 提供完整 Chromium Android 内核，在手机本地运行。APK约548 MB，ARM64，内核为 `156.0.8078.48`，包名为 `com.landu.browser`。
 
 构建最低系统为 Android 10；既有 UA-CH 与 RAF 指定检查覆盖小米 Android 15 和 16；本次 GPU 修复仅在 Redmi Note 12 Turbo / Android 15 复测，不能据此宣称所有机型和系统均已兼容。当前为开发签名预览包，尚未上架应用商店，完整功能仍在验收。
 
 软件免费，不需要岚渡账号、自建服务器、云手机或付费激活。直接使用手机自己的 Wi-Fi、移动数据或系统 VPN；GitHub 只分发代码、文档和安装包，不转发网页流量。
 
-本次岚渡发行版本为 **1.0.26.20261105.1**，Android 版本码为 **807804805**，内核版本独立保留。“关于岚渡浏览器”同时显示两者；发行版本不用于生成 UA。GPU 修复详见[稳定性记录](ANDROID-GPU-STABILITY.md)，历史变更见[更新日志](CHANGELOG.md)。
+本次岚渡发行版本为 **1.0.26.20261105.2**，Android 版本码为 **807804806**，内核版本独立保留。“关于岚渡浏览器”同时显示两者；发行版本不用于生成 UA。GPU 修复详见[稳定性记录](ANDROID-GPU-STABILITY.md)，历史变更见[更新日志](CHANGELOG.md)。
 
 ## 安装与更新
 
-1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
+1. 从 [预览版发布页](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.2) 下载 `LanduBrowser-Android-arm64-latest.apk` 和 `SHA256SUMS.txt`，核对 SHA-256。
 2. 首次安装时，按 Android 提示授权当前浏览器或文件管理器安装该 APK；无需关闭系统安全防护。
 3. 更新前保存编辑，在管理页选择“更多 → 关闭当前环境”，等环境退出后安装新包。已验证本次同签名保留数据更新；不要通过卸载旧版来解决签名冲突，先备份并反馈。
 4. 打开岚渡，新建环境，填写名称和启动地址，保存后启动。若出现浏览器首次启动引导，按自己的选择完成后继续。
