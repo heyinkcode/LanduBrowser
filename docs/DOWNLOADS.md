@@ -24,11 +24,11 @@
 
 ## Android 最新预览
 
-- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.1/LanduBrowser-Android-arm64-latest.apk)
-- [对应安卓源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.1/LanduBrowser-1.0.26-android-20261105-1-source.zip)
-- [安卓发布说明和校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1)
+- [Android ARM64 APK](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.2/LanduBrowser-Android-arm64-latest.apk)
+- [对应安卓源码 ZIP](https://github.com/heyinkcode/LanduBrowser/releases/download/v1.0.26-android.20261105.2/LanduBrowser-1.0.26-android-20261105-2-source.zip)
+- [安卓发布说明和校验清单](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.2)
 
-发行版本 `1.0.26.20261105.1`，Android 版本码 `807804805`，APK约548 MB，真实内核仍为 `156.0.8078.48`。本次修复指定 Adreno GPU 崩溃，保留 Google 网页登录、本地原页翻译及侧边状态按钮。首次翻译通过手机网络下载语言模型。当前为开发签名预览包，更新前保存编辑并关闭环境，再同签名覆盖安装。真机范围见[测试记录](TESTING.md)。
+发行版本 `1.0.26.20261105.2`，Android 版本码 `807804806`，APK约548 MB，真实内核仍为 `156.0.8078.48`。本次修复文字选区重复绘制触发的网页进程退出，同时包含此前的 Adreno GPU 修复，保留 Google 网页登录、本地原页翻译及侧边状态按钮。首次翻译通过手机网络下载语言模型。当前为开发签名预览包，更新前保存编辑并关闭环境，再同签名覆盖安装。真机范围见[测试记录](TESTING.md)。
 
 Android 当前通过本页或官网手动下载 APK 覆盖更新，未宣称具有与 Windows 相同的自动更新提示。
 

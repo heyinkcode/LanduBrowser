@@ -7,8 +7,8 @@
   "upstreamUrl": "https://github.com/sheying2013/OpenBrowser",
   "website": "https://heyinkcode.github.io/LanduBrowser/",
   "free": true,
-  "releaseVersion": "1.0.26.20261105.1",
-  "androidVersionCode": 807804805,
+  "releaseVersion": "1.0.26.20261105.2",
+  "androidVersionCode": 807804806,
   "kernelVersion": "156.0.8078.48",
   "kernelRevision": "d0c02bfad08ec92a6ffcf989e53cd995e6381a4c",
   "kind": "bundled-source-reference"

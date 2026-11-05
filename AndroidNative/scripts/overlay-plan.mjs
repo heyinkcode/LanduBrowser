@@ -2495,6 +2495,33 @@ replacements.set('third_party/dawn/src/dawn/native/vulkan/BackendVk.cpp', [[
 ]]);
 
 
+// A text selection can be painted more than once in a chunk. Keep the same
+// last-painted-bound behavior as Chromium release builds, including independent
+// start/end updates. A duplicate-bound diagnostic must not terminate the page.
+replacements.set('third_party/blink/renderer/platform/graphics/paint/paint_chunker.cc', [[
+  `  LayerSelectionData& selection_data = chunk.EnsureLayerSelectionData();
+  if (start) {
+    DCHECK(!selection_data.start);
+    selection_data.start = start;
+  }
+
+  if (end) {
+    DCHECK(!selection_data.end);
+    selection_data.end = end;
+  }
+`,
+  `  LayerSelectionData& selection_data = chunk.EnsureLayerSelectionData();
+  // Repeated paints replace only the supplied endpoint, as in release builds.
+  if (start) {
+    selection_data.start = start;
+  }
+
+  if (end) {
+    selection_data.end = end;
+  }
+`
+]]);
+
 // Virtual geolocation keeps site consent while avoiding Android sensor permission requests.
 replacements.set("components/location/android/java/src/org/chromium/components/location/LocationUtils.java", [["    private boolean hasPermission(String name) {\n", "    /** Virtual positions come from the immutable environment, without Android sensor access. */\n    public static boolean usesVirtualLocation() {\n        if (!org.chromium.base.CommandLine.isInitialized()) return false;\n        org.chromium.base.CommandLine command = org.chromium.base.CommandLine.getInstance();\n        if (!\"custom\".equals(command.getSwitchValue(\"landu-geolocation-mode\"))) return false;\n        String position = command.getSwitchValue(\"landu-geolocation-position\");\n        if (position == null || position.length() > 128) return false;\n        String[] parts = position.split(\",\", -1);\n        if (parts.length != 3) return false;\n        try {\n            double latitude = Double.parseDouble(parts[0]);\n            double longitude = Double.parseDouble(parts[1]);\n            double accuracy = Double.parseDouble(parts[2]);\n            return Double.isFinite(latitude) && Double.isFinite(longitude) && Double.isFinite(accuracy)\n                    && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180\n                    && accuracy >= 1 && accuracy <= 1000000;\n        } catch (NumberFormatException invalidPosition) {\n            return false;\n        }\n    }\n\n    private boolean hasPermission(String name) {\n"]]);
 replacements.set("components/location/android/java/src/org/chromium/components/location/LocationSettings.java", [["        return LocationUtils.getInstance().hasAndroidLocationPermission();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().hasAndroidLocationPermission();"], ["        return LocationUtils.getInstance().hasAndroidFineLocationPermission();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().hasAndroidFineLocationPermission();"], ["        return LocationUtils.getInstance().isSystemLocationSettingEnabled();", "        return LocationUtils.usesVirtualLocation()\n                || LocationUtils.getInstance().isSystemLocationSettingEnabled();"]]);
