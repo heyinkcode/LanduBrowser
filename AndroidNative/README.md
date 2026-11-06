@@ -10,7 +10,7 @@
 
 配置导出不包含完整浏览数据和手机保存的密码，不能当作整个 Profile 备份。没有宣称与桌面扩展、RPA、窗口同步或 API/MCP 完全一致。
 
-当前安卓修复预览为 [v1.0.26-android.20261105.1](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261105.1)。岚渡发行版本 `1.0.26.20261105.1`、Android 版本码 `807804805` 与真实内核版本分开；包含 Adreno GPU 崩溃修复。验证范围见 [GPU 稳定性记录](../docs/ANDROID-GPU-STABILITY.md)。
+当前安卓性能预览为 [v1.0.26-android.20261106.1](https://github.com/heyinkcode/LanduBrowser/releases/tag/v1.0.26-android.20261106.1)。发行版本 `1.0.26.20261106.1`，Android 版本码 `807804807`。本次调整 V8 执行配置并完成 Android 15 的 20 轮真实网站交互测试，范围见 [测试记录](../docs/TESTING.md)。
 
 ## 源码入口
 
@@ -55,6 +55,8 @@ symbol_level = 0
 blink_symbol_level = 0
 v8_symbol_level = 0
 use_remoteexec = false
+v8_dcheck_always_on = false
+v8_enable_memory_accounting_checks = true
 android_static_analysis = "on"
 ```
 
@@ -114,4 +116,8 @@ GN 参数应预先写入 `out/LanduBaseline/args.gn`；阶段生成不等于 APK
 python3 scripts/verify-release-version.py --apk "$APK" --aapt2 "$AAPT2" --previous-version-code "$PREVIOUS_CODE"
 ```
 
-核验安装包、包内品牌信息和配置版本一致，确认 Android 版本码递增，并在真机的“关于岚渡浏览器”检查发行版本、版本码与真实内核三项，再上传发布。
+核验安装包、包内品牌信息和配置版本一致，确认 Android 版本码递增，并在真机的“关于岚渡浏览器”检查发行版本、版本码与真实内核三项，再上传发布。
+
+## V8 性能构建
+
+使用维护驱动时，在已审查阶段的构建命令中加入 `--build --v8-release`。默认单任务并行度保留，可显式选择 `--jobs 2`。驱动保存原 GN 参数，并核验生成的 V8 配置。手工构建按上面的 GN 参数设置。原生构建完成后仍须检查 APK 签名、版本和真机运行。

@@ -32,6 +32,24 @@ def space():
             raise RuntimeError('Build stopped to preserve 12 GiB free space: ' + str(path))
 
 
+def v8_release_arguments(arguments):
+    # Keep the public V8 header configuration compatible with existing Blink
+    # objects while removing V8's internal development checks and test features.
+    for name, value in (('v8_dcheck_always_on', 'false'),
+                        ('v8_enable_memory_accounting_checks', 'true')):
+        assignment = re.compile(r'(?m)^[ \t]*' + name + r'[ \t]*=.*$')
+        matches = list(assignment.finditer(arguments))
+        if len(matches) > 1:
+            raise RuntimeError('Duplicate GN argument: ' + name)
+        if matches:
+            if not re.fullmatch(r'[ \t]*' + name + r'[ \t]*=[ \t]*(true|false)[ \t]*(?:#.*)?', matches[0].group()):
+                raise RuntimeError('Expected a literal boolean GN argument: ' + name)
+            arguments = assignment.sub(name + ' = ' + value, arguments)
+        else:
+            arguments = arguments.rstrip() + '\n' + name + ' = ' + value + '\n'
+    return arguments
+
+
 def run(command, log, env):
     with log.open('a') as stream:
         stream.write('\n' + json.dumps(command) + '\n')
@@ -64,6 +82,8 @@ def main():
     parser.add_argument('--stage', type=Path, required=True)
     parser.add_argument('--manifest-sha256', required=True)
     parser.add_argument('--build', action='store_true', help='Without this, validate only')
+    parser.add_argument('--v8-release', action='store_true',
+                        help='Rebuild V8 without internal development checks; preserve public memory accounting checks')
     parser.add_argument('--jobs', type=int, choices=(1, 2), default=1,
                         help='Local compile parallelism; keep 1 for native rebuilds')
     args = parser.parse_args()
@@ -105,6 +125,7 @@ def main():
         log = BUILD_ROOT / 'logs' / ('landu-apk-' + stamp + '.log')
         receipt = BUILD_ROOT / 'logs' / ('landu-apk-' + stamp + '.json')
         state = {'kind': 'landu-native-development-apk-build', 'stageManifestSha256': args.manifest_sha256,
+                 'nativeRoot': str(ROOT), 'buildDriverSha256': digest(Path(__file__)),
                  'log': str(log), 'jobs': args.jobs, 'apkBuilt': False, 'deviceTested': False, 'releaseReady': False}
         def save():
             temporary = receipt.with_suffix('.tmp')
@@ -120,8 +141,25 @@ def main():
                        JAVA_HOME=str(SOURCE / 'third_party/jdk/current'))
             # The SDK apksigner shell script invokes `java` from PATH, not JAVA_HOME.
             env['PATH'] = str(SOURCE / 'third_party/jdk/current/bin') + os.pathsep + env.get('PATH', '')
+            arguments = OUT / 'args.gn'
+            if args.v8_release:
+                original = arguments.read_text()
+                updated = v8_release_arguments(original)
+                (BUILD_ROOT / 'logs' / ('landu-args-before-' + stamp + '.gn')).write_text(original)
+                temporary = arguments.with_suffix('.gn.tmp')
+                temporary.write_text(updated)
+                temporary.replace(arguments)
+            state['gnArguments'] = arguments.read_text()
+            state['v8ReleaseRequested'] = args.v8_release
+            save()
             run(['gn', 'gen', str(OUT), '--fail-on-unused-args'], log, env)
             run(['autoninja', '-C', str(OUT), '-j', str(args.jobs), 'chrome_public_apk'], log, env)
+            if args.v8_release:
+                configuration = json.loads((OUT / 'v8_build_config.json').read_text())
+                for name in ('dcheck_always_on', 'DEBUG_defined', 'debug_code', 'verification_features'):
+                    if configuration.get(name) is not False:
+                        raise RuntimeError('V8 release configuration was not built: ' + name)
+                state['v8BuildConfiguration'] = configuration
             apk = OUT / 'apks/ChromePublic.apk'
             sdk = SOURCE / 'third_party/android_sdk/public/build-tools/37.0.0'
             badging = subprocess.check_output([str(sdk / 'aapt2'), 'dump', 'badging', str(apk)], text=True)
