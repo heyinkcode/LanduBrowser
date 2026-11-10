@@ -82,6 +82,11 @@ async function main() {
     const context = await browser.newContext({ viewport: { width: 1600, height: 1000 }, locale: 'zh-CN' });
     const bridge = fs.readFileSync(path.join(__dirname, 'ui-audit-bridge.js'), 'utf8');
     await context.addInitScript({ content: bridge + "\nwindow.ops.getInfo = async () => ({ platform: 'win32', appVersion: '1.0.25', browsers: [], profileRoot: 'UI-AUDIT-FIXTURE' }); localStorage.setItem('openbrowser-ui-skin-v1', 'landu-apple');" });
+    await context.addInitScript(() => {
+      window.ops.rpaPlans = async () => [];
+      window.ops.rpaTasks = async () => [];
+      window.ops.rpaTemplates = async () => ({ templates: [], categories: ['全部'] });
+    });
     const page = await context.newPage();
     const frame = () => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     await page.goto(pathToFileURL(path.join(root, 'index.html')).href);
@@ -201,7 +206,7 @@ async function main() {
     }
     for (const viewport of [{ width: 1280, height: 900 }, { width: 900, height: 650 }]) {
       await page.setViewportSize(viewport);
-      for (const view of ['profiles', 'groups', 'proxies', 'extensions', 'sync', 'api-mcp', 'logs', 'system']) {
+      for (const view of ['profiles', 'groups', 'proxies', 'extensions', 'sync', 'rpa', 'rpa-guide', 'api-mcp', 'logs', 'system']) {
         await page.evaluate(view => { switchView(view); document.querySelector('main').scrollTop = 0; }, view);
         await frame();
         const overview = await page.evaluate(view => {
@@ -215,6 +220,46 @@ async function main() {
         if (view === 'system') validate(`${viewport.width}/system-fields`, await page.evaluate(measure, '#view-system .settings-grid'));
         if (viewport.width === 1280) await page.screenshot({ path: path.join(output, 'view-' + view + '.png') });
       }
+      await page.evaluate(() => switchView('sync'));
+      for (const tab of ['text', 'tabs']) {
+        await page.locator(`[data-console="${tab}"]`).click();
+        validate(`${viewport.width}/sync-${tab}-fields`, await page.evaluate(measure, '#console-' + tab));
+      }
+      if (!await page.locator('#nav-rpa-plus').isVisible()) await page.locator('#rpa-menu-toggle').click();
+      for (const tab of ['flows', 'tasks', 'runs', 'store']) {
+        await page.locator(`.nav-child[data-rpa-tab="${tab}"]`).click();
+        await frame();
+        const panel = await page.evaluate(tab => {
+          const visible = node => node.getClientRects().length > 0;
+          const active = document.querySelector(`[data-rpa-panel="${tab}"]`);
+          return {
+            currentTab: window.getCurrentRpaTab(),
+            active: active && visible(active),
+            visiblePanels: [...document.querySelectorAll('[data-rpa-panel]')].filter(visible).length,
+            hiddenVisible: [...active.querySelectorAll('[hidden]')].filter(visible).map(node => node.id),
+            controls: [...active.querySelectorAll('.rpa-toolbar button,.rpa-search input,.rpa-toolbar .themed-select-button')].filter(visible).map(node => node.getBoundingClientRect().height),
+          };
+        }, tab);
+        check(`${viewport.width}/rpa-${tab} / menu opens the correct panel`, panel.active && panel.currentTab === tab && panel.visiblePanels === 1, panel);
+        check(`${viewport.width}/rpa-${tab} / hidden content stays hidden`, panel.hiddenVisible.length === 0, panel);
+        check(`${viewport.width}/rpa-${tab} / consistent toolbar controls`, panel.controls.length > 0 && panel.controls.every(height => Math.abs(height - 36) <= 1), panel);
+      }
+      await page.locator('.nav-child[data-view="rpa-guide"]').click();
+      check(`${viewport.width}/rpa-guide / navigation opens documentation`, await page.locator('#view-rpa-guide').isVisible(), {});
+      await page.locator('#rpa-guide-create').click();
+      check(`${viewport.width}/rpa-guide / create opens the template dialog in store`, await page.locator('#rpa-template-dialog').isVisible() && await page.evaluate(() => window.getCurrentRpaTab() === 'store' && document.querySelector('#view-rpa').classList.contains('active')), {});
+      await page.evaluate(() => document.querySelector('#rpa-template-dialog').close());
+      await page.evaluate(() => {
+        ui.logs = [{ time: '14:32:06', module: 'Browser', message: '较长的运行记录用于核对换行与列对齐。'.repeat(12) }];
+        renderLogs();
+        switchView('logs');
+      });
+      const logColumns = await page.evaluate(() => {
+        const header = [...document.querySelectorAll('.retro-log-columns > span')];
+        const row = [...document.querySelectorAll('#log-list .log-row:first-child > span')];
+        return header.map((node, index) => Math.abs(node.getBoundingClientRect().left - row[index].getBoundingClientRect().left));
+      });
+      check(`${viewport.width}/logs / header and wrapped records align`, logColumns.every(offset => offset <= 1), logColumns);
     }
     check('renderer / no runtime errors', (await page.evaluate(() => window.__uiAuditErrors)).length === 0, await page.evaluate(() => window.__uiAuditErrors));
     const failures = results.filter(result => !result.ok);

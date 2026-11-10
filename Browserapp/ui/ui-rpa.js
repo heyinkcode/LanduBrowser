@@ -95,7 +95,7 @@ function showRpaPanel(tab) {
   // Ensure RPA menu expands
   const menu = document.getElementById('nav-rpa-plus');
   const toggle = document.getElementById('rpa-menu-toggle');
-  if (menu && menu.hidden) {
+  if (menu && (menu.hidden || menu.style.display === 'none')) {
     menu.hidden = false;
     menu.style.display = 'block';
   }
@@ -739,11 +739,11 @@ document.getElementById('rpa-store-sort')?.addEventListener('change', () => refr
 document.getElementById('rpa-store-source')?.addEventListener('change', () => refreshRpaStore().catch((e) => toast(e.message)));
 document.getElementById('rpa-store-refresh')?.addEventListener('click', () => refreshRpaStore().catch((e) => toast(e.message)));
 document.getElementById('rpa-store-guide')?.addEventListener('click', () => {
-  showRpaPanel('guide');
+  switchView('rpa-guide');
 });
-document.getElementById('rpa-guide-back')?.addEventListener('click', () => showRpaPanel('store'));
+document.getElementById('rpa-guide-back')?.addEventListener('click', () => switchView('rpa', 'store'));
 document.getElementById('rpa-guide-create')?.addEventListener('click', () => {
-  showRpaPanel('store');
+  switchView('rpa', 'store');
   openCustomTemplateDialog({
     name: '',
     cat: '我的模板',
@@ -940,6 +940,7 @@ document.getElementById('rpa-menu-toggle')?.addEventListener('click', (event) =>
 });
 
 window.showRpaPanel = showRpaPanel;
+window.getCurrentRpaTab = () => currentRpaTab;
 window.refreshRpaPage = refreshRpaPage;
 window.appendRpaLog = appendRpaLog;
 window.refreshRpaStatusBadge = refreshRpaStatusBadge;

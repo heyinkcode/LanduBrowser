@@ -707,7 +707,7 @@
               <button type="button" data-flow-source="mine">我创建的</button>
             </div>
             <div class="rpa-empty-card" id="rpa-flow-empty">
-              <div class="rpa-empty-art">🤖</div>
+              <div class="rpa-empty-art" aria-hidden="true"><i data-lucide="workflow"></i></div>
               <p>暂无流程，创建后可在此管理与运行；也可从「模板仓库」一键安装</p>
               <button class="primary" type="button" id="rpa-new-plan-2"><i data-lucide="plus"></i>创建任务流程</button>
             </div>
@@ -734,8 +734,8 @@
                   <button type="button" class="outline" id="rpa-load-template">载入示例</button>
                   <button type="button" class="outline" id="rpa-format-json">格式化</button>
                   <button type="button" class="primary" id="rpa-save">保存</button>
-                  <button type="button" class="primary" id="rpa-run">▶ 运行</button>
-                  <button type="button" class="outline rpa-btn-danger" id="rpa-stop">■ 停止</button>
+                  <button type="button" class="primary" id="rpa-run"><i data-lucide="play" aria-hidden="true"></i><span>运行</span></button>
+                  <button type="button" class="outline rpa-btn-danger" id="rpa-stop"><i data-lucide="square" aria-hidden="true"></i><span>停止</span></button>
                 </div>
                 <div class="rpa-log" id="rpa-log-list"><div class="rpa-muted">运行日志</div></div>
               </div>

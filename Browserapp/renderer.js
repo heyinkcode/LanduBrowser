@@ -2988,7 +2988,8 @@ function renderProxyLibrarySelectors() {
   renderProxyLibrarySelect($('#batch-add-proxy-library'), $('#batch-add-proxy-library')?.value || '');
 }
 
-function switchView(view) {
+function switchView(view, requestedRpaTab) {
+  const rpaTab = requestedRpaTab || window.getCurrentRpaTab?.() || 'flows';
   try {
     const currentActive = document.querySelector('.view.active')?.id?.replace(/^view-/, '');
     if (currentActive) {
@@ -2999,12 +3000,12 @@ function switchView(view) {
   $$('.nav').forEach((button) => {
     if (button.id === 'rpa-menu-toggle') {
       // parent group: active while any RPA sub-page is open
-      button.classList.toggle('active', view === 'rpa');
+      button.classList.toggle('active', view === 'rpa' || view === 'rpa-guide');
       return;
     }
     if (button.classList.contains('nav-child') && button.dataset.view === 'rpa') {
       // child active state is refined in showRpaPanel
-      button.classList.toggle('active', view === 'rpa' && button.dataset.rpaTab === (currentRpaTab || 'flows'));
+      button.classList.toggle('active', view === 'rpa' && button.dataset.rpaTab === rpaTab);
       return;
     }
     button.classList.toggle('active', button.dataset.view === view);
@@ -3038,15 +3039,11 @@ function switchView(view) {
     }
   }
   if (view === 'rpa') {
-    const tab = arguments[1] || currentRpaTab || 'flows';
-    showRpaPanel(tab);
+    showRpaPanel(rpaTab);
     if (!loadedViews.has('rpa')) {
       refreshRpaPage();
       loadedViews.add('rpa');
     }
-  } else {
-    // leaving RPA does not force-collapse; user may re-open later
-    document.getElementById('rpa-menu-toggle')?.classList.remove('open');
   }
   if (view === 'api-mcp') {
     if (!loadedViews.has('api-mcp')) {
@@ -3210,15 +3207,6 @@ async function assignSelectedToGroup(groupId) {
   toast(tx(`已将 ${ids.length} 个环境移到「${gid ? groupNameOf({ groupId: gid }) : '未分组'}」`));
   log('Group', `批量移动 ${ids.length} 个环境 → ${gid || '未分组'}`);
 }
-
-// allow nav buttons to pass rpa tab via dataset
-document.addEventListener('click', (event) => {
-  const nav = event.target.closest('[data-view="rpa"][data-rpa-tab]');
-  if (!nav) return;
-  // switchView will be called by existing nav handler; stash tab
-  currentRpaTab = nav.dataset.rpaTab || 'flows';
-}, true);
-
 
 function renderProxies() {
   const table = $('#proxy-table');
@@ -4525,7 +4513,7 @@ document.addEventListener('click', async (event) => {
   } else if (!event.target.closest('#theme-picker') && !event.target.closest('#theme-popover')) {
     setThemePopoverOpen(false);
   }
-  const nav = event.target.closest('[data-view]'); if (nav) switchView(nav.dataset.view);
+  const nav = event.target.closest('[data-view]'); if (nav) switchView(nav.dataset.view, nav.dataset.rpaTab);
   const action = event.target.closest('[data-action]');
   if (action?.dataset.action === 'start') startProfile(action.dataset.id);
   if (action?.dataset.action === 'stop') stopProfile(action.dataset.id);
