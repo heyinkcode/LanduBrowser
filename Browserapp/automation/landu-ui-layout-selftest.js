@@ -64,8 +64,8 @@ function measure(scopeSelector) {
 
 function validate(prefix, metrics) {
   measurements.push({ prefix, ...metrics });
-  check(prefix + ' / field heights', metrics.controls.every(control => Math.abs(control.height - 34) <= 1), metrics.controls.filter(control => Math.abs(control.height - 34) > 1));
-  check(prefix + ' / action heights', metrics.inlineControls.every(control => Math.abs(control.height - 34) <= 1), metrics.inlineControls.filter(control => Math.abs(control.height - 34) > 1));
+  check(prefix + ' / field heights', metrics.controls.every(control => Math.abs(control.height - 36) <= 1), metrics.controls.filter(control => Math.abs(control.height - 36) > 1));
+  check(prefix + ' / action heights', metrics.inlineControls.every(control => Math.abs(control.height - 36) <= 1), metrics.inlineControls.filter(control => Math.abs(control.height - 36) > 1));
   const unaligned = metrics.rows.filter(row => Math.max(...row.map(control => control.top)) - Math.min(...row.map(control => control.top)) > 1 || Math.max(...row.map(control => control.bottom)) - Math.min(...row.map(control => control.bottom)) > 1);
   check(prefix + ' / grid alignment', unaligned.length === 0, unaligned);
   check(prefix + ' / segment centering', metrics.segments.every(group => group.items.every(item => Math.abs(item.topInset - item.bottomInset) <= 1)), metrics.segments);
@@ -98,6 +98,12 @@ async function main() {
         await page.evaluate(tab => { setEditorTab(tab); document.querySelector('main').scrollTop = 0; }, tab);
         await frame();
         validate(`${viewport.width}x${viewport.height}/${tab}`, await page.evaluate(measure, '#profile-editor-form'));
+        const editorChrome = await page.evaluate(() => {
+          const back = document.querySelector('.editor-back').getBoundingClientRect();
+          const tabs = [...document.querySelectorAll('.editor-tabs button')].map(button => Number.parseFloat(getComputedStyle(button).fontSize));
+          return { backHeight: back.height, tabs };
+        });
+        check(`${viewport.width}/${tab} / readable editor navigation`, editorChrome.backHeight === 36 && editorChrome.tabs.every(size => size >= 14), editorChrome);
         if (viewport.width === 1600) await page.screenshot({ path: path.join(output, `${tab}.png`) });
         const reachable = await page.evaluate(() => {
           const panel = document.querySelector('.editor-panel.active');
@@ -172,19 +178,26 @@ async function main() {
       await page.setViewportSize(viewport);
       await page.evaluate(() => { switchView('profiles'); setThemePopoverOpen(true); });
       await frame();
+      await page.locator('#theme-popover').evaluate(panel => Promise.all(panel.getAnimations().map(animation => animation.finished)));
       const theme = await page.evaluate(() => {
         const badge = document.querySelector('#engine-badge').getBoundingClientRect();
         const trigger = document.querySelector('#theme-trigger').getBoundingClientRect();
         const panel = document.querySelector('#theme-popover');
         const bounds = panel.getBoundingClientRect();
         const cards = [...panel.querySelectorAll('.theme-option')].map(card => ({ height: card.getBoundingClientRect().height, border: getComputedStyle(card).borderTopWidth, shadow: getComputedStyle(card).boxShadow }));
-        return { badgeHeight: badge.height, triggerHeight: trigger.height, centerOffset: (badge.top + badge.bottom - trigger.top - trigger.bottom) / 2, fits: bounds.top >= 0 && bounds.bottom <= innerHeight + 1 && bounds.right <= innerWidth + 1, cards, paginationBorder: getComputedStyle(document.querySelector('#profile-pagination')).borderLeftWidth };
+        const toolbar = [...document.querySelectorAll('.profile-primary-toolbar button')].map(button => ({ height: button.getBoundingClientRect().height, fontSize: getComputedStyle(button).fontSize }));
+        const rowActions = [...document.querySelectorAll('#profile-table .actions button')].map(button => ({ width: button.getBoundingClientRect().width, height: button.getBoundingClientRect().height }));
+        return { badgeHeight: badge.height, triggerHeight: trigger.height, centerOffset: (badge.top + badge.bottom - trigger.top - trigger.bottom) / 2, fits: bounds.top >= 0 && bounds.bottom <= innerHeight + 1 && bounds.right <= innerWidth + 1, cards, toolbar, rowActions, paginationBorder: getComputedStyle(document.querySelector('#profile-pagination')).borderLeftWidth };
       });
       check(`${viewport.width}/header / matching controls`, Math.abs(theme.badgeHeight - theme.triggerHeight) <= 1 && Math.abs(theme.centerOffset) <= 1, theme);
-      check(`${viewport.width}/theme / contained panel and consistent rows`, theme.fits && theme.cards.every(card => card.height === 64 && card.border === '1px' && card.shadow === 'none'), theme);
+      check(`${viewport.width}/theme / contained panel and consistent rows`, theme.fits && theme.cards.every(card => Math.abs(card.height - 56) < 0.1 && card.border === '1px' && card.shadow === 'none'), theme);
       check(`${viewport.width}/pagination / no orphan divider`, theme.paginationBorder === '0px', theme);
+      check(`${viewport.width}/profiles / consistent toolbar controls`, theme.toolbar.every(button => button.height === 36 && button.fontSize === '12px'), theme.toolbar);
+      check(`${viewport.width}/profiles / square action controls`, theme.rowActions.length > 0 && theme.rowActions.every(button => button.width === 32 && button.height === 32), theme.rowActions);
       if (viewport.width === 1600) await page.screenshot({ path: path.join(output, 'theme-picker.png') });
-      await page.evaluate(() => setThemePopoverOpen(false));
+      await page.keyboard.press('Escape');
+      const closedByKeyboard = await page.evaluate(() => document.querySelector('#theme-popover').hidden && document.activeElement === document.querySelector('#theme-trigger'));
+      check(`${viewport.width}/theme / Escape closes menu and restores focus`, closedByKeyboard, closedByKeyboard);
     }
     for (const viewport of [{ width: 1280, height: 900 }, { width: 900, height: 650 }]) {
       await page.setViewportSize(viewport);

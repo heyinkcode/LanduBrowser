@@ -1,30 +1,38 @@
 html[data-ui-theme="landu-apple"] {
   color-scheme: light;
   --landu-ink: #1d1d1f;
-  --landu-secondary: #6e6e73;
-  --landu-tertiary: #86868b;
+  --landu-secondary: #61616a;
+  --landu-tertiary: #6e6e77;
   --landu-canvas: #f5f5f7;
   --landu-surface: #ffffff;
   --landu-border: #e5e5ea;
   --landu-border-strong: #d2d2d7;
   --landu-blue: #007aff;
-  --landu-blue-hover: #0066d6;
+  --landu-action: #0066d6;
+  --landu-blue-hover: #0056b8;
   --landu-blue-soft: #eaf3ff;
   --landu-green: #34c759;
   --landu-red: #ff3b30;
-  --landu-radius: 7px;
-  --landu-control-height: 34px;
-  --landu-field-gap: 6px;
+  --landu-radius: 8px;
+  --landu-control-height: 36px;
+  --landu-field-gap: 8px;
+  --landu-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ui-sidebar-width: 240px;
+  --ui-header-height: 64px;
+  --theme-menu-width: 336px;
   --ui-control-height: var(--landu-control-height);
-  --ui-radius: 10px;
+  --ui-radius: 12px;
   --ui-radius-sm: var(--landu-radius);
   --ui-bg: var(--landu-canvas);
   --ui-surface: var(--landu-surface);
+  --ui-sidebar: var(--landu-canvas);
+  --ui-header: var(--landu-surface);
+  --ui-surface-muted: #f7f8fa;
   --ui-text: var(--landu-ink);
   --ui-muted: var(--landu-secondary);
   --ui-border: var(--landu-border);
-  --ui-primary: var(--landu-blue);
-  --ui-accent: var(--landu-blue);
+  --ui-primary: var(--landu-action);
+  --ui-accent: var(--landu-action);
   --ui-accent-soft: var(--landu-blue-soft);
   --ui-border-strong: var(--landu-border-strong);
   --border: var(--landu-border);
@@ -44,13 +52,20 @@ html[data-ui-theme="landu-apple"] body {
 
 html[data-ui-theme="landu-apple"] .app-shell { background: var(--landu-canvas); }
 html[data-ui-theme="landu-apple"] .sidebar {
+  padding-inline: 16px;
+  padding-bottom: 16px;
   color: #4b4b50;
   background: #f5f5f7;
   border-right: 1px solid var(--landu-border);
   box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 #app-brand-logo { content: url("assets/logo-landu.svg?v=20261022"); image-rendering: auto; }
-html[data-ui-theme="landu-apple"] .brand { border-bottom-color: var(--landu-border); }
+html[data-ui-theme="landu-apple"] .brand { min-height: 48px; gap: 12px; padding-inline: 4px; border-bottom-color: var(--landu-border); }
+html[data-ui-theme="landu-apple"] .brand .logo { width: 40px; height: 40px; flex: 0 0 40px; }
+html[data-ui-theme="landu-apple"] .brand strong { font-size: 16px; line-height: 24px; }
+html[data-ui-theme="landu-apple"] .brand small { line-height: 20px; letter-spacing: 0; }
 html[data-ui-theme="landu-apple"] .brand strong,
 html[data-ui-theme="landu-apple"] .brand-name { color: var(--landu-ink); }
 html[data-ui-theme="landu-apple"] .brand small,
@@ -58,29 +73,62 @@ html[data-ui-theme="landu-apple"] .nav-label,
 html[data-ui-theme="landu-apple"] .sidebar-footer { color: var(--landu-tertiary); }
 html[data-ui-theme="landu-apple"] .new-browser,
 html[data-ui-theme="landu-apple"] .primary {
-  border-color: var(--landu-blue);
+  border-color: var(--landu-action);
   border-radius: var(--landu-radius);
   color: #fff;
-  background: var(--landu-blue);
+  background: var(--landu-action);
   box-shadow: none;
 }
 html[data-ui-theme="landu-apple"] .new-browser:hover,
 html[data-ui-theme="landu-apple"] .primary:hover { border-color: var(--landu-blue-hover); background: var(--landu-blue-hover); }
-html[data-ui-theme="landu-apple"] .nav { border-radius: var(--landu-radius); color: #4b4b50; }
+html[data-ui-theme="landu-apple"] .new-browser {
+  height: 36px;
+  min-height: 36px;
+  margin: 16px 0 24px;
+  padding: 0 12px;
+  border-radius: var(--landu-radius) !important;
+  font-size: 12px;
+}
+html[data-ui-theme="landu-apple"] .sidebar .nav {
+  min-height: 36px;
+  margin: 2px 0;
+  padding: 0 12px;
+  gap: 12px;
+  border-radius: var(--landu-radius);
+  color: var(--landu-secondary);
+  font-size: 12px;
+}
 html[data-ui-theme="landu-apple"] .nav:hover { color: var(--landu-ink); background: #ebebed; }
 html[data-ui-theme="landu-apple"] .nav.active,
-html[data-ui-theme="landu-apple"] .nav[aria-current="page"] { color: var(--landu-ink); background: #e5e5ea; font-weight: 600; }
+html[data-ui-theme="landu-apple"] .nav[aria-current="page"] {
+  color: var(--landu-action);
+  background: var(--landu-blue-soft);
+  box-shadow: none;
+  font-weight: 500 !important;
+}
+html[data-ui-theme="landu-apple"] .sidebar .nav-label { margin: 24px 12px 8px; font-size: 12px; letter-spacing: 0; }
+html[data-ui-theme="landu-apple"] .sidebar-footer { padding: 16px 8px 0; border-top: 1px solid var(--landu-border); }
+html[data-ui-theme="landu-apple"] .sidebar-footer :is(.app-version, a) { font-size: 10px; }
+html[data-ui-theme="landu-apple"] .sidebar-footer .version-traffic-light { width: 8px; height: 8px; box-shadow: none; animation: none; }
 
 html[data-ui-theme="landu-apple"] .content,
 html[data-ui-theme="landu-apple"] main { background: var(--landu-canvas); }
 html[data-ui-theme="landu-apple"] .content > header {
-  min-height: 58px;
+  min-height: var(--ui-header-height);
   border-bottom: 1px solid var(--landu-border);
   color: var(--landu-secondary);
-  background: rgba(255, 255, 255, .92);
+  background: var(--landu-surface);
   box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
-html[data-ui-theme="landu-apple"] .content > header h1 { color: var(--landu-ink); font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
+html[data-ui-theme="landu-apple"] .content > header h1 {
+  color: var(--landu-ink);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
 html[data-ui-theme="landu-apple"] .content > header p,
 html[data-ui-theme="landu-apple"] .header-right { color: var(--landu-secondary); }
 html[data-ui-theme="landu-apple"] .content > header .engine-badge,
@@ -89,14 +137,14 @@ html[data-ui-theme="landu-apple"] .content > header .theme-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 34px;
-  min-height: 34px;
-  padding: 0 11px;
-  border-radius: 999px !important;
-  line-height: 1;
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  padding: 0 12px;
+  border-radius: var(--landu-radius) !important;
+  line-height: 20px;
 }
 html[data-ui-theme="landu-apple"] .content > header .engine-badge {
-  gap: 7px;
+  gap: 8px;
   border: 1px solid var(--landu-border);
   color: var(--landu-secondary);
   background: var(--landu-canvas);
@@ -105,7 +153,7 @@ html[data-ui-theme="landu-apple"] .content > header .engine-badge {
 }
 html[data-ui-theme="landu-apple"] .content > header .engine-badge-ok {
   border: 1px solid #ccebd6;
-  color: #278347;
+  color: #247b42;
   background: #f0faf3;
 }
 html[data-ui-theme="landu-apple"] .content > header .engine-badge-missing {
@@ -114,12 +162,12 @@ html[data-ui-theme="landu-apple"] .content > header .engine-badge-missing {
   background: #fff4f2;
 }
 html[data-ui-theme="landu-apple"] .engine-badge-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   box-shadow: none;
 }
 html[data-ui-theme="landu-apple"] .engine-badge-ok .engine-badge-dot {
-  box-shadow: 0 0 0 3px rgba(52, 199, 89, .14);
+  box-shadow: none;
 }
 html[data-ui-theme="landu-apple"] .engine-badge-text { font-size: 12px; }
 html[data-ui-theme="landu-apple"] .content > header .theme-trigger {
@@ -130,14 +178,14 @@ html[data-ui-theme="landu-apple"] .content > header .theme-trigger {
   box-shadow: none;
   font-size: 12px;
   font-weight: 400;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  transition: color 160ms var(--landu-ease), border-color 160ms var(--landu-ease), background-color 160ms var(--landu-ease), transform 160ms var(--landu-ease);
 }
 html[data-ui-theme="landu-apple"] .theme-trigger-dot {
-  width: 10px;
-  height: 10px;
+  width: 16px;
+  height: 16px;
   border: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #007aff 0 52%, #8abfff 52% 100%);
+  border-radius: 0;
+  background: transparent;
 }
 html[data-ui-theme="landu-apple"] .content > header .theme-trigger:hover {
   border-color: #b7d5f7;
@@ -150,17 +198,46 @@ html[data-ui-theme="landu-apple"] .content > header .theme-trigger:focus-visible
   outline-offset: 2px;
 }
 
-html[data-ui-theme="landu-apple"] #view-profiles .group-chip-row { gap: 7px; }
+html[data-ui-theme="landu-apple"] main { padding: 24px !important; }
+html[data-ui-theme="landu-apple"] #view-profiles .group-chip-row { gap: 8px; margin-bottom: 16px; padding-bottom: 0; }
 html[data-ui-theme="landu-apple"] #view-profiles .group-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px !important;
+  padding: 0 12px !important;
   border: 1px solid var(--landu-border);
-  border-radius: 999px;
+  border-radius: var(--landu-radius) !important;
   color: var(--landu-secondary);
   background: var(--landu-surface);
+  box-shadow: none;
+  font-size: 12px !important;
+  font-variant-numeric: tabular-nums;
 }
-html[data-ui-theme="landu-apple"] #view-profiles .group-chip.active { border-color: #b9d7ff; color: #005fc5; background: var(--landu-blue-soft); }
+html[data-ui-theme="landu-apple"] #view-profiles .group-chip.active {
+  border-color: #b9d7ff;
+  color: #005fc5;
+  background: var(--landu-blue-soft);
+  box-shadow: none;
+}
 html[data-ui-theme="landu-apple"] .toolbar,
 html[data-ui-theme="landu-apple"] .profile-primary-toolbar,
 html[data-ui-theme="landu-apple"] .profile-batch-toolbar { background: transparent; box-shadow: none; }
+html[data-ui-theme="landu-apple"] .toolbar { gap: 12px; }
+html[data-ui-theme="landu-apple"] :is(.toolbar-left, .selection-actions) { gap: 8px; }
+html[data-ui-theme="landu-apple"] #view-profiles .profile-primary-toolbar { flex-wrap: wrap; min-height: 36px; margin-bottom: 12px; }
+html[data-ui-theme="landu-apple"] :is(.toolbar, .sync-toolbar, .rpa-toolbar, .profile-selection-bar) button,
+html[data-ui-theme="landu-apple"] #view-profiles :is(.primary, .outline, .danger) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  padding: 0 12px;
+  font-size: 12px !important;
+  line-height: 20px;
+}
 html[data-ui-theme="landu-apple"] .outline,
 html[data-ui-theme="landu-apple"] .mini,
 html[data-ui-theme="landu-apple"] .row-actions button,
@@ -198,7 +275,29 @@ html[data-ui-theme="landu-apple"] .themed-select-button:focus-visible {
   outline: none;
 }
 html[data-ui-theme="landu-apple"] input::placeholder,
-html[data-ui-theme="landu-apple"] textarea::placeholder { color: #a1a1a6; }
+html[data-ui-theme="landu-apple"] textarea::placeholder { color: #73737c; }
+html[data-ui-theme="landu-apple"] .search,
+html[data-ui-theme="landu-apple"] #view-profiles .search {
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+  padding: 0 12px;
+}
+html[data-ui-theme="landu-apple"] .search input {
+  min-height: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 12px;
+}
+html[data-ui-theme="landu-apple"] .themed-select-button {
+  grid-template-columns: minmax(0, 1fr) 28px;
+  padding-left: 12px !important;
+  border-color: var(--landu-border-strong) !important;
+}
+html[data-ui-theme="landu-apple"] .themed-select-arrow { border-left: 0; background: transparent; color: var(--landu-secondary); }
+html[data-ui-theme="landu-apple"] .themed-select-option.selected::before { font-weight: 500; }
 
 html[data-ui-theme="landu-apple"] .table-card,
 html[data-ui-theme="landu-apple"] .extension-card,
@@ -226,14 +325,46 @@ html[data-ui-theme="landu-apple"] thead th {
 html[data-ui-theme="landu-apple"] tbody td { border-bottom: 1px solid #eeeef0; color: var(--landu-ink); }
 html[data-ui-theme="landu-apple"] tbody tr:hover { background: #f5f5f7; }
 html[data-ui-theme="landu-apple"] tbody tr.selected-row { background: var(--landu-blue-soft); }
-html[data-ui-theme="landu-apple"] #view-profiles .table-card { border: 0; border-radius: 0; background: transparent; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card {
+  border: 1px solid var(--landu-border) !important;
+  border-radius: 12px !important;
+  background: var(--landu-surface);
+  box-shadow: none !important;
+}
 html[data-ui-theme="landu-apple"] #view-profiles .table-card th,
-html[data-ui-theme="landu-apple"] #view-profiles .table-card td { padding-top: 11px; padding-bottom: 11px; }
-html[data-ui-theme="landu-apple"] #view-profiles .table-card th { border-top: 1px solid var(--landu-border); }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card td { padding: 8px 12px !important; font-size: 12px !important; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card th {
+  height: 40px;
+  border-top: 0;
+  background: var(--ui-surface-muted) !important;
+  font-weight: 400 !important;
+}
+html[data-ui-theme="landu-apple"] #view-profiles .table-card td { height: 56px; }
+html[data-ui-theme="landu-apple"] #view-profiles :is(.env-identity-text strong, .env-browser-label strong) {
+  font-size: 12px !important;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] #view-profiles :is(.env-browser-pill, .group-badge-compact, .status-compact, .network-mode, .exit-compact, .net-badge) {
+  font-size: 12px !important;
+  line-height: 20px !important;
+}
+html[data-ui-theme="landu-apple"] #view-profiles .table-card .actions { gap: 4px; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card .actions button.mini.action-icon {
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  flex: 0 0 32px !important;
+}
+html[data-ui-theme="landu-apple"] #view-profiles .table-card :is(th.col-number, td.col-number, .env-window-badge, .exit-compact) {
+  font-variant-numeric: tabular-nums;
+}
 html[data-ui-theme="landu-apple"] #view-profiles .table-card tbody tr { border-bottom: 1px solid var(--landu-border); }
 html[data-ui-theme="landu-apple"] #view-profiles .table-card th.col-actions,
 html[data-ui-theme="landu-apple"] #view-profiles .table-card td.col-actions { background: var(--landu-surface); }
-html[data-ui-theme="landu-apple"] #view-profiles .table-card thead th.col-actions { background: #fff; }
+html[data-ui-theme="landu-apple"] #view-profiles .table-card thead th.col-actions { background: var(--ui-surface-muted); }
 html[data-ui-theme="landu-apple"] .group-badge,
 html[data-ui-theme="landu-apple"] .env-browser-pill,
 html[data-ui-theme="landu-apple"] .net-badge { border-radius: 5px; box-shadow: none; }
@@ -275,6 +406,7 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-gr
   min-height: var(--landu-control-height);
   margin: 0;
   padding-block: 0;
+  padding-inline: 12px;
   font-size: 12px;
   line-height: 20px;
 }
@@ -289,8 +421,8 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-gr
 }
 html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) :is(.form-two, .form-three, .privacy-grid, .proxy-host-row) {
   align-items: start;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog, .settings-grid) :is(.form-two, .form-three, .privacy-grid, .proxy-host-row) > label {
   margin: 0;
@@ -301,9 +433,9 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .themed-sele
 }
 html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) textarea {
   box-sizing: border-box;
-  min-height: 64px;
+  min-height: 72px;
   margin: 0;
-  padding: 8px 10px;
+  padding: 8px 12px;
   line-height: 20px;
   scroll-margin-block: 20px 90px;
 }
@@ -312,9 +444,49 @@ html[data-ui-theme="landu-apple"] #view-profile-editor .environment-editor {
   align-items: start;
   min-width: 0;
 }
+html[data-ui-theme="landu-apple"] #view-profile-editor { margin: 0; }
 html[data-ui-theme="landu-apple"] #view-profile-editor .editor-form {
   min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
+html[data-ui-theme="landu-apple"] #view-profile-editor :is(.editor-form, .profile-summary, .settings-row > span) { font-size: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-panel[data-editor-panel="proxy"] {
+  padding: 20px;
+  border: 1px solid var(--landu-border);
+  border-radius: 12px;
+  background: var(--landu-surface);
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .profile-editor-head { gap: 16px; margin: -24px -24px 0; padding: 20px 24px 16px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .profile-editor-head h2 { font-size: 22px; line-height: 28px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 20px;
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-tabs {
+  gap: 24px;
+  margin: 0 -24px 20px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--landu-border);
+}
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-tabs button { min-height: 48px; padding: 12px 0; line-height: 20px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .environment-editor { gap: 20px; padding: 0 0 32px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-section-card { padding: 20px; margin-bottom: 16px; border-radius: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-card-header { margin-bottom: 20px; padding-bottom: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-card-title { line-height: 20px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .editor-card-desc { margin-top: 4px; line-height: 20px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .profile-summary { padding: 20px; border-radius: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .summary-head { min-height: 24px; margin-bottom: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .summary-head button { font-size: 12px; }
+html[data-ui-theme="landu-apple"] #view-profile-editor .profile-summary dl > div { padding: 8px 0; line-height: 20px; }
 html[data-ui-theme="landu-apple"] #view-system .settings-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -353,8 +525,8 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .segmented {
   align-items: stretch;
   width: fit-content;
   max-width: 100%;
-  padding: 3px;
-  gap: 3px;
+  padding: 4px;
+  gap: 4px;
   margin-bottom: 16px;
 }
 html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .segmented > label {
@@ -368,6 +540,7 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .segmented >
   margin: 0 !important;
   line-height: 20px;
   white-space: nowrap;
+  font-size: 12px;
 }
 html[data-ui-theme="landu-apple"] #view-profile-editor :is(.ua-tools, .storage-actions, .field-inline-group) {
   display: flex;
@@ -400,16 +573,26 @@ html[data-ui-theme="landu-apple"] :is(#profile-editor-form, dialog) .proxy-host-
   margin: 0;
 }
 html[data-ui-theme="landu-apple"] #view-profile-editor .editor-actions {
-  border-top: 1px solid var(--landu-border);
+  border: 1px solid var(--landu-border);
   gap: 8px;
-  padding-block: 12px;
-  border-radius: 0 0 10px 10px;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 -4px 16px rgba(29, 29, 31, .03);
 }
 html[data-ui-theme="landu-apple"] #view-profiles .toolbar-pagination {
   border-left: 0;
   padding-left: 0;
   margin-left: 0;
+  margin-top: 16px;
+  gap: 12px;
 }
+html[data-ui-theme="landu-apple"] #view-profiles .toolbar-pagination :is(button, input, .themed-select-button) {
+  height: var(--landu-control-height);
+  min-height: var(--landu-control-height);
+}
+html[data-ui-theme="landu-apple"] #view-profiles .toolbar-pagination button:not(.themed-select-button) { width: 36px; }
+html[data-ui-theme="landu-apple"] #view-profiles .toolbar-pagination { font-size: 12px !important; font-variant-numeric: tabular-nums; }
 html[data-ui-theme="landu-apple"] dialog[open] .dialog-head {
   align-items: flex-start;
   gap: 16px;
@@ -449,7 +632,7 @@ html[data-ui-theme="landu-apple"] dialog[open] .dialog-head > button:focus-visib
 }
 html[data-ui-theme="landu-apple"] #add-app-dialog {
   box-sizing: border-box;
-  padding: 20px;
+  padding: 24px;
 }
 html[data-ui-theme="landu-apple"] #add-app-dialog .store-source-tabs {
   margin-bottom: 16px;
@@ -473,17 +656,23 @@ html[data-ui-theme="landu-apple"] #sync-settings-dialog .sync-setting-grid > lab
   margin: 0;
 }
 html[data-ui-theme="landu-apple"] .theme-popover {
-  padding: 12px;
+  max-width: calc(100vw - 32px);
+  max-height: min(560px, calc(100dvh - 128px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px;
   border: 1px solid var(--landu-border);
-  box-shadow: 0 12px 32px rgba(29, 29, 31, .12);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(29, 29, 31, .08);
 }
-html[data-ui-theme="landu-apple"] .theme-popover-head { padding: 4px 6px 8px; margin-bottom: 4px; }
+html[data-ui-theme="landu-apple"] .theme-popover-head { padding: 8px 8px 12px; margin-bottom: 4px; }
+html[data-ui-theme="landu-apple"] .theme-popover-head strong { font-size: 14px; line-height: 20px; }
 html[data-ui-theme="landu-apple"] .theme-popover-head span { color: var(--landu-secondary); }
 html[data-ui-theme="landu-apple"] .theme-grid { gap: 4px; }
 html[data-ui-theme="landu-apple"] .theme-option {
-  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
   gap: 12px;
-  min-height: 64px;
+  min-height: 56px;
   padding: 8px 32px 8px 8px;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -496,19 +685,49 @@ html[data-ui-theme="landu-apple"] .theme-option.active {
   background: var(--landu-blue-soft);
 }
 html[data-ui-theme="landu-apple"] .theme-option > i {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   border: 1px solid rgba(29, 29, 31, .12);
   border-radius: 7px;
   overflow: hidden;
 }
-html[data-ui-theme="landu-apple"] .theme-option strong { font-size: 12px; line-height: 20px; }
-html[data-ui-theme="landu-apple"] .theme-option small { color: var(--landu-secondary); line-height: 18px; }
+html[data-ui-theme="landu-apple"] .theme-option > span { display: grid; gap: 0; min-width: 0; }
+html[data-ui-theme="landu-apple"] .theme-option strong,
+html[data-ui-theme="landu-apple"] .theme-option small {
+  margin: 0;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-ui-theme="landu-apple"] .theme-option strong { font-size: 12px; }
+html[data-ui-theme="landu-apple"] .theme-option small { color: var(--landu-secondary); }
 html[data-ui-theme="landu-apple"] .theme-option.active::after { border-color: var(--landu-blue); }
 
+html[data-ui-theme="landu-apple"] :is(.nav, .new-browser, .primary, .outline, .mini, .editor-back, .themed-select-button, .theme-option, .row-actions button) {
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-duration: 160ms;
+  transition-timing-function: var(--landu-ease);
+}
+html[data-ui-theme="landu-apple"] :is(.sidebar, .toolbar, .table-card .actions, .editor-back, .theme-trigger) .lucide,
+html[data-ui-theme="landu-apple"] #view-profiles .table-card .actions button.action-icon .lucide {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  flex: 0 0 16px !important;
+  stroke-width: 1.5 !important;
+}
+html[data-ui-theme="landu-apple"] .theme-popover:not([hidden]) { animation: landu-menu-enter 180ms var(--landu-ease); }
+@keyframes landu-menu-enter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 1180px) {
+  html[data-ui-theme="landu-apple"] { --ui-sidebar-width: 200px; }
   html[data-ui-theme="landu-apple"] #view-profile-editor .environment-editor { grid-template-columns: minmax(0, 1fr); }
   html[data-ui-theme="landu-apple"] #view-profile-editor .profile-summary { position: static; }
   html[data-ui-theme="landu-apple"] #view-system .settings-grid { grid-template-columns: minmax(0, 1fr); }
@@ -520,5 +739,5 @@ html[data-ui-theme="landu-apple"] .theme-option.active::after { border-color: va
 @media (prefers-reduced-motion: reduce) {
   html[data-ui-theme="landu-apple"] *,
   html[data-ui-theme="landu-apple"] *::before,
-  html[data-ui-theme="landu-apple"] *::after { scroll-behavior: auto !important; }
+  html[data-ui-theme="landu-apple"] *::after { scroll-behavior: auto !important; animation: none !important; transition-duration: 0ms !important; }
 }

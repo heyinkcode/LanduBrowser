@@ -4621,6 +4621,12 @@ window.addEventListener('scroll', (event) => {
   closeSelectMenu();
 }, true);
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !openSelectMenu && $('#theme-popover')?.hidden === false) {
+    event.preventDefault();
+    setThemePopoverOpen(false);
+    $('#theme-trigger').focus({ preventScroll: true });
+    return;
+  }
   if (!openSelectMenu) return;
   if (event.key === 'Escape') {
     event.preventDefault();
