@@ -31,6 +31,10 @@ function selectPreview(selected) {
     tab.setAttribute('aria-selected', String(active));
     tab.tabIndex = active ? 0 : -1;
     document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+    if (active) {
+      const image = document.getElementById(tab.getAttribute('aria-controls')).querySelector('img');
+      document.getElementById('preview-image-link').href = image.getAttribute('src');
+    }
   }
 }
 for (const tab of previewTabs) {
